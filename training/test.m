@@ -1,5 +1,6 @@
+clear all
 
-A = magic(5);
+A = magic(7);
 min_index = minfcn(A);
 
 A
