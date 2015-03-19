@@ -1,0 +1,15 @@
+
+function [min, idx] = get_joyce_min(array)
+    n = length(array);
+    a = 2;
+    for i=1: n
+        if array(i) < array(a)
+            a = i;
+        end
+        i = i+1;
+    end
+    min = array(a);
+    idx = a;
+end
+
+function
