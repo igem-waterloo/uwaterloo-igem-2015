@@ -1,7 +1,7 @@
 ## Protocol followed to generate sgRNA sequences
 
 1. Downloaded all *Caulimovrius* sequences from NCBI (includes CaMV).
-   These sequences are in the file **caulimovirus_sequence.fasta*.
+   These sequences are in the file **caulimovirus_sequence.fasta**.
 2. Ran through [Guidance v2](http://guidance.tau.ac.il/ver2/) to generate multiple sequence alignment.
 3. Masked multiple sequence alignment based on base pairs that had at least 0.93% identity
    across all *Caulimovirus*.
