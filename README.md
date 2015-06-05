@@ -6,4 +6,4 @@ headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt S
 ([@mattsmart](http://github.com/mattsmart)).
 
 * **training** is a messy sandbox of code written during our training sessions  
-* **sgRNA_target_design** constains files and scripts associated with optimization of Cas9 targets
+* **gRNA_target_design** constains files and scripts associated with optimization of Cas9 targets
