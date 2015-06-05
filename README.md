@@ -5,4 +5,5 @@ The software in this repo is mostly created by the mathematical modelling subtea
 headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt Smart
 ([@mattsmart](http://github.com/mattsmart)).
 
-* **Training** is a messy sandbox of code written during our training sessions
+* **training** is a messy sandbox of code written during our training sessions  
+* **sgRNA_target_design** constains files and scripts associated with optimization of Cas9 targets
