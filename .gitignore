@@ -1,3 +1,4 @@
-# Do not track MATLAB .asv files
+# Do not track MATLAB .asv files or compiled Python files
 *.asv
+*.pyc 
 sgRNA_design/output.csv
