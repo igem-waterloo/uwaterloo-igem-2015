@@ -10,9 +10,14 @@ class MemberSpider(CrawlSpider):
 
     name = "track"
     allowed_domains = ["igem.org"]
-    start_urls = [
-        "http://igem.org/Team_List?year=2007"
-    ]
+    start_urls = ["http://igem.org/Team_List?year=2007",
+                  "http://igem.org/Team_List?year=2008",
+                  "http://igem.org/Team_List?year=2009",
+                  "http://igem.org/Team_List?year=2010",
+                  "http://igem.org/Team_List?year=2011",
+                  "http://igem.org/Team_List?year=2012",
+                  "http://igem.org/Team_List?year=2013",
+                  "http://igem.org/Team_List?year=2014"]
 
     rules = (Rule(LinkExtractor(allow=('Team\.cgi', )), callback='parse_team'),)
 
@@ -31,16 +36,3 @@ class MemberSpider(CrawlSpider):
         teamtrack['region'] = region
 
         yield teamtrack
-
-        # for sel in response.xpath('//table'):
-        #     tablenum += 1
-
-        #     if tablenum == 1:
-
-        #     for thing in sel.xpath('')
-        #     item = MemberItem()
-        #     item['name'] = sel.xpath('text()').extract()
-        #     item['link'] = sel.xpath('@href').extract()
-        #     yield item
-
-

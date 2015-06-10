@@ -9,17 +9,9 @@ import scrapy
 
 
 class MemberItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-
-    
     team_year = scrapy.Field()
     
-
 class TrackItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-
     team_year = scrapy.Field()
     track = scrapy.Field()
     region = scrapy.Field()
