@@ -6,4 +6,5 @@ headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt S
 ([@mattsmart](http://github.com/mattsmart)).
 
 * **training** is a messy sandbox of code written during our training sessions  
-* **gRNA_target_design** constains files and scripts associated with optimization of Cas9 targets
+* **gRNA_target_design** contains files and scripts associated with optimization of Cas9 targets  
+* **scraper** houses our python scripts for extracting team data from the igem website 
