@@ -7,7 +7,9 @@ class TargetSite(object):
 
     def __init__(self, sequence):
 
+        self.gRNA = sequence
         self.sequence = sequence
+        self.functional = True
 
         self.calculate_probability()
 
@@ -24,10 +26,18 @@ class TargetSite(object):
                                     after='indels')
 
     def indels(self):
-        self.sequence = ## self.sequence modified
+        self.sequence = "abc"## self.sequence modified
         self.calculate_probability()
+        self.working()
 
     def calculate_probability(self):
-        self.cut_probability = ## some function of the sequence
+        self.cut_probability = 0.5## some function of the sequence
                                ## maybe we can also store the original
                                ## sequence (gRNA) for reference
+
+    def working(self):
+        # only checking for frameshifts
+        if (len(self.sequence)-len(self.gRNA))%3 == 0:
+            self.functional = True
+        else:
+            self.functional = False
