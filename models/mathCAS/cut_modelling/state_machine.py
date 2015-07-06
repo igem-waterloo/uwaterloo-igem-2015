@@ -13,7 +13,9 @@
 # classes
 class Target(object):
 
-    def __init__(self, label, grna, sequence, start, complex_concentration, dt):  # may want to make dt adaptive
+    def __init__(
+            self, label, grna, sequence, start, complex_concentration, dt,
+            direction, right_buffer, left_buffer):  # may want to make dt adaptive
         self.label = label  # string
         self.grna = grna  # string
         self.sequence = sequence  # string, include PAM, should be ~ 23 chars, maybe need buffer on opposite end
@@ -25,6 +27,9 @@ class Target(object):
         self.cut_probability = self.compute_cut_probability(dt)
         self.shift = 0  # defined by sum of net indel sizes, used to compute frameshift if orf region
         self.complex_concentration = complex_concentration  # conc of gRNA-cas9 complex inside nucleus
+        self.direction = direction # direction target is pointing (for merging sites after large dels)
+        self.right_buffer = right_buffer # ~100 nucleotides in genome right of sequence
+        self.left_buffer = left_buffer # ~100 nucleotides in genome left of sequence
 
     def is_repaired(self):
         return self.repaired
@@ -49,24 +54,37 @@ class Target(object):
         # TODO: indel size module
         # del_left, del_right, insert_left, insert_right = foo_indel()  # e.g. 0, 0, 1, 1
         del_left, del_right = 0, 0  # fn
-        insert_left, insert_right = 1, 1  # fn
-        net_indel_size = insert_left + insert_right - del_left - del_right
+        insert = 2  # fn
         # TODO: nucleotide insertion module
-        insert_left_nt = 'X'  # foo_nt_rand(insert_left)
-        insert_right_nt = 'Y'  # foo_nt_rand(insert_right)
+        insert_nt = 'XY'  # foo_nt_rand(insert_nt)
         # rewrite target sequence
-        sequence_left = self.sequence[0:self.cut_position-del_left] + insert_left_nt
-        sequence_right = insert_right_nt + self.sequence[self.cut_position+del_right:]
-        self.sequence = sequence_left + sequence_right  # may need to get buffer from genome data if deletion
+        sequence_left = self.sequence[0:self.cut_position-del_left]
+        sequence_right = self.sequence[self.cut_position+del_right:]
+        self.sequence = sequence_left + insert_nt + sequence_right  # may need to get buffer from genome data if deletion
+        del_left = fix_pam(del_left) # fixing in case of damaged PAM
+        net_indel_size = insert - del_left - del_right
+        if net_indel_size < 0: # tack on nucleotides
+            self.sequence = self.sequence + self.right_buffer[0:-net_indel_size]
+            self.right_buffer = self.right_buffer[-net_indel_size:]
+        elif net_indel_size > 0: # shave of nucleotides
+            self.right_buffer = self.sequence[-net_indel_size:] + self.right_buffer
+            self.sequence = self.sequence[:-net_indel_size]
         self.cut_position = None
         self.repaired = True
-        if net_indel_size > 5:  # or if PAM is broken
+        if net_indel_size > 5 or self.sequence[1:3] != "GG": # big insertion or broken PAM
             self.targetable = False
             self.cut_probability = 0.0
         else:
             self.cut_probability = self.compute_cut_probability(dt)
         self.shift += net_indel_size
 
+    def fix_pam(self, del_left):
+        if del_left == 0 or self.sequence[1:3] == "GG": # out of insertions or working PAM
+            return del_left
+        else: # tries to fix broken PAM by adding to the left
+            self.sequence = self.left_buffer[-1:] + self.sequence
+            self.left_buffer = self.left_buffer[:-1]
+            fix_pam(del_left-1)
 
 class Domain(object):
 
