@@ -5,6 +5,6 @@ The software in this repo is mostly created by the mathematical modelling subtea
 headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt Smart
 ([@mattsmart](http://github.com/mattsmart)).
 
+* **models** is where the math subteams keep their models and simulations  
+* **tools** contains code and data related to other aspects of the project  
 * **training** is a messy sandbox of code written during our training sessions  
-* **gRNA_target_design** contains files and scripts associated with optimization of Cas9 targets  
-* **scraper** houses our python scripts for extracting team data from the igem website 
