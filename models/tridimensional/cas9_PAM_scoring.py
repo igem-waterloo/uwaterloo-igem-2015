@@ -37,7 +37,6 @@ for i in range(0, 64):
 		if os.path.isfile(results_file): continue
 
 		print "Running for: " + variant + "_" + program
-		continue
 		# Start keeping track of runtime
 		time_init = time()
 		test_pose = pose_from_pdb(program + "/4UN3." + variant + ".pdb")
