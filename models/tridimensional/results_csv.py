@@ -1,3 +1,4 @@
+import argparse
 import csv
 import os
 
@@ -10,9 +11,13 @@ def get_scores(filedata):
     return [filedata[i].split(" ")[-1][:-1] for i in xrange(4)]
 
 
-# point to score files
-score_file_directory = "results\\"  # TODO make passable arg
-score_files = os.listdir(score_file_directory)
+# argument parsing
+parser = argparse.ArgumentParser(description='Compile score files into a csv.')
+parser.add_argument('results_dir', metavar='D', type=str, 
+                   help='directory of score files to collect')
+args = parser.parse_args()
+score_file_directory = args.results_dir
+score_files = os.listdir(score_file_directory)  # get list of score files
 
 # csv prep
 header = ['PAM_1','PAM_2','PAM_3','Tool','Init FA','Init DNA','Final FA','Final DNA']
@@ -28,16 +33,13 @@ for elem in categories:
         
 # append all data to csv
 for i, score_file in enumerate(score_files):
-
     # get textfile classifiers (PAM and category)
     pam, pam_tool_txt = score_file.split("_")
     pam_tool = pam_tool_txt.split(".")[0]
     assert pam_tool in categories
-
     # read contents of textfile
     with open(score_file_directory + score_file) as f:
         filedata = f.readlines()
-
     # format row and append to csv
     scores = get_scores(filedata)
     row = [pam[0], pam[1], pam[2], pam_tool] + scores
