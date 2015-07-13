@@ -796,5 +796,4 @@ mutants_kleinstiver = [
                     {'aa_idx': 1335, 'sec_structure': 'none', 'aa_init': 'R', 'aa_mut': 'T',
                      'aa_group_init': 'basic', 'aa_group_mut': 'polar'},
                     {'aa_idx': 1337, 'sec_structure': 'none', 'aa_init': 'T', 'aa_mut': 'R',
-                     'aa_group_init': 'polar', 'aa_group_mut': 'basic'}]}
-]
+                     'aa_group_init': 'polar', 'aa_group_mut': 'basic'}]}]

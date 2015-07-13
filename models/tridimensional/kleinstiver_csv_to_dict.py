@@ -2,10 +2,10 @@
 Convert CSV of Cas9 mutants from Klienstiver et al. (2015), Nature, doi:10.1038/nature14592 into dict format
 Included for reproducibility of data preparation
 """
-
-from cas9_mutants import PI_domain, PI_sec_structure, aa_group
 import os
 import csv
+
+from cas9_mutants import PI_domain, PI_sec_structure, aa_group
 
 def mutant_csv_to_string(mutant_csv_row):
     """ Parses a row of mutations in the Kleinstiver CSV to a string describing a dictionary
@@ -61,5 +61,5 @@ with open(os.path.normpath("./Kleinstiver_mutants_NGC.csv")) as csvfile:
         kleinstiver_string += "]},\n"
 
 kleinstiver_string = kleinstiver_string[:-2] # remove redundant comma
-kleinstiver_string += "\n]"
+kleinstiver_string += "]"
 print kleinstiver_string # the output of this print statement becomes kleinstiver_mutants in kleinstiver_dict
