@@ -15,7 +15,7 @@ def mutant_csv_to_string(mutant_csv_row):
         A string that writes out a Python dictionary with entries "pam", "backbone" and "mutants", where "mutants" is a
         sub-dictionary with entries aa_idx, sec_structure, aa_init, aa_mut, aa_group_init, aa_group_mut
     """
-    dict_string = "    {\n        'pam': '"+ mutant_csv_row[0] + "',\n"
+    dict_string = "    {   'pam': '"+ mutant_csv_row[0] + "',\n"
     dict_string += "        'backbone': '" + mutant_csv_row[1] + "',\n        'mutations': [\n"
 
     # Find indices of mutations and annotate
@@ -35,33 +35,31 @@ def mutant_csv_to_string(mutant_csv_row):
 
             dict_string += "        {'aa_idx': " + str(aa_idx) + ", 'sec_structure': '" + sec_structure + "', "
             dict_string += "'aa_init': '" + aa_init + "', 'aa_mut': '" + aa_mut + "',\n"
-            dict_string += "          'aa_group_init': '" + aa_group_init + "', 'aa_group_mut': '" + aa_group_mut
+            dict_string += "         'aa_group_init': '" + aa_group_init + "', 'aa_group_mut': '" + aa_group_mut
             dict_string += "'},\n"
 
     return dict_string
 
-# Begin cas9_mutants_string, which will be copied as the variable cas9_mutants in kleinstiver_dict
-cas9_mutants_string = "cas9_mutants = [\n"
+# Begin kleinstiver_string, which will be copied as the variable cas9_mutants in kleinstiver_dict
+kleinstiver_string = "kleinstiver_mutants = [\n"
 
 # Open CSV files of mutants. Each row contains a vector with 0 where there is no mutation and AA codes for mutations
 with open(os.path.normpath("./Kleinstiver_mutants_NGA.csv")) as csvfile:
     mutants_NGA = csv.reader(csvfile, delimiter=',')
-    mutants_NGA.next()
+    mutants_NGA.next()  # skip header
     for mutant_csv_row in mutants_NGA:
-    #mutant_csv_row = mutants_NGA.next()
-        cas9_mutants_string += mutant_csv_to_string(mutant_csv_row)
-        cas9_mutants_string = cas9_mutants_string[:-2] # remove redundant comma
-        cas9_mutants_string += "\n        ]\n    },\n"
+        kleinstiver_string += mutant_csv_to_string(mutant_csv_row)
+        kleinstiver_string = kleinstiver_string[:-2] # remove redundant comma
+        kleinstiver_string += "]},\n"
 
 with open(os.path.normpath("./Kleinstiver_mutants_NGC.csv")) as csvfile:
     mutants_NGC = csv.reader(csvfile, delimiter=',')
-    mutants_NGC.next() # skip headers
+    mutants_NGC.next()  # skip header
     for mutant_csv_row in mutants_NGC:
-    #mutant_csv_row = mutants_NGA.next()
-        cas9_mutants_string += mutant_csv_to_string(mutant_csv_row)
-        cas9_mutants_string = cas9_mutants_string[:-2] # remove redundant comma
-        cas9_mutants_string += "\n        ]\n    },\n"
+        kleinstiver_string += mutant_csv_to_string(mutant_csv_row)
+        kleinstiver_string = kleinstiver_string[:-2] # remove redundant comma
+        kleinstiver_string += "]},\n"
 
-cas9_mutants_string = cas9_mutants_string[:-2] # remove redundant comma
-cas9_mutants_string += "\n]"
-print cas9_mutants_string # the output of this print statement became kleinstiver_mutants in kleinstiver_dict
+kleinstiver_string = kleinstiver_string[:-2] # remove redundant comma
+kleinstiver_string += "\n]"
+print kleinstiver_string # the output of this print statement becomes kleinstiver_mutants in kleinstiver_dict
