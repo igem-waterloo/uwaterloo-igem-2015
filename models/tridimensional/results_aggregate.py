@@ -46,6 +46,4 @@ for i, score_file in enumerate(score_files):
 # close csvs
 for elem in categories:
     with open('%s.csv' % elem) as f: f.close()
-    with open('%s.csv' % elem) as f:
-        print f.readlines()
 print "csv writing complete"
