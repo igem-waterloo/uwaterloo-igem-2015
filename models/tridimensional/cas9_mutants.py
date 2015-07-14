@@ -61,7 +61,8 @@ PI_sec_structure = {
     'beta_strand_19': (1345,1350),
     'beta_strand_20': (1352,1354),
     'beta_strand_21': (1356,1361),
-    'helix_18': (1362,1365)
+    'helix_18': (1362,1365),
+    'none' : 0
 }
 
 aa_group = {
