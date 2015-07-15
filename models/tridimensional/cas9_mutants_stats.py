@@ -6,8 +6,6 @@ TODO:
 - mutations which always co-occur (regionally? or by AA class?)
 - mutations which co-occur between NGA and NGC PAMs
 - mutations which differ between NGA and NGC PAMs
-- sort secondary structure elements by location rather than mutated frequency
-
 """
 import operator
 import numpy as np
@@ -70,10 +68,15 @@ def bar_ss_counts(counts_NGA, counts_NGC):
     Plots a single figure containing two bar charts showing the number of mutations per NGA- or NGA-binding mutant Cas9
     """
 
-    # Sort ss_counts_NGA by number of mutations and ss_counts_NGC to match its order
-    counts_NGA = sorted(counts_NGA.items(), key=operator.itemgetter(1))
-    sorted_order_NGA = [ss[0] for ss in counts_NGA]
-    counts_NGC = sorted(counts_NGC.items(), key=lambda x:sorted_order_NGA.index(x[0]))
+    # Sort ss_counts_NGA and ss_counts_NGC by index of secondary structure
+    PI_sec_sorted = sorted(PI_sec_structure.items(), key=operator.itemgetter(1))
+    PI_sec_sorted = [ss[0] for ss in PI_sec_sorted]
+    counts_NGA = sorted(counts_NGA.items(), key=lambda x:PI_sec_sorted.index(x[0]))
+    counts_NGC = sorted(counts_NGC.items(), key=lambda x:PI_sec_sorted.index(x[0]))
+
+    #counts_NGA = sorted(counts_NGA.items(), key=operator.itemgetter(1))
+    #sorted_order_NGA = [ss[0] for ss in counts_NGA]
+    #counts_NGC = sorted(counts_NGC.items(), key=lambda x:sorted_order_NGA.index(x[0]))
 
     # Bar plot of secondary structure regions containing mutants in each mutant Cas9
     bar_width = 0.45
