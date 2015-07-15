@@ -89,6 +89,30 @@ def bar_ss_counts(counts_NGA, counts_NGC):
     plt.show()
 
 
+def find_num_pcr_needed():
+    """
+    Naively estimates the number of PCR needed to generate each Cas9 mutant from WT Cas9, assuming that WT Cas9 is
+    mutated via PCR reactions that can alter 60 nt at a time (or 20 AA). Note that it will likely overestimate the
+    reactions needed since it just steps inward from both ends of the range of indices.
+    Returns: list of ints of the same length as mutants_kleinstiver
+    """
+    num_pcr_per_mutant = []
+    for mutant in mutants_kleinstiver:
+        idx_to_pcr_mutate = [m['aa_idx'] for m in mutant['mutations']] # Get indices of all mutations in this mutant
+        num_pcr = 0
+
+        # Step inwards from min/max amino acid indices by 60 nt (1 PCR on either side) and remove all indices covered
+        while idx_to_pcr_mutate:
+            right_coverage = min(idx_to_pcr_mutate) + 20
+            left_coverage = max(idx_to_pcr_mutate) - 20
+            idx_to_pcr_mutate = [idx for idx in idx_to_pcr_mutate if right_coverage <= idx <= left_coverage]
+            num_pcr += 2
+
+        num_pcr_per_mutant.append(num_pcr)
+
+    return num_pcr_per_mutant
+
+
 def main():
 
     # Vectors with one entry per mutant Cas9 containing the number of aa mutations in the mutant, separated by PAM
@@ -103,6 +127,10 @@ def main():
     # Plot two histograms & two bar charts
     hist_mutation_counts(mutation_counts_NGA, mutation_counts_NGC)
     bar_ss_counts(ss_counts_NGA, ss_counts_NGC)
+
+    # Estimate number of PCR reactions needed to convert WT Cas9 into each Cas9 mutant
+    num_pcr_needed = find_num_pcr_needed()
+    print num_pcr_needed
 
 if __name__ == '__main__':
     main()
