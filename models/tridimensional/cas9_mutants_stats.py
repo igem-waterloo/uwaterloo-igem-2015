@@ -55,10 +55,12 @@ def hist_mutation_counts(counts_NGA, counts_NGC):
                   label='NGA')
     axarr[0].set_title('Mutations per Successful Cas9 Mutant')
     axarr[0].set_ylabel('Probability')
+    axarr[0].legend()
     axarr[1].hist(counts_NGC, bins=range(2, 12), histtype='stepfilled', normed=True, align='left', color='#71cce6',
                   label='NGC')
     axarr[1].set_xlabel('Number of Mutations')
     axarr[1].set_ylabel('Probability')
+    axarr[1].legend()
     plt.xlim( 1.5, 10.5 )
     plt.show()
 
@@ -77,7 +79,6 @@ def bar_ss_counts(counts_NGA, counts_NGC):
     bar_width = 0.45
     plt.bar(np.arange(len(counts_NGA))-bar_width, [ss[1] for ss in counts_NGA], width=bar_width, align='center',
             color='#71cce6', label='NGA')
-    print counts_NGC
     plt.bar(range(len(counts_NGC)), [ss[1] for ss in counts_NGC], width=bar_width, align='center',
             color='#333333', label='NGC')
     plt.xticks(range(len(counts_NGA)), [ss[0] for ss in counts_NGA], rotation=45, ha='right')
@@ -91,9 +92,8 @@ def bar_ss_counts(counts_NGA, counts_NGC):
 
 def find_num_pcr_needed():
     """
-    Naively estimates the number of PCR needed to generate each Cas9 mutant from WT Cas9, assuming that WT Cas9 is
-    mutated via PCR reactions that can alter 60 nt at a time (or 20 AA). Note that it will likely overestimate the
-    reactions needed since it just steps inward from both ends of the range of indices.
+    Estimate the number of PCR needed to generate each Cas9 mutant from WT Cas9, assuming that WT Cas9 is mutated via
+    PCR reactions that can alter 60 nt at a time (or 20 AA).
     Returns: list of ints of the same length as mutants_kleinstiver
     """
     num_pcr_per_mutant = []
@@ -103,10 +103,14 @@ def find_num_pcr_needed():
 
         # Step inwards from min/max amino acid indices by 60 nt (1 PCR on either side) and remove all indices covered
         while idx_to_pcr_mutate:
-            right_coverage = min(idx_to_pcr_mutate) + 20
-            left_coverage = max(idx_to_pcr_mutate) - 20
-            idx_to_pcr_mutate = [idx for idx in idx_to_pcr_mutate if right_coverage <= idx <= left_coverage]
-            num_pcr += 2
+            if max(idx_to_pcr_mutate) - min(idx_to_pcr_mutate) > 20: # 2 or more PCR needed
+                right_coverage = min(idx_to_pcr_mutate) + 20
+                left_coverage = max(idx_to_pcr_mutate) - 20
+                idx_to_pcr_mutate = [idx for idx in idx_to_pcr_mutate if right_coverage <= idx <= left_coverage]
+                num_pcr += 2
+            else:
+                num_pcr += 1
+                idx_to_pcr_mutate = [] # if the max/min are less than 20 AA apart, only 1 more PCR needed, so end
 
         num_pcr_per_mutant.append(num_pcr)
 
