@@ -74,10 +74,6 @@ def bar_ss_counts(counts_NGA, counts_NGC):
     counts_NGA = sorted(counts_NGA.items(), key=lambda x:PI_sec_sorted.index(x[0]))
     counts_NGC = sorted(counts_NGC.items(), key=lambda x:PI_sec_sorted.index(x[0]))
 
-    #counts_NGA = sorted(counts_NGA.items(), key=operator.itemgetter(1))
-    #sorted_order_NGA = [ss[0] for ss in counts_NGA]
-    #counts_NGC = sorted(counts_NGC.items(), key=lambda x:sorted_order_NGA.index(x[0]))
-
     # Bar plot of secondary structure regions containing mutants in each mutant Cas9
     bar_width = 0.45
     plt.bar(np.arange(len(counts_NGA))-bar_width, [ss[1] for ss in counts_NGA], width=bar_width, align='center',
