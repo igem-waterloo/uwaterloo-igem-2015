@@ -1,5 +1,5 @@
 function [y] = mattsmart_poly(x, coeffs)
-    
+% testing if source tree works    
 sum_recurse = 0;
 coeffs_recurse = coeffs;
 
