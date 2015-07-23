@@ -5,7 +5,7 @@ from toolbox import mutate_residue
 
 
 def mutate_pose(pose, mutations):
-    """Applies list of mutations to the given pose and returns a pdb
+    """Applies list of mutations to the given template pose and returns a mutated version
     Args:
         pose: PyRosetta Pose() object representing a loaded pdb structure
         mutations: list of amino acid swaps to apply, format is: [(int, char), ..., (int, char)]
@@ -18,7 +18,7 @@ def mutate_pose(pose, mutations):
     mutant_pose = Pose()
     mutant_pose.assign(pose)
     for aa_num, aa_replacement in mutations:
-        assert isinstance(aa_num, int)  # could also check that the residue number is an amino acid and in range? note pose residue != cas9 residue
+        assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
         mutate_residue(mutant_pose, aa_num, aa_replacement)
     return mutant_pose
