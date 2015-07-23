@@ -67,12 +67,23 @@ def dock_simple(pose):
     return [dna_init, dna_final, fa_init, fa_final]
 
 
-def dock_variants(pam_variants, path_to_scores, path_to_pdbs=''):
+def dock_complex(pose):
+    """Complex docking of a pose representing a PAM / program variant
+    Returns:
+        list of scores in the form [dna_init, dna_final, fa_init, fa_final]
+    Notes:
+    - not implemented
+    """
+    raise exception("Complex docking not implemented")
+
+
+def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', complex_docking_flag=False):
     """Docks and scores 2 pdbs for each PAM variant (one for each nt program) using simple docking
     Args:
         pam_variants: list of integers (any from 0 to 63 without repeats) which map to pam strings
         path_to_scores: path to the subdirectory of "results" where the variants are stored
-        path_to_pdbs: [default: current directory] path to location of chimera/3DNA folders of PAM variants 
+        path_to_pdbs: [default: current directory] path to location of chimera/3DNA folders of PAM variants
+        complex_docking_flag: [default: False] if True, use complex dock function (NOT IMPLEMENTED)
     Notes:
     - creates a text file (e.g. 'results_agg_Chimera.txt') for each variant
     - path to variants is typically root/results/<timestamped folder>/<variants>
@@ -82,11 +93,14 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs=''):
         variant = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
         for program in programs:
             print "Running for variant: %s_%s" % (variant, program)
-            pdb_path = os.path.join(path_to_pdbs, program, pdb_filename = "4UN3." + variant + ".pdb"
+            pdb_path = os.path.join(path_to_pdbs, program, "4UN3." + variant + ".pdb")
             # track runtime while loading and passing pose to the simple docker
             time_init = time()
             loaded_pose = pose_from_pdb(pdb_path)
-            dock_stats = dock_simple(loaded_pose)
+            if complex_docking_flag:
+                dock_complex(pose)
+            else:
+                dock_stats = dock_simple(loaded_pose)
             time_final = time()
             # write results to file
             results_filename = variant + "_" + program + ".txt"
@@ -97,11 +111,17 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs=''):
 
 if __name__ == '__main__':
     # create parser and parse arguments
-    parser = argparse.ArgumentParser(description='Run scoring on PAM variants')
-    parser.add_argument('-s', '--start', metavar='N', type=int, help='Starting PAM number (0 = aaa)')
-    parser.add_argument('-e', '--end', metavar='N', type=int, help='Ending PAM number (63 = ttt)')
-    parser.add_argument('-o', '--output_dir', metavar='D', type=str, help='Path to output directory for variant scores')
-    parser.add_argument('-p', '--pam_dir', metavar='D', const='', type=str, help='Path to root of PAM directories')
+    parser = argparse.ArgumentParser(description='Run docking and scoring on PAM variants')
+    parser.add_argument('-s', '--start', metavar='N', type=int,
+                        help='starting PAM number (0 = aaa), inclusive')
+    parser.add_argument('-e', '--end', metavar='N', type=int,
+                        help='ending PAM number (63 = ttt), inclusive')
+    parser.add_argument('-o', '--output_dir', metavar='D', type=str,
+                        help='path to output directory for variant scores')
+    parser.add_argument('--pdb_dir', metavar='D', default='', type=str,
+                        help='path to root of variant pdb directories (default: "")')
+    parser.add_argument('--complex', metavar='B', nargs='?', const=True, default=False,
+                        type=str, help='[switch] select complex docking (default: "False")')
     args = parser.parse_args()
     
     # setup range of pam variants   
@@ -109,9 +129,9 @@ if __name__ == '__main__':
     pam_variants_to_score = range(args.start, args.end + 1)
 
     # setup output path for scoring
-    if args.batch_dir is not None:
+    if args.output_dir is not None:
         compile_csv_flag = False
-        path_to_scores = arg.batch_dir
+        path_to_scores = args.output_dir
     else:
         compile_csv_flag = True
         results_folder = "results"
@@ -122,7 +142,7 @@ if __name__ == '__main__':
     
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls
-    dock_variants(pam_variants_to_score, path_to_scores, path_to_pdbs=args.pam_dir)
+    dock_variants(pam_variants_to_score, path_to_scores, path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex)
 
     # collect score txt files into a csv
     if compile_csv_flag:
