@@ -2,9 +2,9 @@
 
 # TO DO
 # add mandatory input args specifying label and threads
-threads=6
-#label=
-pam_start=14
+threads=
+label=
+pam_start=0
 pam_end=63
 range=$(($pam_end-$pam_start+1))
 results_dir="results/batch/$label/"
