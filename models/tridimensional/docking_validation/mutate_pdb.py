@@ -21,6 +21,14 @@ def mutate_pose(pose, mutations):
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
         mutate_residue(mutant_pose, aa_num, aa_replacement)
+        # kims lines from D050 example
+        # =================================
+        pose_packer = standard_packer_task(mutant_pose)
+        pose_packer.restrict_to_repacking()
+        scorefxn = get_fa_scorefxn()
+        packmover = PackRotamersMover(scorefxn, pose_packer)
+        packmover.apply(test_pose)
+        # =================================
     return mutant_pose
 
 
