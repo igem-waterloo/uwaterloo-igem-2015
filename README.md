@@ -9,4 +9,4 @@ headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt S
 * **tools** contains code and data related to other aspects of the project  
 * **training** is a messy sandbox of code written during our training sessions  
 * **wiki** is JS/CSS for our wiki, draft content is on
-  (the repo's wiki)[http://github.com/igem-waterloo/uwaterloo-igem-2015/wiki]
+  [the repo's wiki](http://github.com/igem-waterloo/uwaterloo-igem-2015/wiki)
