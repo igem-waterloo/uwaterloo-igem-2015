@@ -18,17 +18,26 @@ def mutate_pose(pose, mutations):
     mutant_pose = Pose()
     mutant_pose.assign(pose)
     for aa_num, aa_replacement in mutations:
+        # ensure mutation is valid and apply it
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
         mutant_pose = mutate_residue(mutant_pose, aa_num, aa_replacement)
-        # kims lines from D050 example
-        # =================================
+        # specify a pose packer to repack the mutation region
         pose_packer = standard_packer_task(mutant_pose)
         pose_packer.restrict_to_repacking()
-        scorefxn = get_fa_scorefxn()
-        packmover = PackRotamersMover(scorefxn, pose_packer)
-        packmover.apply(mutant_pose)
         # =================================
+        # mark's hack segment
+        # =================================
+        # This is a hack, but I want to test. Can't set a movemap, resfiles
+        # might be the way to go. Freeze all residues.
+        pose_packer.temporarily_fix_everything()
+        # Let's release the PI domain
+        for i in range(1110, 1388):
+            pose_packer.temporarily_set_pack_residue(i, True)
+        # =================================
+        # specify the rotamer mover and apply repacking
+        packmover = PackRotamersMover(get_fa_scorefxn(), pose_packer)
+        packmover.apply(mutant_pose)
     return mutant_pose
 
 
