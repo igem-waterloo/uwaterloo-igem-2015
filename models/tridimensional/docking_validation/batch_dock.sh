@@ -1,14 +1,24 @@
 #!/bin/bash
 
-# TO DO
-# add mandatory input args specifying label and threads
-threads=
-label=
+# require two input arguments
+threads=$1
+label=$2
+if [ -z "$1" ] || [ -z "$2" ]; then
+	echo "ERROR: requires two arguments (threads, label)"
+	echo "Example: sh batch_dock.sh 50 validation_1"
+	exit 1
+fi
+
+# don't write to a directory which already exists
+results_dir="results/batch/$label/"
+if [ -d "$results_dir" ]; then
+	echo "Directory $results_dir already exists, specify a new label"
+	exit 1
+fi
+
 pam_start=0
 pam_end=63
 range=$(($pam_end-$pam_start+1))
-results_dir="results/batch/$label/"
-
 step=$(($range/$threads))
 remainder=$(($range % $threads))
 pids=()
