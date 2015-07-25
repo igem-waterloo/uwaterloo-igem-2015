@@ -47,8 +47,8 @@ def dock_simple(pose):
     setup_foldtree(pose, 'B_CD', Vector1([1]))
 
     # specify scoring functions
-    fa_score = get_fa_scorefxn()  # standard full atom score
-    dna_score = create_score_function('dna')  # 
+    fa_score = get_fa_scorefxn()
+    dna_score = create_score_function('dna')
     dna_score.set_weight(fa_elec, 1)
 
     # specify docking protocol
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     # setup range of pam variants   
-    assert 0 <= args.start < args.end <= 63
+    assert 0 <= args.start <= args.end <= 63
     pam_variants_to_score = range(args.start, args.end + 1)
 
     # setup output path for scoring
