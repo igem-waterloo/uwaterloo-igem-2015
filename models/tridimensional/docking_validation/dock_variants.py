@@ -42,13 +42,11 @@ def dock_simple(pose):
     Potential Bugs:
     - setup_foldtree(...) crashes on some systems/configurations
     - docking.set_partners(...) may not be needed
+    - use default foldtree (foldtree from pdb) for now
     """
-    # specify foldtree for simple docking
-    setup_foldtree(pose, 'B_CD', Vector1([1]))
-
     # specify scoring functions
-    fa_score = get_fa_scorefxn()  # standard full atom score
-    dna_score = create_score_function('dna')  # 
+    fa_score = get_fa_scorefxn()
+    dna_score = create_score_function('dna')
     dna_score.set_weight(fa_elec, 1)
 
     # specify docking protocol
@@ -67,11 +65,23 @@ def dock_simple(pose):
     return [dna_init, dna_final, fa_init, fa_final]
 
 
-def dock_variants(pam_variants, path_to_variant_scores):
+def dock_complex(pose):
+    """Complex docking of a pose representing a PAM / program variant
+    Returns:
+        list of scores in the form [dna_init, dna_final, fa_init, fa_final]
+    Notes:
+    - not implemented
+    """
+    raise exception("Complex docking not implemented")
+
+
+def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', complex_docking_flag=False):
     """Docks and scores 2 pdbs for each PAM variant (one for each nt program) using simple docking
     Args:
         pam_variants: list of integers (any from 0 to 63 without repeats) which map to pam strings
-        path_to_variant_scores: path to the subdirectory of "results" where the variants are stored
+        path_to_scores: path to the subdirectory of "results" where the variants are stored
+        path_to_pdbs: [default: current directory] path to location of chimera/3DNA folders of PAM variants
+        complex_docking_flag: [default: False] if True, use complex dock function (NOT IMPLEMENTED)
     Notes:
     - creates a text file (e.g. 'results_agg_Chimera.txt') for each variant
     - path to variants is typically root/results/<timestamped folder>/<variants>
@@ -80,42 +90,58 @@ def dock_variants(pam_variants, path_to_variant_scores):
     for i in pam_variants:
         variant = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
         for program in programs:
-            # track runtime while loading and passing pose to the simple docker
             print "Running for variant: %s_%s" % (variant, program)
+            pdb_path = os.path.join(path_to_pdbs, program, "4UN3." + variant + ".pdb")
+            # track runtime while loading and passing pose to the simple docker
             time_init = time()
-            pdb_filename = "4UN3." + variant + ".pdb"
-            loaded_pose = pose_from_pdb(program + os.sep + pdb_filename)
-            dock_stats = dock_simple(loaded_pose)
+            loaded_pose = pose_from_pdb(pdb_path)
+            if complex_docking_flag:
+                dock_complex(loaded_pose)
+            else:
+                dock_stats = dock_simple(loaded_pose)
             time_final = time()
-
             # write results to file
             results_filename = variant + "_" + program + ".txt"
-            write_dock_stats(path_to_variant_scores, results_filename, dock_stats, time_final - time_init)
+            write_dock_stats(path_to_scores, results_filename, dock_stats, time_final - time_init)
             print "Finished writing scores for variant: %s_%s" % (variant, program)
     return
 
 
 if __name__ == '__main__':
-    # parse arguments 
-    parser = argparse.ArgumentParser(description='Run scoring on PAM variants')
-    parser.add_argument('-s', '--start', metavar='N', type=int, help='Starting PAM number (0 = aaa)')
-    parser.add_argument('-e', '--end', metavar='N', type=int, help='Ending PAM number (63 = ttt)')
+    # create parser and parse arguments
+    parser = argparse.ArgumentParser(description='Run docking and scoring on PAM variants')
+    parser.add_argument('-s', '--start', metavar='N', type=int,
+                        help='starting PAM number (0 = aaa), inclusive')
+    parser.add_argument('-e', '--end', metavar='N', type=int,
+                        help='ending PAM number (63 = ttt), inclusive')
+    parser.add_argument('-o', '--output_dir', metavar='D', type=str,
+                        help='path to output directory for variant scores')
+    parser.add_argument('--pdb_dir', metavar='D', default='', type=str,
+                        help='path to root of variant pdb directories (default: "")')
+    parser.add_argument('--complex', metavar='B', nargs='?', const=True, default=False,
+                        type=str, help='[switch] select complex docking (default: "False")')
+    parser.add_argument('--csv', metavar='B', nargs='?', const=True, default=False,
+                        type=str, help='[switch] compile scores to csv (default: "False")')
     args = parser.parse_args()
-    assert 0 <= args.start < args.end <= 63
+    
+    # setup range of pam variants   
+    assert 0 <= args.start <= args.end <= 63
     pam_variants_to_score = range(args.start, args.end + 1)
 
-    # specify location of pdb directories
-    #os.chdir("")  # specify pdb folder root if script isn't located there
-
-    # setup results directory and timestamped variant score subdirectory
-    results_folder = "results"
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
-    path_to_variant_scores = "results" + os.sep + timestamp + os.sep
-    os.makedirs(path_to_variant_scores)
+    # setup output path for scoring
+    if args.output_dir is not None:
+        path_to_scores = args.output_dir
+    else:
+        results_folder = "results"
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
+        path_to_scores = "results" + os.sep + timestamp + os.sep
+    if not os.path.exists(path_to_scores):
+        os.makedirs(path_to_scores)
     
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls
-    dock_variants(pam_variants_to_score, path_variants)
+    dock_variants(pam_variants_to_score, path_to_scores, path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex)
 
-    # collect text files into a csv
-    results_to_csv(path_to_variant_scores)
+    # collect score txt files into a csv
+    if args.csv:
+        results_to_csv(path_to_scores)
