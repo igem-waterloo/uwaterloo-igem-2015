@@ -48,7 +48,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     output_pdb_path = os.path.join(output_directory, output_id + ".pdb")
-    mutant_pose.dump(output_pdb_path)
+    pose_mutant.dump(output_pdb_path)
     return output_pdb_path
 
     
