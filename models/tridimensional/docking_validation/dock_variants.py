@@ -98,7 +98,7 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', complex_docking
             time_init = time()
             loaded_pose = pose_from_pdb(pdb_path)
             if complex_docking_flag:
-                dock_complex(pose)
+                dock_complex(loaded_pose)
             else:
                 dock_stats = dock_simple(loaded_pose)
             time_final = time()
