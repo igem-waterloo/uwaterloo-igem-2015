@@ -42,10 +42,8 @@ def dock_simple(pose):
     Potential Bugs:
     - setup_foldtree(...) crashes on some systems/configurations
     - docking.set_partners(...) may not be needed
+    - use default foldtree (foldtree from pdb) for now
     """
-    # specify foldtree for simple docking
-    setup_foldtree(pose, 'B_CD', Vector1([1]))
-
     # specify scoring functions
     fa_score = get_fa_scorefxn()
     dna_score = create_score_function('dna')
@@ -122,6 +120,8 @@ if __name__ == '__main__':
                         help='path to root of variant pdb directories (default: "")')
     parser.add_argument('--complex', metavar='B', nargs='?', const=True, default=False,
                         type=str, help='[switch] select complex docking (default: "False")')
+    parser.add_argument('--csv', metavar='B', nargs='?', const=True, default=False,
+                        type=str, help='[switch] compile scores to csv (default: "False")')
     args = parser.parse_args()
     
     # setup range of pam variants   
@@ -130,10 +130,8 @@ if __name__ == '__main__':
 
     # setup output path for scoring
     if args.output_dir is not None:
-        compile_csv_flag = False
         path_to_scores = args.output_dir
     else:
-        compile_csv_flag = True
         results_folder = "results"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
         path_to_scores = "results" + os.sep + timestamp + os.sep
@@ -145,5 +143,5 @@ if __name__ == '__main__':
     dock_variants(pam_variants_to_score, path_to_scores, path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex)
 
     # collect score txt files into a csv
-    if compile_csv_flag:
+    if args.csv:
         results_to_csv(path_to_scores)

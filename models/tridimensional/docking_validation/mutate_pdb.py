@@ -20,7 +20,7 @@ def mutate_pose(pose, mutations):
     for aa_num, aa_replacement in mutations:
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
-        mutate_residue(mutant_pose, aa_num, aa_replacement)
+        mutant_pose = mutate_residue(mutant_pose, aa_num, aa_replacement)
         # kims lines from D050 example
         # =================================
         pose_packer = standard_packer_task(mutant_pose)
@@ -45,12 +45,12 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     """
     pose_template = pose_from_pdb(input_pdb_path)
     pose_mutant = mutate_pose(pose_template, mutations)
-    if not os.path.exists(output_directory_path):
-        os.makedirs(output_directory_path)    
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
     output_pdb_path = os.path.join(output_directory, output_id + ".pdb")
     mutant_pose.dump(output_pdb_path)
     return output_pdb_path
 
     
-if __name__ == '__main__:
+if __name__ == '__main__':
     print "main behaviour not yet implemented"
