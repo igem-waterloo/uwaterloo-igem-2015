@@ -27,7 +27,7 @@ def mutate_pose(pose, mutations):
         pose_packer.restrict_to_repacking()
         scorefxn = get_fa_scorefxn()
         packmover = PackRotamersMover(scorefxn, pose_packer)
-        packmover.apply(test_pose)
+        packmover.apply(mutant_pose)
         # =================================
     return mutant_pose
 
