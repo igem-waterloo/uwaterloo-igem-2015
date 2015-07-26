@@ -1,8 +1,11 @@
 import os
 import argparse
+import math
+
 import chimera
 from chimera import runCommand
 from chimera import replyobj
+
 
 dna_nts = ['a','c','g','t']
 
@@ -23,13 +26,15 @@ def mutate_nt(pam_idx, base):
     runCommand("swapna " + base + " : " + pos )
     runCommand("swapna " + complement_base + " : " + complement_pos)
 
-def generate_pdb(original_pdb_basename, pam_seq):
+
+def generate_pdb(template_pdb_basename, pam_seq):
     """Generate a new PDB file
     Args:
-        original_pdb_basename: original fine basename
+        template_pdb_basename: original fine basename
         pam_seq: new PAM sequence to be listed in name
     """
-    new_pdb_path = os.path.join(args.output_dir, original_pdb_basename[:4] + "." + pam_seq + ".pdb")
+    basename = 4 + int(math.log(args.num_pams, 4)) + 1 # count back ".NNN[N].pdb" in file name
+    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-basename] + "." + pam_seq + ".pdb")
     runCommand("write 0 " + new_pdb_path)
     runCommand("close all")
 
@@ -45,9 +50,9 @@ if __name__ == '__main__':
                         help='path to output directory for new PDBs')
     args = parser.parse_args()
 
-    assert args.num_pams
-    assert args.input_pdb
-    assert args.output_dir
+    assert args.num_pams is not None
+    assert args.input_pdb is not None
+    assert args.output_dir is not None
     args.num_pams = int(args.num_pams) # convert string from command line to int
     assert 64 == args.num_pams or 256 == args.num_pams
     assert os.path.isfile(args.input_pdb)
@@ -55,7 +60,7 @@ if __name__ == '__main__':
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-for i in range(args.num_pams):
+for i in xrange(args.num_pams):
     if 64 == args.num_pams:
         pam = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
     else:
@@ -67,14 +72,13 @@ for i in range(args.num_pams):
     # open up the file again each time, for now
     runCommand("open " + args.input_pdb)
     # Loop through the PAM sequence and mutate positions
-    for n in range(len(pam)):
-        base = pam[n]
+    for n in xrange(int(math.log(args.num_pams, 4))):
         # If the first base is T, don't mutate
-        if base == 't' and n == 0:
+        if 't' == pam[n] and n == 0:
             continue
         # If the 2nd or third bases are G, don't mutate
-        if all([base == 'g', any([n == 1, n == 2])]):
+        if 'g' == pam[n] and (1 == n or 2 == n):
             continue
-        mutate_nt(n, base)
+        mutate_nt(n, pam[n])
     # Save and close all files
     generate_pdb(os.path.basename(args.input_pdb), pam)
