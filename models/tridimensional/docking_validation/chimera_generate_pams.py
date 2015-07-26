@@ -4,8 +4,6 @@ import chimera
 from chimera import runCommand
 from chimera import replyobj
 
-os.chdir("C:\\Users\\James\\Documents\\GitHub\\uwaterloo-igem-2015\\models\\tridimensional\\cas9_modification")
-original_pdb_path = "4UN3.clean.pdb"
 dna_nts = ['a','c','g','t']
 
 
@@ -25,13 +23,13 @@ def mutate_nt(pam_idx, base):
     runCommand("swapna " + base + " : " + pos )
     runCommand("swapna " + complement_base + " : " + complement_pos)
 
-def generate_pdb(original_pdb_path, pam_seq):
+def generate_pdb(original_pdb_basename, pam_seq):
     """Generate a new PDB file
     Args:
-        original_pdb_path: original fine basename
+        original_pdb_basename: original fine basename
         pam_seq: new PAM sequence to be listed in name
     """
-    new_pdb_path = os.path.join(args.output_dir, original_pdb_path[:4] + "." + pam_seq + ".pdb")
+    new_pdb_path = os.path.join(args.output_dir, original_pdb_basename[:4] + "." + pam_seq + ".pdb")
     runCommand("write 0 " + new_pdb_path)
     runCommand("close all")
 
@@ -67,7 +65,7 @@ for i in range(args.num_pams):
     if "tgg" == pam:
         continue
     # open up the file again each time, for now
-    runCommand("open " + original_pdb_path)
+    runCommand("open " + args.input_pdb)
     # Loop through the PAM sequence and mutate positions
     for n in range(len(pam)):
         base = pam[n]
@@ -79,4 +77,4 @@ for i in range(args.num_pams):
             continue
         mutate_nt(n, base)
     # Save and close all files
-    generate_pdb(original_pdb_path, pam)
+    generate_pdb(os.path.basename(args.input_pdb), pam)
