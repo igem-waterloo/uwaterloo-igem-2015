@@ -33,10 +33,10 @@ DIR_SCRIPTS = os.path.join(DIR_BASE, "scripts")
 # Every mutant gets its owned subdirectory of pdb files based on index.  #
 # For example, if index=12, then the mutant has a template associated    #
 # with applying the index=12 mutations from our mutant database to       #
-# the original pdb file in  "pdb/special/"                               #
+# the original pdb file in  "pdb/special/".                              #
 # This template pdb is left in:  "pdb/mutants/mutant_12/template/"       #
 # Once the template is created, 64 or 256 pam variants are created and   #
-# stored in:  "pdb/mutants/mutant_12/variants/"                          #
+# stored in:  "pdb/mutants/mutant_12/variants/".                         #
 # ====================================================================== #
 
 DIR_PDB_MUTANTS = os.path.join(DIR_BASE, "mutants")
@@ -70,11 +70,20 @@ MUTANT_TEMPLATE_PREFIX = "4UN3.mutant_"
 # The results directory mirrors the pdb directory in that each mutant    #
 # gets its own folder: "results/mutant_scores/scores_i" where i is the   #
 # mutant index. Within scores_i are k "run_j" folders. We repeat runs    #
-# to characterize the stochastic elements of the monte carlo simulation  #
+# to characterize the stochastic elements of the monte carlo simulation. #
 # ====================================================================== #
 
 DIR_RESULTS_VALIDATION = os.path.join(DIR_RESULTS, "batch")
 DIR_RESULTS_MUTANT_SCORES = os.path.join(DIR_RESULTS, "mutant_scores")
 
 
-MUTANT_DATABASE_PATH = 
+# ====================================================================== #
+# SCRIPTS:                                                               #
+# ====================================================================== #
+#                                                                        #
+# scripts /   all scripts here                                           #
+#                                                                        #
+# This is currently a flat directory that may have some structure later. #
+# ====================================================================== #
+
+MUTANT_DATABASE_PATH = os.path.join(DIR_SCRIPTS, "mutant_database.py")
