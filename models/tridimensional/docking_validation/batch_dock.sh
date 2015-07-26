@@ -8,7 +8,7 @@ threads=$1
 label=$2
 if [ -z "$1" ] || [ -z "$2" ]; then
 	echo "ERROR: requires two arguments (threads, label)"
-	echo "Example: sh batch_dock.sh 50 validation_1"
+	echo "Example: bash batch_dock.sh 50 validation_1"
 	exit 1
 fi
 
