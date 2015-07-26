@@ -42,14 +42,17 @@ while [ $i -lt $threads ]; do
 	pam_first=$(($pam_last+1))
 	pam_last=$(($pam_first+$step+$remainder_plus-1))
 	python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir &
-	pids+=($!)	
+	pids+=($!)
 	i=$(($i+1))
-	sleep 0.1
 done
+
+sleep 0.5
 
 for pid in ${pids[*]}; do
 	wait $pid
 done
+
+sleep 0.5
 
 # run CSV script
 echo "Writing to CSV"
