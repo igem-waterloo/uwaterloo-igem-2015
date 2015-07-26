@@ -68,9 +68,6 @@ if __name__ == '__main__':
         else:
             pam = dna_nts[i / 64] + dna_nts[i / 16 % 4] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
 
-        # TGG PAM site already exists, let's skip it
-        if original_pam_sequence == pam:
-            continue
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
 
