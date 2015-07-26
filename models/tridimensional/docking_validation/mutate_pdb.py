@@ -52,6 +52,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     Returns:
         full filepath to the output pdb with the specified mutations
     """
+    assert os.path.isfile(input_pdb_path)
     pose_template = pose_from_pdb(input_pdb_path)
     pose_mutant = mutate_pose(pose_template, mutations)
     if not os.path.exists(output_directory):
