@@ -1,4 +1,4 @@
-mutants = {
+MUTANTS = {
     0: {'label': 'original',
         'mutations': []},
     1: {'label': 'fake1',
