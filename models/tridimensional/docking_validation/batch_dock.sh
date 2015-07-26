@@ -1,5 +1,8 @@
 #!/bin/bash
 
+RESULTS=~/working/results
+SCRIPTS=~/working/scripts
+
 # require two input arguments
 threads=$1
 label=$2
@@ -10,8 +13,8 @@ if [ -z "$1" ] || [ -z "$2" ]; then
 fi
 
 # don't write to a directory which already exists
-results_dir="results/batch/$label/"
-if [ -d "$results_dir" ]; then
+results_dir=$RESULTS/batch/$label
+if [ -d $results_dir ]; then
 	echo "Directory $results_dir already exists, specify a new label"
 	exit 1
 fi
@@ -38,10 +41,10 @@ while [ $i -lt $threads ]; do
 	fi
 	pam_first=$(($pam_last+1))
 	pam_last=$(($pam_first+$step+$remainder_plus-1))
-	python dock_variants.py -s=$pam_first -e=$pam_last & --output_dir=$results_dir &
+	python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir &
 	pids+=($!)	
 	i=$(($i+1))
-	sleep 1
+	sleep 0.1
 done
 
 for pid in ${pids[*]}; do
@@ -50,6 +53,6 @@ done
 
 # run CSV script
 echo "Writing to CSV"
-python results_csv.py $results_dir
+python $SCRIPTS/results_csv.py $results_dir
 
 echo "Done!"
