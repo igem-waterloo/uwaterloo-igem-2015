@@ -60,25 +60,25 @@ if __name__ == '__main__':
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-for i in xrange(args.num_pams):
-    if 64 == args.num_pams:
-        pam = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
-    else:
-        pam = dna_nts[i / 64] + dna_nts[i / 16 % 4] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
+    for i in xrange(args.num_pams):
+        if 64 == args.num_pams:
+            pam = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
+        else:
+            pam = dna_nts[i / 64] + dna_nts[i / 16 % 4] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
 
-    # TGG PAM site already exists, let's skip it
-    if "tgg" == pam:
-        continue
-    # open up the file again each time, for now
-    runCommand("open " + args.input_pdb)
-    # Loop through the PAM sequence and mutate positions
-    for n in xrange(int(math.log(args.num_pams, 4))):
-        # If the first base is T, don't mutate
-        if 't' == pam[n] and n == 0:
+        # TGG PAM site already exists, let's skip it
+        if "tgg" == pam:
             continue
-        # If the 2nd or third bases are G, don't mutate
-        if 'g' == pam[n] and (1 == n or 2 == n):
-            continue
-        mutate_nt(n, pam[n])
-    # Save and close all files
-    generate_pdb(os.path.basename(args.input_pdb), pam)
+        # open up the file again each time, for now
+        runCommand("open " + args.input_pdb)
+        # Loop through the PAM sequence and mutate positions
+        for n in xrange(int(math.log(args.num_pams, 4))):
+            # If the first base is T, don't mutate
+            if 't' == pam[n] and n == 0:
+                continue
+            # If the 2nd or third bases are G, don't mutate
+            if 'g' == pam[n] and (1 == n or 2 == n):
+                continue
+            mutate_nt(n, pam[n])
+        # Save and close all files
+        generate_pdb(os.path.basename(args.input_pdb), pam)
