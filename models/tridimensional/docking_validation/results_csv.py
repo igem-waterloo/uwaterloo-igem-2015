@@ -25,12 +25,11 @@ def get_score_info(score_dir, score_filename):
         Expected return: ['a', 'g', 'g', '3DNA', '2465.219', ..., '600.0']
     """
     # get textfile classifiers (PAM and category)
-    print score_filename
     pam, pam_tool_txt = score_filename.split('_')
     pam_tool = pam_tool_txt.split('.')[0]
     assert pam_tool in categories
     # read contents of textfile
-    with open(score_dir + score_filename) as f:
+    with open(os.path.join(score_dir, score_filename)) as f:
         file_lines = f.readlines()
         assert len(file_lines) == 5
     # format row
@@ -47,10 +46,12 @@ def results_to_csv(score_file_directory):
     Notes:
         - currently creates / looks for a csv for each PAM tool
     """
+
     # csv prep
-    csv_dict = {elem: csv.writer(open(score_file_directory + os.sep + '%s.csv' % elem, 'a'), lineterminator='\n') for elem in categories}
+    csv_dict = {elem: csv.writer(open(os.path.join(score_file_directory, '%s.csv' % elem), 'a'), lineterminator='\n')
+                for elem in categories}
     for elem in categories:
-        filename = score_file_directory + os.sep + '%s.csv' % elem
+        filename = os.path.join(score_file_directory, '%s.csv' % elem)
         if os.stat(filename).st_size == 0:  # if file empty, write header
             print "%s is empty, adding header" % filename
             csv_dict[elem].writerow(header)
@@ -64,7 +65,7 @@ def results_to_csv(score_file_directory):
             csv_dict[category].writerow(score_info)
     # close csvs
     for elem in categories:
-        with open(score_file_directory + os.sep + '%s.csv' % elem, 'a') as f:
+        with open(os.path.join(score_file_directory, '%s.csv' % elem), 'a') as f:
             f.close()
     print "csv writing complete"
 
