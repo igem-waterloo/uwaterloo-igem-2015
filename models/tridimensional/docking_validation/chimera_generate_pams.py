@@ -8,6 +8,7 @@ from chimera import replyobj
 
 
 dna_nts = ['a','c','g','t']
+original_pam_sequence = 'tgg'
 
 
 def mutate_nt(pam_idx, base):
@@ -33,8 +34,7 @@ def generate_pdb(template_pdb_basename, pam_seq):
         template_pdb_basename: original fine basename
         pam_seq: new PAM sequence to be listed in name
     """
-    basename = 4 + int(math.log(args.num_pams, 4)) + 1 # count back ".NNN[N].pdb" in file name
-    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-basename] + "." + pam_seq + ".pdb")
+    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam_seq + ".pdb")
     runCommand("write 0 " + new_pdb_path)
     runCommand("close all")
 
@@ -54,11 +54,13 @@ if __name__ == '__main__':
     assert args.input_pdb is not None
     assert args.output_dir is not None
     args.num_pams = int(args.num_pams) # convert string from command line to int
+    pam_length = int(math.log(args.num_pams, 4))
     assert 64 == args.num_pams or 256 == args.num_pams
     assert os.path.isfile(args.input_pdb)
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
+
 
     for i in xrange(args.num_pams):
         if 64 == args.num_pams:
@@ -67,18 +69,17 @@ if __name__ == '__main__':
             pam = dna_nts[i / 64] + dna_nts[i / 16 % 4] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
 
         # TGG PAM site already exists, let's skip it
-        if "tgg" == pam:
+        if original_pam_sequence == pam:
             continue
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
+
         # Loop through the PAM sequence and mutate positions
-        for n in xrange(int(math.log(args.num_pams, 4))):
-            # If the first base is T, don't mutate
-            if 't' == pam[n] and n == 0:
+        for pam_idx in xrange(pam_length):
+            # If the nt matches the original PAM nt, don't change it
+            if original_pam_sequence[pam_idx] == pam[pam_idx]:
                 continue
-            # If the 2nd or third bases are G, don't mutate
-            if 'g' == pam[n] and (1 == n or 2 == n):
-                continue
-            mutate_nt(n, pam[n])
+            mutate_nt(pam_idx, pam[pam_idx])
+
         # Save and close all files
         generate_pdb(os.path.basename(args.input_pdb), pam)
