@@ -135,7 +135,7 @@ if __name__ == '__main__':
     else:
         results_folder = "results"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
-        path_to_scores = os.join("results", timestamp)
+        path_to_scores = os.path.join("results", timestamp)
     if not os.path.exists(path_to_scores):
         try: # check existence again to handle concurrency problems
             os.makedirs(path_to_scores)
