@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import errno
 import os
 from time import time
 
@@ -134,9 +135,14 @@ if __name__ == '__main__':
     else:
         results_folder = "results"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
-        path_to_scores = "results" + os.sep + timestamp + os.sep
+        path_to_scores = os.join("results", timestamp)
     if not os.path.exists(path_to_scores):
-        os.makedirs(path_to_scores)
+        try: # check existence again to handle concurrency problems
+            os.makedirs(path_to_scores)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else: raise
     
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls
