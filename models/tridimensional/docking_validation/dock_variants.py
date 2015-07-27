@@ -140,7 +140,7 @@ if __name__ == '__main__':
         try: # check existence again to handle concurrency problems
             os.makedirs(path_to_scores)
         except OSError as exc:
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
+            if exc.errno == errno.EEXIST and os.path.isdir(path_to_scores):
                 pass
             else: raise
     
