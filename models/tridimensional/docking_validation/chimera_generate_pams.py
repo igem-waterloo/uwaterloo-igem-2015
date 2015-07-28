@@ -1,9 +1,10 @@
 from __future__ import print_function
-import sys
 
+import sys
 import os
 import argparse
 import math
+import errno
 
 import chimera
 from chimera import runCommand
