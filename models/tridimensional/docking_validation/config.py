@@ -6,7 +6,7 @@ DIR_BASE = "~/working/"  # this should be changed on windows systems
 # ====================================================================== #
 # Directory layout                                                       #
 # ====================================================================== #
-#      /--- PDB ---/   pdb files (protein-dna structure) go here         #
+#      /--- PDB ---/   pdb files (protein-dna structures) go here        #
 # BASE /- RESULTS -/   results and simulation scores go here             #
 #      /- SCRIPTS -/   all scripts go here (should be flat)              #
 # ====================================================================== #
@@ -20,7 +20,7 @@ DIR_SCRIPTS = os.path.join(DIR_BASE, "scripts")
 # PDB:                                                                   #
 # ====================================================================== #
 #                                                                        #
-#     /- special -/    any special pdb files, esp. the original pdb      #
+#     /- special -/    any special pdb files, esp. the progenitor pdb    #
 #     |                                                                  #
 # pdb /- mutants -/-- mutant_0 --/-- template --/   1 pdb                #
 #                 |              /-- variants --/   256 pdbs             #
