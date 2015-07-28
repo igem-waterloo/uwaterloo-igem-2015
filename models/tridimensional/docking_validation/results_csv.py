@@ -2,7 +2,7 @@ import argparse
 import csv
 import os
 
-from constants import SCOREFILE_LINES, CSV_HEADER
+from constants import CSV_HEADER, SCOREFILE_LINES
 
 
 categories = ['Chimera', '3DNA']  # tools used to create 64 or 256 pam variants
@@ -11,10 +11,9 @@ categories = ['Chimera', '3DNA']  # tools used to create 64 or 256 pam variants
 def get_pam_and_tool_from_filename(score_filename):
     """Extracts pam/tool info from a score filename
     Args:
-        score_filename: filename
-        score_file: specific score file name (including .txt)
+        score_filename: specific score file name (including .txt)
     Returns:
-        pam, pam_tool
+        list of pam, pam_tool
     Example:
         Example score file: 'aggt_Chimera.txt'
         output: ['aggt', 'Chimera']
@@ -75,7 +74,7 @@ def results_to_csv(score_file_directory):
             assert len(pam) == 3 or len(pam) == 4
             assert pam_tool in categories
             score_info = get_score_info(score_file_directory, score_filename)
-            csv_row = list(pam) + [pam_tool] + score_info
+            csv_row = list(pam) + [pam_tool] + score_info  # all elements must be lists to append them
             csv_dict[pam_tool].writerow(csv_row)
     # close csvs
     for elem in categories:
