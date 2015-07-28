@@ -64,7 +64,7 @@ def dock_simple(pose):
 def dock_complex(pose):
     """Complex docking of a pose representing a PAM / program variant
     Returns:
-        list of scores in the form [dna_init, dna_final, fa_init, fa_final]
+        list of scores in the form [fa_init, fa_final, dna_init, dna_final]
     Notes:
     - not implemented
     """
