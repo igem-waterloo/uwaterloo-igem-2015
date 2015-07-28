@@ -23,8 +23,9 @@ def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, tim
     - 'a' appends in case of accidental duplication
     - scores and times are passed in explicitly for argument clarity
     """
-    path = os.path.join(score_directory, filename)
-    f = open(path, 'a')
+    # ensure csv compiler behaviour matches using global line number constant
+    assert len(dock_stats + [time_diff_total, time_diff_docking]) == SCOREFILE_LINES
+    f = open(os.path.join(score_directory, filename), 'a')
     f.write("Initial FA score: %8.3f\n" % dock_stats[0])
     f.write("Final FA score: %8.3f\n" % dock_stats[1])
     f.write("Initial DNA score: %8.3f\n" % dock_stats[2])
