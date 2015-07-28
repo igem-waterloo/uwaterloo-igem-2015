@@ -1,3 +1,6 @@
+from __future__ import print_function
+import sys
+
 import os
 import argparse
 import math
@@ -14,8 +17,8 @@ def mutate_nt(pam_idx, base):
         pam_idx: the index of the PAM nucleotide to be modified
         base: what the nt at pam_idx will be changed to
     """
-    position_idx = { 0 : "5.d", 1 : "6.d", 2 : "7.d"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
-    position_pairs = { "5.d" : "8.c", "6.d" : "7.c", "7.d" : "6.c"} # Create a dictionary mapping corresponding positions to each other.
+    position_idx = { 0 : "5.d", 1 : "6.d", 2 : "7.d", 3 : "8.d"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
+    position_pairs = { "5.d" : "8.c", "6.d" : "7.c", "7.d" : "6.c", "8.d" : "5.c"} # Create a dictionary mapping corresponding positions to each other.
     base_pairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'} # Create dictionary mapping valid base pairs to each other.
 
     pos = position_idx[pam_idx]
@@ -60,10 +63,13 @@ if __name__ == '__main__':
 
 
     for i in xrange(args.num_pams):
-        if 4 == pam_length:
+        if 3 == pam_length:
             pam = DNA_ALPHABET[i / 16] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
-        else:
+        elif 4 == pam_length:
             pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
+        else:
+            print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
+            sys.exit()
 
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
