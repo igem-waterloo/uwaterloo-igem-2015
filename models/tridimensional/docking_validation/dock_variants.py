@@ -31,7 +31,6 @@ def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, tim
     f.write("Final DNA Score: %8.3f\n" % dock_stats[3])
     f.write("Total variant time: %8.3f\n" % time_diff_total)
     f.write("Docking variant time: %8.3f\n" % time_diff_docking)
-    assert len(f.readlines()) == SCOREFILE_LINES
     f.close()
     return
 
