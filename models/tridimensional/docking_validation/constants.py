@@ -1,0 +1,2 @@
+DNA_ALPHABET = "actg"
+PAM_TEMPLATE_SEQUENCE = "tggt"
