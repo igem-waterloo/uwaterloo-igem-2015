@@ -72,6 +72,7 @@ def results_to_csv(score_file_directory):
     for i, score_filename in enumerate(os.listdir(score_file_directory)):
         if score_filename[-4:] == '.txt':
             pam, pam_tool = get_pam_and_tool_from_filename(score_filename)
+            assert len(pam) == 3 or len(pam) == 4
             assert pam_tool in categories
             score_info = get_score_info(score_file_directory, score_filename)
             csv_dict[pam_tool].writerow(pam + pam_tool + score_info)
