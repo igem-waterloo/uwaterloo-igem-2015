@@ -2,13 +2,16 @@
 
 RESULTS=~/working/results
 SCRIPTS=~/working/scripts
+LOGGING=~/working/results/batch/log
 
 # require two input arguments
 threads=$1
 label=$2
-if [ -z "$1" ] || [ -z "$2" ]; then
-	echo "ERROR: requires two arguments (threads, label)"
-	echo "Example: bash batch_dock.sh 50 validation_1"
+pdb_dir=$3
+
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+	echo "ERROR: requires three arguments (threads, label, pdb_dir)"
+	echo "Example: bash batch_dock.sh 50 validation_1 ~/pdb/setA/"
 	exit 1
 fi
 
@@ -20,7 +23,7 @@ if [ -d $results_dir ]; then
 fi
 
 pam_start=0
-pam_end=63
+pam_end=255
 range=$(($pam_end-$pam_start+1))
 step=$(($range/$threads))
 remainder=$(($range % $threads))
@@ -41,7 +44,18 @@ while [ $i -lt $threads ]; do
 	fi
 	pam_first=$(($pam_last+1))
 	pam_last=$(($pam_first+$step+$remainder_plus-1))
-	python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir &
+	log_name="$LOGGING/$label"
+	log_name+="_pf_$pam_first"
+	log_name+="_pl_$pam_last"
+	log_name+="_thread_$i" # name for logging stdout and stderr
+
+	out_name=$log_name
+	out_name+="_out.txt"
+
+	err_name=$log_name
+	err_name+="_err.txt"
+
+	python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir --pdb_dir=$pdb_dir > $out_name 2> $err_name &
 	pids+=($!)
 	i=$(($i+1))
 done
