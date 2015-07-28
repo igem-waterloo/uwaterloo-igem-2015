@@ -53,7 +53,7 @@ MUTANT_TEMPLATE_PREFIX = "4UN3.mutant_"
 # RESULTS:                                                               #
 # ====================================================================== #
 #                                                                        #
-#         /- batch -/   lone validation runs in labelled folders         #
+#         /- batch -/   validation runs for specific tests/analysis      #
 #         |                                                              #
 # results /- mutant_scores -/- scores_0 -/- run_0 -/   256 txt, 1 csv    #
 #                           |            /- run_1 -/   256 txt, 1 csv    #
