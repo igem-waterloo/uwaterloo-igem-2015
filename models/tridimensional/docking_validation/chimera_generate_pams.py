@@ -5,10 +5,7 @@ import math
 import chimera
 from chimera import runCommand
 from chimera import replyobj
-
-
-dna_nts = ['a','c','g','t']
-original_pam_sequence = 'tgg'
+from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 
 
 def mutate_nt(pam_idx, base):
@@ -63,10 +60,10 @@ if __name__ == '__main__':
 
 
     for i in xrange(args.num_pams):
-        if 64 == args.num_pams:
-            pam = dna_nts[i / 16] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
+        if 4 == pam_length:
+            pam = DNA_ALPHABET[i / 16] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
         else:
-            pam = dna_nts[i / 64] + dna_nts[i / 16 % 4] + dna_nts[i / 4 % 4] + dna_nts[i % 4]
+            pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
 
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
@@ -74,7 +71,7 @@ if __name__ == '__main__':
         # Loop through the PAM sequence and mutate positions
         for pam_idx in xrange(pam_length):
             # If the nt matches the original PAM nt, don't change it
-            if original_pam_sequence[pam_idx] == pam[pam_idx]:
+            if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
                 continue
             mutate_nt(pam_idx, pam[pam_idx])
 
