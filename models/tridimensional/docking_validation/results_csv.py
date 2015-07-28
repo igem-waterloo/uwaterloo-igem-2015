@@ -75,7 +75,8 @@ def results_to_csv(score_file_directory):
             assert len(pam) == 3 or len(pam) == 4
             assert pam_tool in categories
             score_info = get_score_info(score_file_directory, score_filename)
-            csv_dict[pam_tool].writerow(pam + pam_tool + score_info)
+            csv_row = list(pam) + [pam_tool] + score_info
+            csv_dict[pam_tool].writerow(csv_row)
     # close csvs
     for elem in categories:
         with open(os.path.join(score_file_directory, '%s.csv' % elem), 'a') as f:
