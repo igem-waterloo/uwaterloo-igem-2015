@@ -44,9 +44,18 @@ while [ $i -lt $threads ]; do
 	fi
 	pam_first=$(($pam_last+1))
 	pam_last=$(($pam_first+$step+$remainder_plus-1))
-	log_name="$LOGGING/$(($label))_pf_$(($pam_first))_pl_$(($pam_last))_thread_$(($i))" # name for logging stdout and stderr
+	log_name="$LOGGING/$label"
+	log_name+="_pf_$pam_first"
+	log_name+="_pl_$pam_last"
+	log_name+="_thread_$i" # name for logging stdout and stderr
 
-	nohup python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir --pdb_dir=$pdb_dir > $(($log_name))_out.txt 2> $(($log_name))_err.txt &
+	out_name=$log_name
+	out_name+="_out.txt"
+
+	err_name=$log_name
+	err_name+="_err.txt"
+
+	python $SCRIPTS/dock_variants.py -s=$pam_first -e=$pam_last --output_dir=$results_dir --pdb_dir=$pdb_dir > $out_name 2> $err_name &
 	pids+=($!)
 	i=$(($i+1))
 done
