@@ -58,9 +58,12 @@ if __name__ == '__main__':
     assert 64 == args.num_pams or 256 == args.num_pams
     assert os.path.isfile(args.input_pdb)
 
-    if not os.path.exists(args.output_dir):
+    try: # check existence again to handle concurrency problems
         os.makedirs(args.output_dir)
-
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(args.output_dir):
+            pass
+        else: raise
 
     for i in xrange(args.num_pams):
         if 3 == pam_length:
