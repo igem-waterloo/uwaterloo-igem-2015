@@ -1,16 +1,16 @@
 import os
 
-from mutant_database import MUTANTS
-from mutate_pdb import mutate_pdb
 from config import MUTANT_TEMPLATE_PREFIX, PATH_PDB_SPECIAL_ORIGINAL
-from utility import mutant_variants_dir_by_idx, mutant_template_dir_by_idx, mutant_template_by_idx, mutant_template_pdb_path_by_idx, 
+from mutate_pdb import mutate_pdb
+from mutant_database import MUTANTS
+from utility import mutant_variants_dir_by_idx, mutant_template_dir_by_idx, mutant_template_pdb_path_by_idx
 
 
 # TODO
 """
-Create and get references to functions
-pam_variants_chimera(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
-pam_variants_3dna(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
+Create and get references to functions:
+- pam_variants_chimera(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
+- pam_variants_3dna(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
 """
 
 
