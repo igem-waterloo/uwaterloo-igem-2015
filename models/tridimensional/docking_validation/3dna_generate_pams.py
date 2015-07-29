@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import sys
 import os
 import argparse
@@ -15,8 +13,8 @@ def mutate_pam(pam):
     Args:
         pam: PAM to mutate to
     """
+
     mutation = mutation_string(pam)
-    print mutation
     template_pdb_basename = os.path.basename(args.input_pdb)
     new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
     subprocess.call(["mutate_bases", mutation, args.input_pdb, new_pdb_path])
@@ -46,10 +44,6 @@ def mutation_string(pam):
     mutation = mutation[0:-2] # remove last "; "
     return mutation
 
-
-# Going to assume file"4UN3.clean.pdb" is always used and in the same directory.
-# This file has a TGG PAM sequence already present in it
-fileNameOriginal = "4UN3.original.pdb"
 
 if __name__ == '__main__':
     # create parser and parse arguments
@@ -83,7 +77,7 @@ if __name__ == '__main__':
         elif 4 == pam_length:
             pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
         else:
-            print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
+            sys.stderr.write("Unexpected PAM length = %d" %(pam_length))
             sys.exit()
 
         mutate_pam(pam)

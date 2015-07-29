@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import sys
 import os
 import argparse
@@ -72,7 +70,7 @@ if __name__ == '__main__':
         elif 4 == pam_length:
             pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
         else:
-            print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
+            sys.stderr.write("Unexpected PAM length = %d" %(pam_length))
             sys.exit()
 
         # open up the file again each time, for now
