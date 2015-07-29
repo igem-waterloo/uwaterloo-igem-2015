@@ -1,9 +1,7 @@
-import sys
-import os
 import argparse
-import math
 import errno
-
+import math
+import os
 import subprocess
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 

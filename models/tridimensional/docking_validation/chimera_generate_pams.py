@@ -1,8 +1,8 @@
-import sys
-import os
 import argparse
-import math
 import errno
+import math
+import os
+import sys
 
 import chimera
 from chimera import runCommand
