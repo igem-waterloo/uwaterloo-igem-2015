@@ -26,18 +26,19 @@ def mutation_string(pam):
     Args:
         pam: the PAM to create
     """
-    position_idx = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
-    position_pairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"} # Create a dictionary mapping corresponding positions to each other.
-    base_pairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'} # Create dictionary mapping valid base pairs to each other.
+    position_idx = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"} # nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
+    position_pairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"} # create a dictionary mapping corresponding positions to each other.
+    base_pairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'} # create dictionary mapping valid base pairs to each other.
     mutation = ""
 
-    # Loop through the PAM sequence and find positions to mutate
+    # loop through the PAM sequence and find positions to mutate
     for pam_idx in range(pam_length):
         pos = position_idx[pam_idx]
         base = pam[pam_idx]
         complement_base = base_pairs[base]
         complement_pos = position_pairs[pos]
 
+        # don't bother changing if it matches the input PDB
         if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
             continue
         mutation = mutation + "c=d s=" + pos + " m=D" + base + "; c=c s=" + complement_pos + " m=D" + complement_base + "; "
@@ -73,6 +74,4 @@ if __name__ == '__main__':
         else: raise
 
     for i in xrange(args.num_pams):
-        pam = pam_string_from_int(i, pam_length)
-
-        mutate_pam(pam, args.input_pdb, args.output_dir)
+        mutate_pam(pam_string_from_int(i, pam_length), args.input_pdb, args.output_dir)
