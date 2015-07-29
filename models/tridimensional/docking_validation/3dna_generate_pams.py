@@ -9,51 +9,46 @@ import errno
 import subprocess
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 
-# Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG)
-# and 8,7,6 in chain C (target strand, NCC).
-positionIndex = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"}
-# Create a dictionary mapping corresponding positions to each other.
-positionPairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"}
 
-# Create dictionary mapping valid base pairs to each other.
-basePairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'}
+def mutate_pam(fileNameOriginal,PAM):
+    """Mutate base pairs
+    Args:
+        fileNameOriginal: file of input PDB to generate from
+        PAM: PAM to mutate to
+    """
+    mutation = mutation_string(PAM)
+    print mutation
+    subprocess.call(["mutate_bases", mutation, fileNameOriginal, "4UN3." + PAM + ".pdb"])
 
-# Function to mutate base pairs
-def mutateNucleotide(fileNameOriginal,PAM):
-    mutationString = createMutationString(PAM)
-    print mutationString
-    subprocess.call(["mutate_bases", mutationString, fileNameOriginal, "4UN3." + PAM + ".pdb"])
 
-# Function to determine command line output for mutations and positions for
-# call call of mutate_base
-def createMutationString(PAM):
+def mutation_string(pam):
+    """Determine command line output for mutations and positions for call of mutate_base
+    Args:
+        pam: the pam to create
+    """
     position_idx = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
     position_pairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"} # Create a dictionary mapping corresponding positions to each other.
     base_pairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'} # Create dictionary mapping valid base pairs to each other.
-    mutationString = ""
+    mutation = ""
 
     # Loop through the PAM sequence and find positions to mutate
     for pam_idx in range(pam_length):
         pos = position_idx[pam_idx]
-        base = PAM[pam_idx]
+        base = pam[pam_idx]
         complement_base = base_pairs[base]
         complement_pos = position_pairs[pos]
 
         if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
             continue
-        mutationString = mutationString + "c=d s=" + pos + " m=D" + base + \
-                "; c=c s=" + complementaryPosition + " m=D" + complementaryBase + "; "
+        mutation = mutation + "c=d s=" + pos + " m=D" + base + "; c=c s=" + complement_pos + " m=D" + complement_base + "; "
 
-    mutationString = mutationString[0:-2] # remove last "; "
-    return mutationString
+    mutation = mutation[0:-2] # remove last "; "
+    return mutation
 
 
 # Going to assume file"4UN3.clean.pdb" is always used and in the same directory.
 # This file has a TGG PAM sequence already present in it
 fileNameOriginal = "4UN3.original.pdb"
-
-# Iterate through all possible PAM sites
-listOfBases = ['a','c','g','t']
 
 if __name__ == '__main__':
     # create parser and parse arguments
@@ -90,4 +85,4 @@ if __name__ == '__main__':
             print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
             sys.exit()
 
-        mutateNucleotide(fileNameOriginal, pam)
+        mutate_pam(fileNameOriginal, pam)
