@@ -10,15 +10,16 @@ import subprocess
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 
 
-def mutate_pam(fileNameOriginal,PAM):
+def mutate_pam(pam):
     """Mutate base pairs
     Args:
-        fileNameOriginal: file of input PDB to generate from
-        PAM: PAM to mutate to
+        pam: PAM to mutate to
     """
-    mutation = mutation_string(PAM)
+    mutation = mutation_string(pam)
     print mutation
-    subprocess.call(["mutate_bases", mutation, fileNameOriginal, "4UN3." + PAM + ".pdb"])
+    template_pdb_basename = os.path.basename(args.input_pdb)
+    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
+    subprocess.call(["mutate_bases", mutation, args.input_pdb, new_pdb_path])
 
 
 def mutation_string(pam):
@@ -85,4 +86,4 @@ if __name__ == '__main__':
             print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
             sys.exit()
 
-        mutate_pam(fileNameOriginal, pam)
+        mutate_pam(pam)
