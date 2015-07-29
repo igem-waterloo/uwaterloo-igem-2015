@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
+from utility import pam_string_from_int
 
 
 def mutate_pam(pam, template_pdb, output_dir):
