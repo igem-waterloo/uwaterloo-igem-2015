@@ -65,13 +65,7 @@ if __name__ == '__main__':
         else: raise
 
     for i in xrange(args.num_pams):
-        if 3 == pam_length:
-            pam = DNA_ALPHABET[i / 16] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
-        elif 4 == pam_length:
-            pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
-        else:
-            sys.stderr.write("Unexpected PAM length = %d" %(pam_length))
-            sys.exit()
+        pam = pam_string_from_int(i, pam_length)
 
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
