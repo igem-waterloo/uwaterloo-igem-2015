@@ -3,25 +3,28 @@ import errno
 import math
 import os
 import subprocess
+import sys
+
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 
 
-def mutate_pam(pam):
+def mutate_pam(pam, template_pdb, output_dir):
     """Mutate base pairs
     Args:
         pam: PAM to mutate to
+        template_pdb: input PDB file
+        output_dir: output directoty
     """
-
     mutation = mutation_string(pam)
-    template_pdb_basename = os.path.basename(args.input_pdb)
-    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
-    subprocess.call(["mutate_bases", mutation, args.input_pdb, new_pdb_path])
+    template_pdb_basename = os.path.basename(input_pdb)
+    new_pdb_path = os.path.join(output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
+    subprocess.call(["mutate_bases", mutation, input_pdb, new_pdb_path])
 
 
 def mutation_string(pam):
     """Determine command line output for mutations and positions for call of mutate_base
     Args:
-        pam: the pam to create
+        pam: the PAM to create
     """
     position_idx = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
     position_pairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"} # Create a dictionary mapping corresponding positions to each other.
@@ -72,4 +75,4 @@ if __name__ == '__main__':
     for i in xrange(args.num_pams):
         pam = pam_string_from_int(i, pam_length)
 
-        mutate_pam(pam)
+        mutate_pam(pam, args.input_pdb, args.output_dir)

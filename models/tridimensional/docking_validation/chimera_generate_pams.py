@@ -27,13 +27,15 @@ def mutate_nt(pam_idx, base):
     runCommand("swapna " + complement_base + " : " + complement_pos)
 
 
-def generate_pdb(template_pdb_basename, pam_seq):
+def generate_pdb(pam, input_pdb, output_dir):
     """Generate a new PDB file
     Args:
+        pam: new PAM sequence to be listed in name
         template_pdb_basename: original fine basename
-        pam_seq: new PAM sequence to be listed in name
+        output_dir: output directory
     """
-    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam_seq + ".pdb")
+    template_pdb_basename = os.path.basename(input_pdb)
+    new_pdb_path = os.path.join(output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
     runCommand("write 0 " + new_pdb_path)
     runCommand("close all")
 
@@ -78,4 +80,4 @@ if __name__ == '__main__':
             mutate_nt(pam_idx, pam[pam_idx])
 
         # Save and close all files
-        generate_pdb(os.path.basename(args.input_pdb), pam)
+        generate_pdb(pam, args.input_pdb, args.output_dir)
