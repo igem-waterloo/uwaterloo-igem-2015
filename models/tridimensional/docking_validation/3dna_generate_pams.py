@@ -51,12 +51,40 @@ fileNameOriginal = "4UN3.original.pdb"
 
 # Iterate through all possible PAM sites
 listOfBases = ['a','c','g','t']
-for i in listOfBases:
-    for j in listOfBases:
-        for k in listOfBases:
-            for l in listOfBases:
-                PAM = i+j+k+l
-                # TGG PAM site already exists, let's skip it
-                mutateNucleotide(fileNameOriginal,PAM)
-                print "mutate PAM to " + PAM
-                # Save and close all files
+
+if __name__ == '__main__':
+    # create parser and parse arguments
+    parser = argparse.ArgumentParser(description='Generate PDBs with new PAM sites based on input PDB with Cas9 variant')
+    parser.add_argument('-n', '--num_pams', metavar='N', type=str, # string type because of how this script must be run by Chimera
+                        help='how many PAMs in total to run. 64 = all PAMs of length 3, 256 = all PAMs of length 4')
+    parser.add_argument('-i', '--input_pdb', metavar='F', type=str,
+                        help='input PDB file containing Cas9 mutant of interest')
+    parser.add_argument('-o', '--output_dir', metavar='D', type=str,
+                        help='path to output directory for new PDBs')
+    args = parser.parse_args()
+
+    assert args.num_pams is not None
+    assert args.input_pdb is not None
+    assert args.output_dir is not None
+    args.num_pams = int(args.num_pams) # convert string from command line to int
+    pam_length = int(math.log(args.num_pams, 4))
+    assert 64 == args.num_pams or 256 == args.num_pams
+    assert os.path.isfile(args.input_pdb)
+
+    try: # check existence again to handle concurrency problems
+        os.makedirs(args.output_dir)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(args.output_dir):
+            pass
+        else: raise
+
+
+    for i in listOfBases:
+        for j in listOfBases:
+            for k in listOfBases:
+                for l in listOfBases:
+                    PAM = i+j+k+l
+                    # TGG PAM site already exists, let's skip it
+                    mutateNucleotide(fileNameOriginal,PAM)
+                    print "mutate PAM to " + PAM
+                    # Save and close all files
