@@ -27,24 +27,27 @@ def mutateNucleotide(fileNameOriginal,PAM):
 # Function to determine command line output for mutations and positions for
 # call call of mutate_base
 def createMutationString(PAM):
-    # Set up some variables
+    position_idx = { 0 : "5", 1 : "6", 2 : "7", 3 : "8"} # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG) and 8,7,6 in chain C (target strand, NCC).
+    position_pairs = { "5" : "8", "6" : "7", "7" : "6", "8" : "5"} # Create a dictionary mapping corresponding positions to each other.
+    base_pairs = {'a' : 't', 'c' : 'g', 'g' : 'c', 't' : 'a'} # Create dictionary mapping valid base pairs to each other.
     mutationString = ""
+
     # Loop through the PAM sequence and find positions to mutate
-    for n in range(len(PAM)):
-        pos = positionIndex[n]
-        base = PAM[n]
-        complementaryBase = basePairs[base]
-        complementaryPosition = positionPairs[pos]
-        # If the first base is T, don't mutate it
-        if base== 't' and n == 0:
-            continue
-        # If the 2nd or 3rd bases are G, don't mutate them
-        if all([base == 'g', any([n == 1, n == 2])]):
+    for pam_idx in range(pam_length):
+        pos = position_idx[pam_idx]
+        base = PAM[pam_idx]
+        complement_base = base_pairs[base]
+        complement_pos = position_pairs[pos]
+
+        if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
             continue
         mutationString = mutationString + "c=d s=" + pos + " m=D" + base + \
                 "; c=c s=" + complementaryPosition + " m=D" + complementaryBase + "; "
-    mutationString = mutationString[0:-2]
+
+    mutationString = mutationString[0:-2] # remove last "; "
     return mutationString
+
+
 # Going to assume file"4UN3.clean.pdb" is always used and in the same directory.
 # This file has a TGG PAM sequence already present in it
 fileNameOriginal = "4UN3.original.pdb"
@@ -78,13 +81,13 @@ if __name__ == '__main__':
             pass
         else: raise
 
+    for i in xrange(args.num_pams):
+        if 3 == pam_length:
+            pam = DNA_ALPHABET[i / 16] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
+        elif 4 == pam_length:
+            pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
+        else:
+            print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
+            sys.exit()
 
-    for i in listOfBases:
-        for j in listOfBases:
-            for k in listOfBases:
-                for l in listOfBases:
-                    PAM = i+j+k+l
-                    # TGG PAM site already exists, let's skip it
-                    mutateNucleotide(fileNameOriginal,PAM)
-                    print "mutate PAM to " + PAM
-                    # Save and close all files
+        mutateNucleotide(fileNameOriginal, pam)
