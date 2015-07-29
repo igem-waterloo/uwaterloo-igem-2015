@@ -1,6 +1,13 @@
+from __future__ import print_function
+
+import sys
 import os
-# import subprocess to run cli
+import argparse
+import math
+import errno
+
 import subprocess
+from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 
 # Nucleotides we want to mutate are located at positions 5,6,7 in chain D (PAM,NGG)
 # and 8,7,6 in chain C (target strand, NCC).
