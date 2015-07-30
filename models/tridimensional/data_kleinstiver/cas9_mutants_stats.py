@@ -116,6 +116,91 @@ def find_num_pcr_needed():
     return num_pcr_per_mutant
 
 
+def idx_freq(pam):
+    '''
+    Given a pam site returns the indices of mutation and frequency of mutation
+    occurring at said indices
+    '''
+    mut_lst = [mutant for mutant in mutants_kleinstiver if (mutant['pam'] == pam)]
+    id_dict = {}
+    for mutant in mut_lst:
+        for mutation in mutant['mutations']:
+            idx = mutation['aa_idx']
+            if idx in id_dict.keys():
+                id_dict[idx] += 1
+            else:
+                id_dict[idx] = 1
+    return id_dict
+
+def ss_freq(pam):
+    '''
+    Given a pam site returns the frequency of mutations at different types of 
+    secondary structure
+    '''
+    mut_lst = [mutant for mutant in mutants_kleinstiver if (mutant['pam'] == pam)]
+    loc_dict = {}
+    for mutant in mut_lst:
+        for mutation in mutant['mutations']:
+            loc = mutation['sec_structure']
+            if loc in loc_dict.keys():
+                loc_dict[loc] += 1
+            else:
+                loc_dict[loc] = 1
+    return loc_dict
+
+
+def aafin_freq(pam):
+    '''
+    Given a pam site returns the frequncies final amino acid of mutation
+    '''
+    mut_lst = [mutant for mutant in mutants_kleinstiver if (mutant['pam'] == pam)]
+    aafin_dict = {}
+    for mutant in mut_lst:
+        for mutation in mutant['mutations']:
+            aafin = mutation['aa_group_mut']
+            if aafin in aafin_dict.keys():
+                aafin_dict[aafin] += 1
+            else:
+                aafin_dict[aafin] = 1
+    return aafin_dict
+
+
+def aa_swap_freq(pam):
+    '''
+    Given a pam site returns the frequencies of indices and change of amino acids in each mutation in the form
+    aa_init to aa_fin at aa_idx
+    '''
+    mut_lst = [mutant for mutant in mutants_kleinstiver if (mutant['pam'] == pam)]
+    aachng_dict = {}
+    for mutant in mut_lst:
+        for mutation in mutant['mutations']:
+            aachng = mutation['aa_group_init'] + ' to ' + mutation['aa_group_mut'] + ' at ' + str(mutation['aa_idx'])
+            if aachng in aachng_dict.keys():
+                aachng_dict[aachng] += 1
+            else:
+                aachng_dict[aachng] = 1
+    return aachng_dict
+
+
+def bar_aa_swap_freq(pam):
+    """
+    Plots a single figure containing two bar charts showing the frequencies of mutations 
+    """
+    # Get Dictionary of counts
+    ch = aachng_freq(pam)
+    # Bar plot of secondary structure regions containing mutants in each mutant Cas9
+    bar_width = 0.45
+    plt.bar(range(len(ch)), [ch[aa] for aa in ch.keys()], width=bar_width, align='center',
+            color='#71cce6', label='NGA')
+    plt.xticks(range(len(ch)), [aa for aa in ch.keys()], rotation=45, ha='right')
+    plt.title("Mutations in Amino Acids of Successful " + pam + " Cas9 Mutants")
+    plt.xlabel("Amino Acid Category Change")
+    plt.ylabel("Mutation Count")
+    plt.yscale('log')
+    plt.legend()
+    plt.show()
+    
+
 def main():
 
     # Vectors with one entry per mutant Cas9 containing the number of aa mutations in the mutant, separated by PAM
@@ -134,6 +219,10 @@ def main():
     # Estimate number of PCR reactions needed to convert WT Cas9 into each Cas9 mutant
     num_pcr_needed = find_num_pcr_needed()
     print num_pcr_needed
+    
+    # Create gar graphs of amino acid category changes and indexes of changes
+    bar_chn_counts('NGA')
+    bar_chn_counts('NGC')
 
 if __name__ == '__main__':
     main()
