@@ -5,11 +5,13 @@ breed [vasculars vascular]  ;; phloem vascular bundles
 ;; Create "breed" of 'link' called phloem
 directed-link-breed [phloems phloem]  
 ;; Note: I know there shouldn't be an s, but it wanted a different plural :(
+undirected-link-breed [plasmodesmata plasmodesma]
 
 ;; Declare global variables
 globals
 [
   num-infected   ;; keep track of number infected
+  num-viruses    ;; keep track of the viral particles
 ]
 
 ;; Declare the cell-specific (turtle breed) variables
@@ -18,70 +20,147 @@ cells-own
   infected?         ;; if true, the cell is infectious
   resistant?        ;; if true, cell can't be infected
   num-plasmodesmata ;; number of connections with other cells
+  viral-count       ;; keeps track of the virions in the cell
 ]
+
+
 
 
 
 ;; Setup procedures
 to setup
   clear-all    ;; remove anything from previous runs
+  setup-stem   ;; make a stem structure to connect the leaves
   setup-cells  ;; set up the cells
   setup-leaf   ;; set up the connections between cells
-  ask n-of multiplicity-of-infection cells   ;; determine how many viruses
-    [ become-infected ]
+  ask n-of multiplicity-of-infection cells   ;; infect cells based on moi
+    [ 
+      become-infected 
+      set viral-count num-colonizing-viruses ;; start with x viruses per infected cell
+    ]
   ask links [ set color white ]  ;; make the symplastic connections white
   ask phloems 
     [ 
-      set color green      ;; make the vascular bundles green and thicker
-      set thickness 3
+      set color green            ;; make the vascular bundles green and thicker
+      set thickness 0.3
     ]
   reset-ticks  ;; reset timer from previous run
+end
+
+to setup-stem
+  set-default-shape vasculars "plant" ;; uses stem-looking shape for vasculature
+  ;; Create and position vascular cells
+  create-vasculars 1 [ setxy 0 -16 ]
+  create-vasculars 1 
+  [ 
+    setxy 0 -6 
+    create-phloem-from vascular 0 ;; directed stem connection
+  ]
+  create-vasculars 1 
+  [ 
+    setxy 0 6 
+    create-phloem-from vascular 1 ;; directed stem connection
+  ]
+  create-vasculars 1 
+  [ 
+    setxy 0 16 
+    create-phloem-from vascular 2 ;; directed stem connection
+  ]
+  ask vasculars         ;; make the vasculature stand out from the leaf cells
+    [ 
+      set color green 
+      set size 2.5
+    ]
 end
 
 to setup-cells
   set-default-shape cells "circle"   ;; uses circle shape for displayed cells
   create-cells num-cells
   [
-    setxy (random-xcor * 0.95) (random-ycor * 0.95) ;; no nodes too close to edges
+    let xguess random-pxcor
+    while [abs xguess < 0.1 * max-pxcor or abs xguess > 0.95 * max-pxcor]
+      [set xguess random-pxcor]
+      
+     let yguess random-pycor
+    while [abs yguess < 0.1 * max-pycor or abs yguess > 0.95 * max-pycor]
+      [set yguess random-pycor] 
+      
+    setxy xguess yguess ;; no nodes too close to edges
     become-susceptible
+    ask cells [ set size 0.5 ]       ;; makes the circles smaller for larger scale
   ]
 end
 
 to setup-leaf
   ask cells 
   [ 
-    while [num-plasmodesmata < avg-num-plasmodesmata]
+    ;; using random-possion to give a more realistic distribution of links per cell
+    while [ count my-links < random-poisson avg-num-plasmodesmata ]
     [ 
       let choice (min-one-of (other cells with [not link-neighbor? myself])
                               [distance myself])
-      if choice != nobody [ create-link-with choice ]
-      set num-plasmodesmata num-plasmodesmata + 1
+      if choice != nobody [ create-plasmodesma-with choice ]
     ]
   ]
-  repeat 10 ; to make the network look nicer
-  [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
+  ;; to make the network look nicer
+  repeat 10 [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
+  ;; connect leaves to the vasculature
+;;  ask vascular 0 
+;;  [ 
+;;    let choice (min-one-of (other cells with [not link-neighbor? myself])
+;;                            [distance myself])
+;;    if choice != nobody [ create-plasmodesma-with choice ]
+;;  ]
+;;  ask vascular 1 
+;;  [ 
+;;    let choice (min-one-of (other cells with [not link-neighbor? myself])
+;;                            [distance myself])
+;;    if choice != nobody [ create-plasmodesma-with choice ]
+;;  ]
+;;  ask vascular 2 
+;;  [ 
+;;    let choice (min-one-of (other cells with [not link-neighbor? myself])
+;;                            [distance myself])
+;;    if choice != nobody [ create-plasmodesma-with choice ]
+;;  ]
+;;  ask vascular 3
+;;  [ 
+;;    let choice (min-one-of (other cells with [not link-neighbor? myself])
+;;                            [distance myself])
+;;    if choice != nobody [ create-plasmodesma-with choice ]
+;;  ]
 end
 
 
 
+
+
+;; This is the main process - what is activated when the user clicks "go"
 to go
-  ;; once all cells are infected, run 40 more times, then stop
-;;  if all? cells [ infected? ] 
-;;  [  
-;;    let i 0 
-;;    while [i <= 40] 
-;;    [
-;;      spread-virus
-;;      set i i + 1
-;;      tick
-;;    ]
-;;    stop  ;; stop model completely
-;;  ]
-  if ticks > num-ticks [ stop ]
+  ;; if the user specified a duration, stop after that
+  if specified-duration
+  [
+    if ticks > num-ticks [ stop ] 
+  ]
+  ;; otherwise, check if all cells are infected
+  if all? cells [ infected? ] 
+  [  
+    ;; if they are, run 40 more times (make the graph look nice)
+    let i 0 
+    while [i <= 40] 
+    [
+      spread-virus
+      set i i + 1
+      tick
+    ]
+    stop  ;; stop model completely
+  ]
+  
   ;; otherwise, continue to spread the virus
   spread-virus
   tick
 end
+
 
 
 
@@ -90,12 +169,17 @@ to become-infected
   set infected? true
   set resistant? false
   set color violet
+  ;; determine number of viruses entering the susceptible cell
+  let new-viruses ( sum [viral-count] of link-neighbors )
+  set viral-count new-viruses
+  set num-viruses num-viruses + new-viruses
 end
 
 to become-susceptible
   set infected? false
   set resistant? false
   set color green
+  set viral-count 0
 end
 
 to become-resistant
@@ -106,7 +190,9 @@ to become-resistant
 end
 
 
-;; Virus Procedure
+;; Virus Procedures
+
+
 to spread-virus
   ask cells with [infected?]
     [ 
@@ -120,12 +206,6 @@ to spread-virus
         ] 
     ]
 end
-
-;; END OF ACTUAL CODE
-;; END
-;; END
-;; ...END?
-;; YES, END.
 @#$#@#$#@
 GRAPHICS-WINDOW
 238
@@ -172,15 +252,15 @@ NIL
 1
 
 SLIDER
-22
-99
-196
-132
+18
+148
+192
+181
 multiplicity-of-infection
 multiplicity-of-infection
 1
 4
-2
+3
 1
 1
 NIL
@@ -193,24 +273,24 @@ SLIDER
 43
 num-cells
 num-cells
-0
-100
-89
+1
+1000
+287
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-23
-137
-211
-170
+17
+234
+205
+267
 avg-num-plasmodesmata
 avg-num-plasmodesmata
 1
 10
-7
+8
 1
 1
 NIL
@@ -252,10 +332,10 @@ NIL
 1
 
 SLIDER
-22
-178
-194
-211
+21
+292
+193
+325
 viral-spread-chance
 viral-spread-chance
 1
@@ -268,14 +348,14 @@ HORIZONTAL
 
 SLIDER
 23
-224
+349
 195
-257
+382
 num-ticks
 num-ticks
 0
 500
-48
+428
 1
 1
 NIL
@@ -298,6 +378,50 @@ false
 "" ""
 PENS
 "default" 1.0 0 -13840069 true "" "plot count turtles"
+
+SWITCH
+22
+101
+177
+134
+specified-duration
+specified-duration
+0
+1
+-1000
+
+PLOT
+245
+478
+445
+628
+Number of Viruses
+ticks
+#viruses
+0.0
+10.0
+1.0
+1000.0
+true
+false
+"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 num-cells" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot num-viruses"
+
+SLIDER
+19
+184
+191
+217
+num-colonizing-viruses
+num-colonizing-viruses
+1
+30
+8
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
