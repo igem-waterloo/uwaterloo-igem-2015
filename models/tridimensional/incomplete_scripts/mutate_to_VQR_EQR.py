@@ -39,8 +39,7 @@ def mutate_pose(pose, mutations):
     # Let's release the PI domain
     # for i in range(1097, 1364):
     #     pose_num = findPyRosettaResNum(mutant_pose, 'B', i)
-    #     if pose_num != 0:
-    #         pose_packer.temporarily_set_pack_residue(pose_num,True)
+    #     pose_packer.temporarily_set_pack_residue(pose_num,True)
     # packmover = PackRotamersMover(scorefxn, pose_packer)
     # packmover.apply(mutant_pose)
     # =================================
@@ -60,6 +59,7 @@ def findPyRosettaResNum(pose,chain,pdb_res_num):
     DNA and sgRNA chains present.
     '''
     pose_res_num = pose.pdb_info().pdb2pose(chain,pdb_res_num)
+    assert pose_res_num != 0; "Amino acid residue number %r is not a valid position in the pose." % pdb_res_num
     return pose_res_num
 
 def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):

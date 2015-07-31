@@ -79,7 +79,7 @@ def findPyRosettaResNum(pose,chain,pdb_res_num):
     DNA and sgRNA chains present.
     '''
     pose_res_num = pose.pdb_info().pdb2pose(chain,pdb_res_num)
-    assert pose_res_num != 0; "Amino acid number %i is not a valid position in the pdb"
+    assert pose_res_num != 0; "Amino acid number %r is not a valid position in the pose" % pdb_res_num
     return pose_res_num
     
 if __name__ == '__main__':
