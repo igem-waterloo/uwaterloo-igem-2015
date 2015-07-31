@@ -57,7 +57,7 @@ def generate_pam_variants_from_mutant(mutant_idx, total_pam_variants, flag_chime
     if flag_chimera:
         generate_pam_variants_chimera(total_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_dir)
     else:
-        generate_pam_variants_3DNA(total_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_dir)
+        generate_pam_variants_3dna(total_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_dir)
     # ========================================================================
     return mutant_variants_pdb_dir
 
