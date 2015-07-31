@@ -9,7 +9,7 @@ from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 from utility import pam_string_from_int
 
 
-def mutate_pam(pam, template_pdb, output_dir):
+def generate_pam_variant_3dna(pam, template_pdb, output_dir):
     """Mutate base pairs
     Args:
         pam: PAM to mutate to
@@ -75,4 +75,4 @@ if __name__ == '__main__':
         else: raise
 
     for i in xrange(args.num_pams):
-        mutate_pam(pam_string_from_int(i, pam_length), args.input_pdb, args.output_dir)
+        generate_pam_variant_3dna(pam_string_from_int(i, pam_length), args.input_pdb, args.output_dir)
