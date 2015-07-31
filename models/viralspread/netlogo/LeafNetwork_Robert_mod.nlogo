@@ -252,7 +252,7 @@ HORIZONTAL
 SLIDER
 198
 21
-235
+231
 268
 viral-spread-chance
 viral-spread-chance
@@ -312,7 +312,7 @@ HORIZONTAL
 SLIDER
 236
 118
-273
+269
 268
 resistance-spread
 resistance-spread
@@ -346,27 +346,31 @@ PENS
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+THis model has a network of cells, in which we track viral spread. The spatial locations of the cells are divided into "leaves", and individual cells are connected by plasmodesmata. 
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+The model begins by creating all of the cells - it places them in space (in 4 leaves separated by the coodrinate axes) and iteratively goes through the cells, giving each a random number of connections. 
+
+All the cells start as susceptible, except for some small initial infection. Then the virus spreads along the plasmodesmata connections as time progresses.
+
+In this model there's also a chance of cells becoming resistant. This is triggered by either proximity to infected cells, or by spreading among 
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Set the sliders to various ranges, click setup & go, and see what happens. 
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+How does the viral infection curve change as # of connections is increased and viral spread chance is decreased?
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Move the sliders! And note the variations in the random setup, especially as it concerns connections between different leaves.
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+The big thing missing from this is the viral count. Other models will have this. As a result, though we also don't have a change in the viral count over time. 
 
 ## NETLOGO FEATURES
 
@@ -377,8 +381,9 @@ PENS
 (models in the NetLogo Models Library and elsewhere which are of related interest)
 
 ## CREDITS AND REFERENCES
+Robert & Zoe.
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+Aiming to reproduce Rodrigo & other papers by Elena lab on viral spread. 
 @#$#@#$#@
 default
 true
