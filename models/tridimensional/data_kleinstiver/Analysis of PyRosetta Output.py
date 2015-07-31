@@ -52,14 +52,14 @@ def get_tau_n_chi(sorted_data, exp_key):
         chitau_dict[k] = k_dict
     return chitau_dict
 
-def main(dataname, filename):
+def main(dataname, ref_name, filename):
     """
     Data name is the csv where the data is held, filename is the output file
-    name
+    name, ref_name is the name of the reference column in the csv
     """
     data = file(dataname, 'r')
     clean_data = sort_data(data)
-    res = get_tau_n_chi(clean_data)
+    res = get_tau_n_chi(clean_data, ref_name)
     res_lst = []
     for k in res.keys():
         line = k + ',' + str(res[k]['tau']) + ',' + str(res[k]['chi_sq_val']) \
