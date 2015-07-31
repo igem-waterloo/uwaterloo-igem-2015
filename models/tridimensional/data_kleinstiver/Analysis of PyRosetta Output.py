@@ -65,6 +65,7 @@ def main(dataname, ref_name, filename):
         line = k + ',' + str(res[k]['tau']) + ',' + str(res[k]['chi_sq_val']) \
              + ',' + str(res[k]['chi_sq_p']) + '\n'
         res_lst.append(line)
+    res_lst = ['Setup,Tau,ChiSqValue,ChiSqProb\n'] + res_lst
     res_file = file(filename, 'w')
     res_file.writelines(res_lst)
     res_file.close()
