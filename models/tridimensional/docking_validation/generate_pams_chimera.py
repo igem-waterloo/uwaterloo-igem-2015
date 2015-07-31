@@ -27,7 +27,7 @@ def mutate_nt(pam_idx, base):
     runCommand("swapna " + complement_base + " : " + complement_pos)
 
 
-def generate_pdb(pam, input_pdb, output_dir):
+def generate_pam_variant_chimera(pam, input_pdb, output_dir):
     """Generate a new PDB file
     Args:
         pam: new PAM sequence to be listed in name
@@ -80,4 +80,4 @@ if __name__ == '__main__':
             mutate_nt(pam_idx, pam[pam_idx])
 
         # save and close all files
-        generate_pdb(pam, args.input_pdb, args.output_dir)
+        generate_pam_variant_chimera(pam, args.input_pdb, args.output_dir)
