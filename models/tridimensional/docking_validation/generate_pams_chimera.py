@@ -1,10 +1,8 @@
-from __future__ import print_function
-
-import sys
-import os
 import argparse
-import math
 import errno
+import math
+import os
+import sys
 
 import chimera
 from chimera import runCommand
@@ -29,13 +27,15 @@ def mutate_nt(pam_idx, base):
     runCommand("swapna " + complement_base + " : " + complement_pos)
 
 
-def generate_pdb(template_pdb_basename, pam_seq):
+def generate_pam_variant_chimera(pam, input_pdb, output_dir):
     """Generate a new PDB file
     Args:
+        pam: new PAM sequence to be listed in name
         template_pdb_basename: original fine basename
-        pam_seq: new PAM sequence to be listed in name
+        output_dir: output directory
     """
-    new_pdb_path = os.path.join(args.output_dir, template_pdb_basename[:-4] + "." + pam_seq + ".pdb")
+    template_pdb_basename = os.path.basename(input_pdb)
+    new_pdb_path = os.path.join(output_dir, template_pdb_basename[:-4] + "." + pam + ".pdb")
     runCommand("write 0 " + new_pdb_path)
     runCommand("close all")
 
@@ -67,23 +67,17 @@ if __name__ == '__main__':
         else: raise
 
     for i in xrange(args.num_pams):
-        if 3 == pam_length:
-            pam = DNA_ALPHABET[i / 16] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
-        elif 4 == pam_length:
-            pam = DNA_ALPHABET[i / 64] + DNA_ALPHABET[i / 16 % 4] + DNA_ALPHABET[i / 4 % 4] + DNA_ALPHABET[i % 4]
-        else:
-            print("Unexpected PAM length = %d" %(pam_length), file=sys.stderr)
-            sys.exit()
+        pam = pam_string_from_int(i, pam_length)
 
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
 
-        # Loop through the PAM sequence and mutate positions
+        # loop through the PAM sequence and mutate positions
         for pam_idx in xrange(pam_length):
             # If the nt matches the original PAM nt, don't change it
             if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
                 continue
             mutate_nt(pam_idx, pam[pam_idx])
 
-        # Save and close all files
-        generate_pdb(os.path.basename(args.input_pdb), pam)
+        # save and close all files
+        generate_pam_variant_chimera(pam, args.input_pdb, args.output_dir)
