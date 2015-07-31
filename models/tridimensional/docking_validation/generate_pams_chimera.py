@@ -72,12 +72,12 @@ if __name__ == '__main__':
         # open up the file again each time, for now
         runCommand("open " + args.input_pdb)
 
-        # Loop through the PAM sequence and mutate positions
+        # loop through the PAM sequence and mutate positions
         for pam_idx in xrange(pam_length):
             # If the nt matches the original PAM nt, don't change it
             if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
                 continue
             mutate_nt(pam_idx, pam[pam_idx])
 
-        # Save and close all files
+        # save and close all files
         generate_pdb(pam, args.input_pdb, args.output_dir)
