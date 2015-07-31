@@ -22,19 +22,27 @@ def mutate_pose(pose, mutations):
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
         scorefxn = get_fa_scorefxn()
         pose_num = findPyRosettaResNum(mutant_pose, 'B',aa_num,)
-        mutant_pose = mutate_residue(mutant_pose, aa_num, aa_replacement, 0, scorefxn)
+        # Use this mutate_residue for automatic repacking based on distance (angstroms)
+        # distance can be set with using an int in the fourth arguement position. Please run 0,2,5
+        mutant_pose = mutate_residue(mutant_pose, pose_num, aa_replacement, 0, scorefxn)
+        # use the mutate_residue below for manually specifying packing residues with the pose_packer
+        # code below. Try the entire pdb_range, as well as setting to the aa_num list passed to
+        # the function
+        # mutant_pose = mutate_residue(mutate_residue, pose_num, aa_replacement)
     # kims lines from D050 example
     # =================================
-    #pose_packer = standard_packer_task(mutant_pose)
-    #pose_packer.restrict_to_repacking()
+    # pose_packer = standard_packer_task(mutant_pose)
+    # pose_packer.restrict_to_repacking()
     # This is a hack, but I want to test. Can't set a movemap, resfiles
     # might be the way to go. Freeze all residues. 
-    #pose_packer.temporarily_fix_everything()
+    # pose_packer.temporarily_fix_everything()
     # Let's release the PI domain
-    #for i in range(1110, 1388):
-    #    pose_packer.temporarily_set_pack_residue(i,True)
-    #packmover = PackRotamersMover(scorefxn, pose_packer)
-    #packmover.apply(mutant_pose)
+    # for i in range(1097, 1364):
+    #     pose_num = findPyRosettaResNum(mutant_pose, 'B', i)
+    #     if pose_num != 0:
+    #         pose_packer.temporarily_set_pack_residue(pose_num,True)
+    # packmover = PackRotamersMover(scorefxn, pose_packer)
+    # packmover.apply(mutant_pose)
     # =================================
     return mutant_pose
 
@@ -83,5 +91,4 @@ if __name__ == '__main__':
     residue numbering, the offset is not constant either. The mutant locations
     in this script have been verified using PyMOL.
     '''
-    mutate_pdb("4UN3.tgg.pdb", [(1135,'V'),(1335,'Q'),(1337,'R')],"mutate_folder",'4UN3.VQR')
-    mutate_pdb("4UN3.tgg.pdb", [(1135,'E'),(1335,'Q'),(1337,'R')],"mutate_folder",'4UN3.EQR')
+    mutate_pdb("4UN3_trimmed.tgg.pdb", [(1135,'V'),(1335,'Q'),(1337,'R')],"mutate_folder",'4UN3.VQR')
