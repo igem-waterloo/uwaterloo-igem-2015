@@ -36,13 +36,22 @@ def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, tim
     return
 
 
-def dock_simple(pose):
+def dock_simple(pose, dock_partners="B_ACD", foldtree=None):
     """Coarse docking of a pose representing a PAM / program variant
+    Args:
+        pose: pose loaded from pdb to be docked / scored
+        dock_partners: [default: "B_ACD"] string for thee set_partners(...) method for docking
+        foldtree: [default: None] string for the 2nd setup_foldtree(...) argument, None implies default foldtree
     Returns:
         list of scores in the form [fa_init, fa_final, dna_init, dna_final]
     Notes:
     - docking optimizes for DNA score, which is weighted differently than "Full Atom" (FA) score
     """
+    assert isinstance(dock_partners, str)
+    # setup foldtree
+    if foldtree is not None:
+        assert isinstance(foldtree, str)
+        setup_foldtree(pose, foldtree, Vector1([1]))
     # specify scoring functions
     fa_score = get_fa_scorefxn()
     dna_score = create_score_function('dna')
@@ -51,7 +60,7 @@ def dock_simple(pose):
     docking = DockMCMProtocol()
     docking.set_scorefxn(dna_score)
     docking.set_scorefxn_pack(fa_score)
-    docking.set_partners("B_ACD")
+    docking.set_partners(dock_partners)
     # obtain initial and final scores after docking
     dna_init = dna_score(pose)
     fa_init = fa_score(pose)
@@ -71,14 +80,17 @@ def dock_complex(pose):
     raise Exception("Complex docking not implemented")
 
 
-def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', complex_docking_flag=False, pam_length=4):
+def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="B_ACD", foldtree=None,
+                  pam_length=4, complex_docking_flag=False):
     """Docks and scores 2 pdbs for each PAM variant (one for each nt program) using simple docking
     Args:
         pam_variants: list of integers (any from 0 to 63 without repeats) which map to pam strings
         path_to_scores: path to the subdirectory of "results" where the variants are stored
         path_to_pdbs: [default: current directory] path to location of chimera/3DNA folders of PAM variants
-        complex_docking_flag: [default: False] if True, use complex dock function (NOT IMPLEMENTED)
+        dock_partners: [default: "B_ACD"] string for thee set_partners(...) method for docking
+        foldtree: [default: None] string for the 2nd setup_foldtree(...) argument, None implies default foldtree
         pam_length: [default: 4] length of the pam sequence to be investigated
+        complex_docking_flag: [default: False] if True, use complex dock function (NOT IMPLEMENTED)
     Notes:
     - creates a text file (e.g. 'results_agg_Chimera.txt') for each variant
     - path to variants is typically root/results/<timestamped folder>/<variants>
@@ -122,12 +134,16 @@ if __name__ == '__main__':
                         help='path to output directory for variant scores')
     parser.add_argument('--pdb_dir', metavar='D', default='', type=str,
                         help='path to root of variant pdb directories (default: "")')
+    parser.add_argument('--set_partners', metavar='S', default="B_ACD", type=str,
+                        help='string for docking partners (default: "B_ACD")')
+    parser.add_argument('--setup_foldtree', metavar='S', type=str,
+                        help='string for foldtree (default: None - use default ft)')
     parser.add_argument('--complex', metavar='B', nargs='?', const=True, default=False,
-                        type=str, help='[switch] select complex docking (default: "False")')
+                        type=bool, help='[switch] select complex docking (default: "False")')
     parser.add_argument('--csv', metavar='B', nargs='?', const=True, default=False,
-                        type=str, help='[switch] compile scores to csv (default: "False")')
+                        type=bool, help='[switch] compile scores to csv (default: "False")')
     parser.add_argument('--pam64', metavar='B', nargs='?', const=3, default=4,
-                        type=str, help='[switch] assume 64 pam variants (default: assume 256)')
+                        type=int, help='[switch] assume 64 pam variants (default: assume 256)')
     args = parser.parse_args()
 
     # setup range of pam variants
@@ -151,7 +167,7 @@ if __name__ == '__main__':
 
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls
-    dock_variants(pam_variants_to_score, path_to_scores,
+    dock_variants(pam_variants_to_score, path_to_scores, dock_partners=args.set_partners, foldtree=args.setup_foldtree,
                   path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex, pam_length=args.pam64)
 
     # collect score txt files into a csv

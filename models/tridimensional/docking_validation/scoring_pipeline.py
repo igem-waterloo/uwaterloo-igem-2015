@@ -1,17 +1,14 @@
-import os
+from math import log
 
 from config import MUTANT_TEMPLATE_PREFIX, PATH_PDB_SPECIAL_ORIGINAL
+from generate_pams_3dna import generate_pam_variant_3dna
+from generate_pams_chimera import generate_pam_variant_chimera
 from mutate_pdb import mutate_pdb
 from mutant_database import MUTANTS
-from utility import mutant_variants_dir_by_idx, mutant_template_dir_by_idx, mutant_template_pdb_path_by_idx
-
-
-# TODO
-"""
-Create and get references to functions:
-- pam_variants_chimera(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
-- pam_variants_3dna(num_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_directory)
-"""
+from utility import (mutant_template_dir_by_idx,
+                     mutant_template_pdb_path_by_idx,
+                     mutant_variants_dir_by_idx,
+                     pam_string_from_int)
 
 
 def get_mutations_from_index(mutant_idx):
@@ -45,7 +42,7 @@ def generate_pam_variants_from_mutant(mutant_idx, total_pam_variants, flag_chime
     """Generate all the pam variants for a given mutant
     Args:
         mutant_idx:  int >= 0 (0 is default dCas9)
-        total_pam_variants: 64 or 256 -- represents all 3 or 4nt pam variants
+        total_pam_variants: 64 or 256 -- represents all 3nt or 4nt pam variants
         flag_chimera: [default: True] if flag_chimera, then use chimera to generate variants (else use 3DNA)
     Returns:
         path to the pam variant folder (containing 64 or 256 pdbs)
@@ -53,12 +50,17 @@ def generate_pam_variants_from_mutant(mutant_idx, total_pam_variants, flag_chime
     assert total_pam_variants == 64 or total_pam_variants == 256  # currently support 3 or 4 nt PAM sites
     mutant_template_pdb_path = mutant_template_pdb_path_by_idx(mutant_idx)
     mutant_variants_pdb_dir = mutant_variants_dir_by_idx(mutant_idx)
-    # ========================================================================
+
+    # select a tool for generating the pam variants
     if flag_chimera:
-        generate_pam_variants_chimera(total_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_dir)
+        pam_variant_tool = generate_pam_variant_chimera
     else:
-        generate_pam_variants_3DNA(total_pam_variants, mutant_template_pdb_path, mutant_variants_pdb_dir)
-    # ========================================================================
+        pam_variant_tool = generate_pam_variant_3dna
+
+    pam_length = int(log(total_pam_variants, 4))
+    for pam_int in xrange(total_pam_variants):
+        pam_string = pam_string_from_int(pam_int, pam_length)
+        pam_variant_tool(pam_string, mutant_template_pdb_path, mutant_variants_pdb_dir)
     return mutant_variants_pdb_dir
 
 
