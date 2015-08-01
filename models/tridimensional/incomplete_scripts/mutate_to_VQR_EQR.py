@@ -48,7 +48,7 @@ def mutate_pose(pose, mutations):
 
 def findPyRosettaResNum(pose,chain,pdb_res_num):
     ''' Find the internal PyRosetta number given the protein sequence numbering.
-        Args:
+    Args:
         pose: PyRosetta pose representing the pdb
         chain: the chain the residues of interest is part or. Single character string, uppercase
     Returns:
@@ -83,7 +83,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     pose_mutant.dump_pdb(output_pdb_path)
     return output_pdb_path
     
-    
+
 if __name__ == '__main__':
     '''
     This script creates the VQR and EQR mutants from the Kleinstiver 2015 paper
