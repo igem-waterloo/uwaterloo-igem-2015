@@ -34,7 +34,7 @@ pam_tool=
 pam_start=0
 pam_end=255
 
-while getopts “ht:l:d:f:p:sa” OPTION
+while getopts “ht:l:d:f:p:sa:” OPTION
 do
     case $OPTION in
         h)
