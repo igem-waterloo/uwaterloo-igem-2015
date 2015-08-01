@@ -96,30 +96,6 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="
     assert pam_tool in PAM_TOOLS
     for idx in pam_variants:
         variant = pam_string_from_int(idx, pam_length)
-<<<<<<< HEAD
-        for program in programs:
-            print "Running for variant: %s_%s" % (variant, program)
-            pdb_path = os.path.join(path_to_pdbs, program, "4UN3." + variant + ".pdb")
-
-            # track runtime while loading and passing pose to the simple docker
-            time_init_total = time()
-            loaded_pose = pose_from_pdb(pdb_path)
-
-            time_init_docking = time()
-            if complex_docking_flag:
-                dock_stats = dock_complex(loaded_pose)
-            else:
-                dock_stats = dock_simple(loaded_pose, dock_partners, foldtree)
-
-            time_final = time()
-            time_diff_total = time_final - time_init_total
-            time_diff_docking = time_final - time_init_docking
-
-            # write results to file
-            results_filename = variant + "_" + program + ".txt"
-            write_dock_stats(path_to_scores, results_filename, dock_stats, time_diff_total, time_diff_docking)
-            print "Finished writing scores for variant: %s_%s" % (variant, program)
-=======
         print "Running for variant: %s_%s" % (variant, pam_tool)
         pdb_path = os.path.join(path_to_pdbs, pam_tool, "4UN3." + variant + ".pdb")
 
@@ -141,7 +117,6 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="
         results_filename = variant + "_" + pam_tool + ".txt"
         write_dock_stats(path_to_scores, results_filename, dock_stats, time_diff_total, time_diff_docking)
         print "Finished writing scores for variant: %s_%s" % (variant, pam_tool)
->>>>>>> a8879db82e6e08dd15aae10e25bfa2fa4603d2b6
     return
 
 
