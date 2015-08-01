@@ -35,7 +35,7 @@ def mutate_pose(pose, mutations):
     pose_packer.temporarily_fix_everything()
     # Let's release the PI domain
     for i in range(1110, 1388):
-        pose_num = findPyRosettaResNum(mutate_pose, 'B', aa_num)
+        pose_num = findPyRosettaResNum(mutate_pose, 'B', i)
         pose_packer.temporarily_set_pack_residue(pose_num, True)
     # =================================
     # specify the rotamer mover and apply repacking
@@ -67,7 +67,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
 
 def findPyRosettaResNum(pose,chain,pdb_res_num):
     ''' Find the internal PyRosetta number given the protein sequence numbering.
-        Args:
+    Args:
         pose: PyRosetta pose representing the pdb
         chain: the chain the residues of interest is part or. Single character string, uppercase
     Returns:
@@ -79,8 +79,10 @@ def findPyRosettaResNum(pose,chain,pdb_res_num):
     DNA and sgRNA chains present.
     '''
     pose_res_num = pose.pdb_info().pdb2pose(chain,pdb_res_num)
-    assert pose_res_num != 0; "Amino acid number %r is not a valid position in the pose" % pdb_res_num
+    assert pose_res_num != 0, "Amino acid number %r is not a valid position in the pose" % pdb_res_num
     return pose_res_num
-    
+
+
 if __name__ == '__main__':
     print "main behaviour not yet implemented"
+ 

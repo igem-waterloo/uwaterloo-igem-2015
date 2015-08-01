@@ -45,6 +45,7 @@ def mutate_pose(pose, mutations):
     # =================================
     return mutant_pose
 
+
 def findPyRosettaResNum(pose,chain,pdb_res_num):
     ''' Find the internal PyRosetta number given the protein sequence numbering.
         Args:
@@ -59,8 +60,9 @@ def findPyRosettaResNum(pose,chain,pdb_res_num):
     DNA and sgRNA chains present.
     '''
     pose_res_num = pose.pdb_info().pdb2pose(chain,pdb_res_num)
-    assert pose_res_num != 0; "Amino acid residue number %r is not a valid position in the pose." % pdb_res_num
+    assert pose_res_num != 0, "Amino acid residue number %r is not a valid position in the pose." % pdb_res_num
     return pose_res_num
+
 
 def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     """Create a new pdb (<output_filename>.pdb) in the output directory containing specified mutations
@@ -80,6 +82,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     output_pdb_path = os.path.join(output_directory, output_id + ".pdb")
     pose_mutant.dump_pdb(output_pdb_path)
     return output_pdb_path
+    
     
 if __name__ == '__main__':
     '''
