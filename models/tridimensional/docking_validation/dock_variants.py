@@ -32,12 +32,12 @@ def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, tim
     return
 
 
-def dock_simple(pose, dock_partners="B_ACD", foldtree=None):
+def dock_simple(pose, dock_partners, foldtree):
     """Coarse docking of a pose representing a PAM / program variant
     Args:
         pose: pose loaded from pdb to be docked / scored
         dock_partners: [default: "B_ACD"] string for thee set_partners(...) method for docking
-        foldtree: [default: None] string for the 2nd setup_foldtree(...) argument, None implies default foldtree
+        foldtree: [default: None] string (e.g. "B_CD") for the 2nd setup_foldtree(...) argument, None implies default foldtree
     Returns:
         list of scores in the form [fa_init, fa_final, dna_init, dna_final]
     Notes:
@@ -107,7 +107,7 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="
         if complex_docking_flag:
             dock_stats = dock_complex(loaded_pose)
         else:
-            dock_stats = dock_simple(loaded_pose, dock_partners=dock_partners, foldtree=foldtree)
+            dock_stats = dock_simple(loaded_pose, dock_partners, foldtree)
 
         time_final = time()
         time_diff_total = time_final - time_init_total
