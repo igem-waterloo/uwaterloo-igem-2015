@@ -21,7 +21,7 @@ def mutate_pose(pose, mutations):
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
         scorefxn = get_fa_scorefxn()
-        pose_num = findPyRosettaResNum(mutant_pose, 'B',aa_num,)
+        pose_num = find_py_rosetta_res_num(mutant_pose, 'B',aa_num,)
         # Use this mutate_residue for automatic repacking based on distance (angstroms)
         # distance can be set with using an int in the fourth arguement position. Please run 0,2,5
         mutant_pose = mutate_residue(mutant_pose, pose_num, aa_replacement, 0, scorefxn)
@@ -38,7 +38,7 @@ def mutate_pose(pose, mutations):
     # pose_packer.temporarily_fix_everything()
     # Let's release the PI domain
     # for i in range(1097, 1364):
-    #     pose_num = findPyRosettaResNum(mutant_pose, 'B', i)
+    #     pose_num = find_py_rosetta_res_num(mutant_pose, 'B', i)
     #     pose_packer.temporarily_set_pack_residue(pose_num,True)
     # packmover = PackRotamersMover(scorefxn, pose_packer)
     # packmover.apply(mutant_pose)
@@ -46,7 +46,7 @@ def mutate_pose(pose, mutations):
     return mutant_pose
 
 
-def findPyRosettaResNum(pose,chain,pdb_res_num):
+def find_py_rosetta_res_num(pose,chain,pdb_res_num):
     ''' Find the internal PyRosetta number given the protein sequence numbering.
     Args:
         pose: PyRosetta pose representing the pdb

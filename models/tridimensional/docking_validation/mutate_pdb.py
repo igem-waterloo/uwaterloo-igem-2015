@@ -21,8 +21,8 @@ def mutate_pose(pose, mutations):
         # ensure mutation is valid and apply it
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
-        #Use the findPyRosettaResNum() to automatically convert from pdb to Rosetta numbering
-        pose_num = findPyRosettaResNum(mutate_pose, 'B', aa_num)
+        #Use the find_pyrosetta_res_num() to automatically convert from pdb to Rosetta numbering
+        pose_num = find_pyrosetta_res_num(mutate_pose, 'B', aa_num)
         mutant_pose = mutate_residue(mutant_pose, pose_num, aa_replacement)
     # specify a pose packer to repack the mutation region
     pose_packer = standard_packer_task(mutant_pose)
@@ -35,7 +35,7 @@ def mutate_pose(pose, mutations):
     pose_packer.temporarily_fix_everything()
     # Let's release the PI domain
     for i in range(1110, 1388):
-        pose_num = findPyRosettaResNum(mutate_pose, 'B', i)
+        pose_num = find_pyrosetta_res_num(mutate_pose, 'B', i)
         pose_packer.temporarily_set_pack_residue(pose_num, True)
     # =================================
     # specify the rotamer mover and apply repacking
@@ -65,7 +65,7 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     return output_pdb_path
 
 
-def findPyRosettaResNum(pose,chain,pdb_res_num):
+def find_pyrosetta_res_num(pose,chain,pdb_res_num):
     ''' Find the internal PyRosetta number given the protein sequence numbering.
     Args:
         pose: PyRosetta pose representing the pdb
