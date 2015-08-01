@@ -82,3 +82,4 @@ if __name__ == '__main__':
 
         # save and close all files
         generate_pam_variant_chimera(pam, args.input_pdb, args.output_dir)
+
