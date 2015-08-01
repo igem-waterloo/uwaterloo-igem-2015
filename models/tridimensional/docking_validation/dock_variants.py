@@ -11,10 +11,6 @@ from results_csv import results_to_csv
 from utility import pam_string_from_int
 
 
-# variations to account for
-
-
-
 def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, time_diff_docking):
     """Writes separate files for each variant
     Notes:
