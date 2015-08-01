@@ -110,7 +110,7 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="
             if complex_docking_flag:
                 dock_stats = dock_complex(loaded_pose)
             else:
-                dock_stats = dock_simple(loaded_pose)
+                dock_stats = dock_simple(loaded_pose, dock_partners, foldtree)
 
             time_final = time()
             time_diff_total = time_final - time_init_total
