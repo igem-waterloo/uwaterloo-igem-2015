@@ -21,7 +21,7 @@ OPTIONS:
   -f  String passed along with --setup_foldtree to dock_variants.py (optional)
   -p  String passed along with --set_partners to dock_variants.py (optional)
   -s  Passes string "--pam64" to dock_variants.py (optional)
-  -a  String passed along with --alt_tool to dock_variants.py (optional)
+  -a  Passes string "--alt_tool" to dock_variants.py (optional)
 EOF
 }
 threads=
@@ -34,7 +34,7 @@ pam_tool=
 pam_start=0
 pam_end=255
 
-while getopts “ht:l:d:f:p:sa:” OPTION
+while getopts “ht:l:d:f:p:sa” OPTION
 do
     case $OPTION in
         h)
@@ -60,7 +60,7 @@ do
             pam64=True
             ;;
         a)
-            pam_tool=$OPTARG
+            pam_tool=True
             ;;
         ?)
             usage
@@ -93,10 +93,10 @@ if [ ! -z $pam64 ]; then
     pam_end=63
 fi
 fi p ! -z $pam_tool]; then
-    echo "Adding '--alt_tool $pam_tool' argument to dock_variants"
-    echo "Adding '--alt_tool $pam_tool' argument to results_csv"
-    opt_dock_variants_args+=" --alt_tool $pam_tool"
-    opt_results_csv_args=" --alt_tool $pam_tool"
+    echo "Adding '--alt_tool' argument to dock_variants"
+    echo "Adding '--alt_tool' argument to results_csv"
+    opt_dock_variants_args+=" --alt_tool"
+    opt_results_csv_args=" --alt_tool"
 fi
 
 # don't write to a directory that already exists
