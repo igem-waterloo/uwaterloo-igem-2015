@@ -7,9 +7,17 @@ import sys
 import chimera
 from chimera import runCommand
 from chimera import replyobj
+HOME = os.getenv("HOME")
+sys.path.append(HOME+'/github/uwaterloo-igem-2015/models/tridimensional/docking_validation')
 from constants import PAM_TEMPLATE_SEQUENCE, DNA_ALPHABET
 from utility import pam_string_from_int 
-
+'''
+Mark Lubberts - 01/08/2015
+I'm checking if the higher scoring in the tgg variants is due to the fact that
+they aren't mutated, rather than actually binding better. tgg bases are switched
+with identical nucleotide instead of being skipped, to ensure that scoring is 
+nucleotide specific.
+'''
 
 def mutate_nt(pam_idx, base):
     """Mutate a base pair at pam_idx to base
@@ -75,9 +83,11 @@ if __name__ == '__main__':
 
         # loop through the PAM sequence and mutate positions
         for pam_idx in xrange(pam_length):
+            '''This has been commented out so that all nucleotides are changed
+            regardless of whether the match the original pdb or not.'''
             # If the nt matches the original PAM nt, don't change it
-            if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
-                continue
+            #if PAM_TEMPLATE_SEQUENCE[pam_idx] == pam[pam_idx]:
+            #    continue
             mutate_nt(pam_idx, pam[pam_idx])
 
         # save and close all files
