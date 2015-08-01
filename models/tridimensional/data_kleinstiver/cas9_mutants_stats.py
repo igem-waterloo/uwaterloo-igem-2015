@@ -2,7 +2,6 @@
 Gathering statistics on the Cas9 mutants that were able to bind alternative PAMs
 
 TODO:
-- visualization = regions + AA class
 - mutations which always co-occur (regionally? or by AA class?)
 - mutations which co-occur between NGA and NGC PAMs
 - mutations which differ between NGA and NGC PAMs
@@ -12,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from cas9_mutants import *
+from aa_info import *
 
 
 def find_mutation_counts(pam):
@@ -28,6 +28,20 @@ def find_mutation_counts(pam):
     return mutation_counts
 
 
+def find_idx_counts(pam, start=1099, end=1368):
+    """
+    Cumulative counts of which amino acid indices are mutated, separated by PAM
+    Returns a dict w/ the same keys for indices start-end+1 and values = # of times it was mutated for 'pam' = pam
+    """
+    idx_counts = {key: 0 for key in range(start, end+1)}
+    for mutant in mutants_kleinstiver:
+        if mutant['pam'] == pam:
+            for mutation in mutant['mutations']:
+                if start <= mutation['aa_idx'] <= end:
+                    idx_counts[mutation['aa_idx']] += 1
+
+    return idx_counts
+
 def find_ss_counts(pam):
     """
     Cumulative counts of which secondary structures are mutated across mutant Cas9s, separated by PAM
@@ -41,6 +55,29 @@ def find_ss_counts(pam):
 
     return ss_counts
 
+def find_aa_changes(pam, change_type, by_idx=True, start=1099, end=1368):
+    """
+    Interfaces with the aa_info dictionary to classify the amino acid changes across mutant Cas9s, separated by PAM
+    if by_idx = True, returns a dict with the keys for each combination of index and aa_info change, otherwise returns
+    a dict with keys for every aa_info change observed
+    """
+    aa_changes = {}
+    assert change_type in aa_info.keys(), "change_type is not an in set of aa_info keys: %s" % id
+    for mutant in mutants_kleinstiver:
+        if mutant['pam'] == pam:
+            for mutation in mutant['mutations']:
+                aa_info_init = aa_info[change_type][mutation['aa_init']]  # info corresponding to WT nucleotide
+                aa_info_mut = aa_info[change_type][mutation['aa_mut']]  # info corresponding to mutated nucleotide
+
+                # key for aa_changes dictionary determined with by_idx setting
+                change_key = aa_info_init + 'to' + aa_info_mut
+                if by_idx: change_key = str(mutation['aa_idx']) + '_' + change_key
+
+                if change_key in aa_changes:
+                    aa_changes[change_key] += 1
+                else:
+                    aa_changes[change_key] = 1
+    return aa_changes
 
 def hist_mutation_counts(counts_NGA, counts_NGC):
     """
@@ -109,7 +146,7 @@ def find_num_pcr_needed():
                 num_pcr += 2
             else:
                 num_pcr += 1
-                idx_to_pcr_mutate = [] # if the max/min are less than 20 AA apart, only 1 more PCR needed, so end
+                idx_to_pcr_mutate = []  # if the max/min are less than 20 AA apart, only 1 more PCR needed, so end
 
         num_pcr_per_mutant.append(num_pcr)
 
@@ -211,6 +248,14 @@ def main():
     # secondary structure was mutated across all mutant Cas9s
     ss_counts_NGA = find_ss_counts('NGA')
     ss_counts_NGC = find_ss_counts('NGC')
+
+    # Dictionaries with one key per amino acid PI domain (well, 1097-1364 since those are the values we exported dists
+    # for in PyRosetta & values that count the number of times the index was mutated across all mutant Cas9s
+    idx_counts_NGA = find_idx_counts('NGA', 1097, 1364)
+    idx_counts_NGC = find_idx_counts('NGC', 1097, 1364)
+
+    size_transitions_NGA = find_aa_changes('NGA', 'size')
+    print size_transitions_NGA
 
     # Plot two histograms & two bar charts
     hist_mutation_counts(mutation_counts_NGA, mutation_counts_NGC)
