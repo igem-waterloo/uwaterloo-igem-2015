@@ -92,7 +92,7 @@ if [ ! -z $pam64 ]; then
     opt_dock_variants_args+=" --pam64"
     pam_end=63
 fi
-fi p ! -z $pam_tool]; then
+if [ ! -z $pam_tool]; then
     echo "Adding '--alt_tool' argument to dock_variants"
     echo "Adding '--alt_tool' argument to results_csv"
     opt_dock_variants_args+=" --alt_tool"
