@@ -6,13 +6,9 @@ from time import time
 
 from rosetta import *
 
-from constants import SCOREFILE_LINES
+from constants import PAM_TOOLS, SCOREFILE_LINES
 from results_csv import results_to_csv
 from utility import pam_string_from_int
-
-
-# variations to account for
-programs = ["Chimera", "3DNA"]
 
 
 def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, time_diff_docking):
@@ -36,12 +32,12 @@ def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, tim
     return
 
 
-def dock_simple(pose, dock_partners="B_ACD", foldtree=None):
+def dock_simple(pose, dock_partners, foldtree):
     """Coarse docking of a pose representing a PAM / program variant
     Args:
         pose: pose loaded from pdb to be docked / scored
         dock_partners: [default: "B_ACD"] string for thee set_partners(...) method for docking
-        foldtree: [default: None] string for the 2nd setup_foldtree(...) argument, None implies default foldtree
+        foldtree: [default: None] string (e.g. "B_CD") for the 2nd setup_foldtree(...) argument, None implies default foldtree
     Returns:
         list of scores in the form [fa_init, fa_final, dna_init, dna_final]
     Notes:
@@ -81,8 +77,8 @@ def dock_complex(pose):
 
 
 def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="B_ACD", foldtree=None,
-                  pam_length=4, complex_docking_flag=False):
-    """Docks and scores 2 pdbs for each PAM variant (one for each nt program) using simple docking
+                  pam_length=4, pam_tool='Chimera', complex_docking_flag=False):
+    """Docks and scores a pdb for each PAM variant (created using pam_tool) using simple docking
     Args:
         pam_variants: list of integers (any from 0 to 63 without repeats) which map to pam strings
         path_to_scores: path to the subdirectory of "results" where the variants are stored
@@ -90,36 +86,37 @@ def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="
         dock_partners: [default: "B_ACD"] string for thee set_partners(...) method for docking
         foldtree: [default: None] string for the 2nd setup_foldtree(...) argument, None implies default foldtree
         pam_length: [default: 4] length of the pam sequence to be investigated
+        pam_tool: [default: 'Chimera'] either "3DNA" or "Chimera"
         complex_docking_flag: [default: False] if True, use complex dock function (NOT IMPLEMENTED)
     Notes:
     - creates a text file (e.g. 'results_agg_Chimera.txt') for each variant
     - path to variants is typically root/results/<timestamped folder>/<variants>
     - assumes current directory is the root of a folder that contains pdbs in Chimera and 3DNA directories
     """
+    assert pam_tool in PAM_TOOLS
     for idx in pam_variants:
         variant = pam_string_from_int(idx, pam_length)
-        for program in programs:
-            print "Running for variant: %s_%s" % (variant, program)
-            pdb_path = os.path.join(path_to_pdbs, program, "4UN3." + variant + ".pdb")
+        print "Running for variant: %s_%s" % (variant, pam_tool)
+        pdb_path = os.path.join(path_to_pdbs, pam_tool, "4UN3." + variant + ".pdb")
 
-            # track runtime while loading and passing pose to the simple docker
-            time_init_total = time()
-            loaded_pose = pose_from_pdb(pdb_path)
+        # track runtime while loading and passing pose to the simple docker
+        time_init_total = time()
+        loaded_pose = pose_from_pdb(pdb_path)
 
-            time_init_docking = time()
-            if complex_docking_flag:
-                dock_stats = dock_complex(loaded_pose)
-            else:
-                dock_stats = dock_simple(loaded_pose)
+        time_init_docking = time()
+        if complex_docking_flag:
+            dock_stats = dock_complex(loaded_pose)
+        else:
+            dock_stats = dock_simple(loaded_pose, dock_partners, foldtree)
 
-            time_final = time()
-            time_diff_total = time_final - time_init_total
-            time_diff_docking = time_final - time_init_docking
+        time_final = time()
+        time_diff_total = time_final - time_init_total
+        time_diff_docking = time_final - time_init_docking
 
-            # write results to file
-            results_filename = variant + "_" + program + ".txt"
-            write_dock_stats(path_to_scores, results_filename, dock_stats, time_diff_total, time_diff_docking)
-            print "Finished writing scores for variant: %s_%s" % (variant, program)
+        # write results to file
+        results_filename = variant + "_" + pam_tool + ".txt"
+        write_dock_stats(path_to_scores, results_filename, dock_stats, time_diff_total, time_diff_docking)
+        print "Finished writing scores for variant: %s_%s" % (variant, pam_tool)
     return
 
 
@@ -144,6 +141,8 @@ if __name__ == '__main__':
                         type=bool, help='[switch] compile scores to csv (default: "False")')
     parser.add_argument('--pam64', metavar='B', nargs='?', const=3, default=4,
                         type=int, help='[switch] assume 64 pam variants (default: assume 256)')
+    parser.add_argument('--alt_tool', metavar='S', nargs='?', const='3DNA', default='Chimera',
+                        type=str, help='[switch] use 3DNA pdbs instead of Chimera (default: Chimera)')
     args = parser.parse_args()
 
     # setup range of pam variants
@@ -168,8 +167,8 @@ if __name__ == '__main__':
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls
     dock_variants(pam_variants_to_score, path_to_scores, dock_partners=args.set_partners, foldtree=args.setup_foldtree,
-                  path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex, pam_length=args.pam64)
+                  path_to_pdbs=args.pdb_dir, complex_docking_flag=args.complex, pam_length=args.pam64, pam_tool=args.alt_tool)
 
     # collect score txt files into a csv
     if args.csv:
-        results_to_csv(path_to_scores)
+        results_to_csv(path_to_scores, pam_tool=args.alt_tool)
