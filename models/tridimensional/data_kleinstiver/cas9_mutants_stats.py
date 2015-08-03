@@ -23,7 +23,6 @@ def find_mutation_counts(pam):
     for mutant in mutants_kleinstiver:
         if mutant['pam'] == pam:
             mutation_counts.append(len(mutant['mutations']))
-
     return mutation_counts
 
 
@@ -38,7 +37,6 @@ def find_idx_counts(pam, start=1099, end=1368):
             for mutation in mutant['mutations']:
                 if start <= mutation['aa_idx'] <= end:
                     idx_counts[mutation['aa_idx']] += 1
-
     return idx_counts
 
 
@@ -52,7 +50,6 @@ def find_ss_counts(pam):
         if mutant['pam'] == pam:
             for mutation in mutant['mutations']:
                 ss_counts[mutation['sec_structure']] += 1
-
     return ss_counts
 
 
@@ -104,7 +101,6 @@ def find_num_pcr_needed():
                 idx_to_pcr_mutate = []  # if the max/min are less than 20 AA apart, only 1 more PCR needed, so end
 
         num_pcr_per_mutant.append(num_pcr)
-
     return num_pcr_per_mutant
 
 
@@ -128,7 +124,7 @@ def hist_mutation_counts(counts_NGA, counts_NGC):
     plt.show()
 
 
-def bar_graph_dict(dict_to_plot, plot_title="", xlab="", ylab="", log_scale=False, col="#71cce6", sort_key_list=[],
+def bar_graph_dict(dict_to_plot, plot_title="", xlab="", ylab="", log_scale=False, col="#71cce6", sort_key_list=None,
                    min_count=1):
     """
     Plots a bar graph of the provided dictionary.
@@ -146,7 +142,8 @@ def bar_graph_dict(dict_to_plot, plot_title="", xlab="", ylab="", log_scale=Fals
         list_to_plot = sorted(dict_to_plot.items(), key=lambda x: sort_key_list.index(x[0]))
 
     # Remove list items with less than min_count
-    if min_count != 1: list_to_plot = [dd for dd in list_to_plot if dd[1] >= min_count]
+    if min_count != 1:
+        list_to_plot = [dd for dd in list_to_plot if dd[1] >= min_count]
 
     # Bar plot of secondary structure regions containing mutants in each mutant Cas9
     bar_width = 0.45

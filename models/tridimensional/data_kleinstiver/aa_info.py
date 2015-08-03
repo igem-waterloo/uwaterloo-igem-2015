@@ -8,7 +8,7 @@ amino acid abbreviations.
     rchain: string, either 'aliphatic', 'aromatic' or 'other'
     size: string, either 'small', 'medium', 'large', 'large_long chain)' or 'large_benzene)'
 """
-aa_info = {'hydrophobic': {'A': 'hydrophobic', 'C': 'hydrophobic', 'D': 'hydrophillic', 'E': 'hydrophillic',
+aa_info = {'hydrophobicity': {'A': 'hydrophobic', 'C': 'hydrophobic', 'D': 'hydrophillic', 'E': 'hydrophillic',
                            'F': 'very hydrophobic', 'G': 'neutral', 'H': 'neutral', 'I': 'very hydrophobic',
                            'K': 'hydrophillic', 'L': 'very hydrophobic', 'M': 'very hydrophobic', 'N': 'hydrophillic',
                            'P': 'hydrophillic', 'Q': 'neutral', 'R': 'hydrophillic', 'S': 'neutral', 'T': 'neutral',
@@ -21,7 +21,7 @@ aa_info = {'hydrophobic': {'A': 'hydrophobic', 'C': 'hydrophobic', 'D': 'hydroph
                   'H': 'basic', 'I': 'neutral', 'K': 'basic', 'L': 'neutral', 'M': 'neutral', 'N': 'neutral',
                   'P': 'neutral', 'Q': 'neutral', 'R': 'basic', 'S': 'neutral', 'T': 'neutral', 'V': 'neutral',
                   'W': 'neutral', 'Y': 'neutral'},
-           'polar': {'A': 'non-polar', 'C': 'polar', 'D': 'charged', 'E': 'charged', 'F': 'non-polar', 'G': 'non-polar',
+           'polarity': {'A': 'non-polar', 'C': 'polar', 'D': 'charged', 'E': 'charged', 'F': 'non-polar', 'G': 'non-polar',
                      'H': 'polar', 'I': 'non-polar', 'K': 'charged', 'L': 'non-polar', 'M': 'polar', 'N': 'polar',
                      'P': 'non-polar', 'Q': 'polar', 'R': 'charged', 'S': 'polar', 'T': 'polar', 'V': 'non-polar',
                      'W': 'polar', 'Y': 'polar'},
