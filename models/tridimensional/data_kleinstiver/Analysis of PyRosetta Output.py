@@ -1,39 +1,39 @@
+#import scipy, scipy.stats.kendalltau, scipy.stats.chisquare
 
-import scipy, scipy.stats.kendalltau, scipy.stats.chisquare
 
-def los_clnr(los):
+def csv_parser(los):
     """
     Consumes a list of strings containing newline characters and commas, and 
     cleans the strings by removing the newline characters and splitting by 
     commas before returning a list of lists, where each list corresponds to
-    the important data from each string
+    the important data from each string, helper for sort_data
     """
     newline_remove = map(lambda (el): el.strip(), los)
     comma_split = map(lambda (el): el.split(','), newline_remove)
     as_ints = [comma_split[0]] + map(lambda (el): map(float, el), comma_split[1:])
     return as_ints
 
-def sort_data(lst):
+
+def sort_data(los):
     """
     Consumes a list produced by reading a csv file with titled columns
     corresponding to PyRosetta outputs
     """
-    cleaned_data = los_clnr(lst)
-    titles = cleaned_data[0]
-    just_vals = cleaned_data[1:]
-    properly_sorted_lst = []
-    for i in range(len(titles)):
-        i_lst = []
-        for val_lst in just_vals:
-            i_lst.append(val_lst[i])
-        properly_sorted_lst.append(i_lst)
-    sorted_dict = {}
-    for i in range(len(titles)):
-        sorted_dict[titles[i]] = properly_sorted_lst[i]
+    parsed_data = csv_parser(los)
+    titles = parsed_data[0]
+    just_vals = parsed_data[1:]
+    #properly_sorted_lst = []
+    #for i in range(len(titles)):
+    #    i_lst = []
+    #    for val_lst in just_vals:
+    #        i_lst.append(val_lst[i])
+    #    properly_sorted_lst.append(i_lst)
+    data_transposed = [[just_vals[row][col] for row in xrange(len(just_vals[0]))] for col in xrange(len(titles))]
+    sorted_dict = {titles[i]: data_transposed[i] for i in xrange(len(titles))}
     return sorted_dict
         
 
-def get_tau_n_chi(sorted_data, exp_key):
+def calc_tau_and_chi(sorted_data, exp_key):
     """
     Consumes a dictionary of results that is output from sort_data
     and calculates kendall's tau and the chi square statistic value for each
@@ -52,6 +52,7 @@ def get_tau_n_chi(sorted_data, exp_key):
         chitau_dict[k] = k_dict
     return chitau_dict
 
+
 def main(dataname, ref_name, filename):
     """
     Data name is the csv where the data is held, filename is the output file
@@ -59,7 +60,7 @@ def main(dataname, ref_name, filename):
     """
     data = file(dataname, 'r')
     clean_data = sort_data(data)
-    res = get_tau_n_chi(clean_data, ref_name)
+    res = calc_tau_and_chi(clean_data, ref_name)
     res_lst = []
     for k in res.keys():
         line = k + ',' + str(res[k]['tau']) + ',' + str(res[k]['chi_sq_val']) \
