@@ -1,4 +1,4 @@
-#import scipy, scipy.stats.kendalltau, scipy.stats.chisquare
+import scipy, scipy.stats.kendalltau, scipy.stats.chisquare
 
 
 def csv_parser(los):
@@ -22,13 +22,7 @@ def sort_data(los):
     parsed_data = csv_parser(los)
     titles = parsed_data[0]
     just_vals = parsed_data[1:]
-    #properly_sorted_lst = []
-    #for i in range(len(titles)):
-    #    i_lst = []
-    #    for val_lst in just_vals:
-    #        i_lst.append(val_lst[i])
-    #    properly_sorted_lst.append(i_lst)
-    data_transposed = [[just_vals[row][col] for row in xrange(len(just_vals[0]))] for col in xrange(len(titles))]
+    data_transposed = [[just_vals[row][col] for row in xrange(len(just_vals))] for col in xrange(len(titles))]
     sorted_dict = {titles[i]: data_transposed[i] for i in xrange(len(titles))}
     return sorted_dict
         
@@ -59,7 +53,7 @@ def main(dataname, ref_name, filename):
     name, ref_name is the name of the reference column in the csv
     """
     data = file(dataname, 'r')
-    clean_data = sort_data(data)
+    clean_data = sort_data(data.readlines())
     res = calc_tau_and_chi(clean_data, ref_name)
     res_lst = []
     for k in res.keys():
