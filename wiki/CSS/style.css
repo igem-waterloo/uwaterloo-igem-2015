@@ -289,17 +289,17 @@ footer .footer-links a {
 .cover#lab::after {
     background-image: url('/wiki/images/c/c9/Waterloo_lab_cover.JPG');
 }
-
 .cover#math::after {
     background-image: url('/wiki/images/e/e8/Waterloo_math_cover.jpg');
 }
-
 .cover#policy::after {
     background-image: url('/wiki/images/2/22/Waterloo_policy_cover.jpg');
 }
-
 .cover#advisors::after {
     background-image: url('/wiki/images/c/cc/Waterloo_advisors_cover.jpg');
+}
+.cover#leads::after {
+    background-image: url('/wiki/images/1/1e/Waterloo_cover_leads.jpg');
 }
 
 a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
@@ -307,6 +307,18 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
     font-size: 2em;
     text-shadow: 0 0 10px #000;
     text-decoration: none;
+}
+
+.accordion-inner ul {
+    list-style: none;
+}
+.accordion-inner ul li {
+    line-height: 100px;
+}
+.accordion-inner ul li img {
+    max-width: 100px;
+    display: inline-block;
+    border-radius: 50%;
 }
 
 /*---Sponsor images-------------------------------------------------------------------------------*/
