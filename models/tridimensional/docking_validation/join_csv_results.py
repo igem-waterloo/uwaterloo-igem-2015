@@ -1,12 +1,12 @@
 import argparse
-import os.path
-import fnmatch
-import datetime
 import csv
+import datetime
+import fnmatch
+import os.path
 
 from collections import defaultdict
-
 from constants import CSV_HEADER, PAM_TOOLS
+
 
 def locate(pattern, root=os.curdir):
     """Locate all files matching supplied filename pattern in and below supplied root directory.
