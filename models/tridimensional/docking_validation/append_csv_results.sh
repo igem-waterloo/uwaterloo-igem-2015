@@ -10,8 +10,13 @@ if [ -z "$1" ]; then
 fi
 
 outcsv=$csv_dir"/"$(basename "$csv_dir").csv
-echo "Appending all CSVs found in $csv_dir"
-echo "to $outcsv..."
+if [ -e $outcsv ]; then
+    echo "ERROR: Output file $outcsv already exists!"
+    exit 1
+else
+    echo "Appending all CSVs found in $csv_dir"
+    echo "to $outcsv..."
+fi
 
 # Find constants.py, assuming it is stored in the same directory as this script
 docking_validation_dir=$( cd "$(dirname "${BASH_SOURCE[0]}" ) " && pwd)
