@@ -261,7 +261,7 @@ footer .footer-links a {
   opacity: 1;
 }
 
-/*---Splash images--------------------------------------------------------------------------------*/
+/*---Splash images & team page --------------------------------------------------------------------*/
 .cover {
     position: relative;
     height: 30em;
@@ -315,10 +315,26 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 .accordion-inner ul li {
     line-height: 100px;
 }
-.accordion-inner ul li img {
+.accordion-inner dl dt {
+    min-width: 150px;
+    width: 30%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+.accordion-inner dl dd {
+    width: 60%;
+    display: inline-block;
+    font-size: small;
+    vertical-align: middle;
+}
+.accordion-inner dl dt img {
     max-width: 100px;
     display: inline-block;
     border-radius: 50%;
+}
+
+.description {
 }
 
 /*---Sponsor images-------------------------------------------------------------------------------*/
