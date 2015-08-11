@@ -263,13 +263,13 @@ footer .footer-links a {
 /*---Splash images & team page --------------------------------------------------------------------*/
 .cover {
     position: relative;
-    height: 30em;
+    height: 20em;
     background: rgba(0, 0, 0, 0.5);
     width: 100%
     color: #fff;
     margin: auto;
     text-align: center;
-    line-height: 30em;
+    line-height: 20em;
 }
 
 .cover::after {
