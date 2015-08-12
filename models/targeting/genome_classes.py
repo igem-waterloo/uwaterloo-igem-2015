@@ -13,6 +13,8 @@
 # code for deletions
 # see specific TODOs / 'to be implemented' throughout the code
 
+from probabilistic import prob_cut
+from nucleotide_insertion import nt_rand
 
 class Target(object):
 
@@ -43,9 +45,7 @@ class Target(object):
         return self.shift
 
     def compute_cut_probability(self, dt):  # TODO fix time dependence scope
-        # TODO: function to compute probability or time until next cut
-        # return foo_cut_prob(self.grna, self.target, self.complex_concentration, dt)
-        return 0.0
+        return prob_cut(self.grna, self.sequence, self.complex_concentraion, dt)
 
     def cut(self):
         self.total_cuts += 1
@@ -56,15 +56,24 @@ class Target(object):
 
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
         # TODO: indel size module
-        # del_left, del_right, insert_left, insert_right = foo_indel()  # e.g. 0, 0, 1, 1
+        # del_left, del_right, insert = foo_indel()  # e.g. 0, 0, 1, 1
         del_left, del_right = 0, 0  # fn
         insert = 2  # fn
-        # TODO: nucleotide insertion module
-        insert_nt = 'XY'  # foo_nt_rand(insert)
+        insert_nt = nt_rand(insert)  # fill in random sequence
 
         # rewrite target sequence
-        sequence_left = self.sequence[0:self.cut_position-del_left]  # TODO what if cut pos - del_left < 0 ?
-        sequence_right = self.sequence[self.cut_position+del_right:]
+        if cut_position - del_left >= 0:
+            sequence_left = self.sequence[0:self.cut_position-del_left]
+        else:  # if cutting into left buffer
+            sequence_left = ""
+            self.left_buffer = self.left_buffer[0:del_left-cut_position]
+
+        if cut_position + del_right <= len(self.sequence):
+            sequence_right = self.sequence[self.cut_position+del_right:]
+        else: # if cutting into right buffer
+            sequence_right = ""
+            self.right_buffer = self.right_buffer[len(self.sequence)-cut_position-del_right]
+
         self.sequence = sequence_left + insert_nt + sequence_right
         del_left = self.fix_pam(del_left)  # fixing in case of damaged PAM
         net_indel_size = insert - del_left - del_right

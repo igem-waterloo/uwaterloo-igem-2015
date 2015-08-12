@@ -7,7 +7,6 @@ mismatch_decay_values = [0.000, 0.000, 0.014, 0.000, 0.000, 0.395, 0.317, 0.000,
 # average time for SpyCas9 cutting in perfect match case
 average_cut_time = 60.0
 
-
 def prob_concentration(concentration, num_mismatches):
     """Computes the concentration factor of the total cut probability
     Args:
