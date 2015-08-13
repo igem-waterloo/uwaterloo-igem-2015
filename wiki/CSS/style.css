@@ -307,7 +307,12 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
     text-shadow: 0 0 10px #000;
     text-decoration: none;
 }
-
+.cover-desc {
+    color: #999;
+    margin-top: -9em;
+    text-shadow: 0 0 10px #000;
+    text-decoration: none;
+}
 .accordion-inner {
     margin-top: 10px;
 }
@@ -333,8 +338,7 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
         -ms-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
-.description {
-}
+
 
 /*---Sponsor images-------------------------------------------------------------------------------*/
 ul.sponsors {
