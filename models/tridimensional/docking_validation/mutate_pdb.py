@@ -21,7 +21,9 @@ def mutate_pose(pose, mutations):
         # ensure mutation is valid and apply it
         assert isinstance(aa_num, int)
         assert isinstance(aa_replacement, str) and len(aa_replacement) == 1
-        mutant_pose = mutate_residue(mutant_pose, aa_num, aa_replacement)
+        #Use the find_pyrosetta_res_num() to automatically convert from pdb to Rosetta numbering
+        pose_num = find_pyrosetta_res_num(mutate_pose, 'B', aa_num)
+        mutant_pose = mutate_residue(mutant_pose, pose_num, aa_replacement)
     # specify a pose packer to repack the mutation region
     pose_packer = standard_packer_task(mutant_pose)
     pose_packer.restrict_to_repacking()
@@ -33,7 +35,8 @@ def mutate_pose(pose, mutations):
     pose_packer.temporarily_fix_everything()
     # Let's release the PI domain
     for i in range(1110, 1388):
-        pose_packer.temporarily_set_pack_residue(i, True)
+        pose_num = find_pyrosetta_res_num(mutate_pose, 'B', i)
+        pose_packer.temporarily_set_pack_residue(pose_num, True)
     # =================================
     # specify the rotamer mover and apply repacking
     packmover = PackRotamersMover(get_fa_scorefxn(), pose_packer)
@@ -61,6 +64,25 @@ def mutate_pdb(input_pdb_path, mutations, output_directory, output_id):
     pose_mutant.dump_pdb(output_pdb_path)
     return output_pdb_path
 
-    
+
+def find_pyrosetta_res_num(pose,chain,pdb_res_num):
+    ''' Find the internal PyRosetta number given the protein sequence numbering.
+    Args:
+        pose: PyRosetta pose representing the pdb
+        chain: the chain the residues of interest is part or. Single character string, uppercase
+    Returns:
+        pose_res_num: the internal PyRosetta residue number from the pose
+    pdb_res_num: int, the residue number from the protein sequence or pdb to modify
+    This is helpful given that PyRosetta does not number according to the
+    protein sequence given in the pdb, which matches numbering from start to finish.
+    Especially helpful given the gaps present in the cas9 structure, and the extra
+    DNA and sgRNA chains present.
+    '''
+    pose_res_num = pose.pdb_info().pdb2pose(chain,pdb_res_num)
+    assert pose_res_num != 0, "Amino acid number %r is not a valid position in the pose" % pdb_res_num
+    return pose_res_num
+
+
 if __name__ == '__main__':
     print "main behaviour not yet implemented"
+ 
