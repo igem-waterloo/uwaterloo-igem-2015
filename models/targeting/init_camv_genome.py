@@ -14,10 +14,12 @@ P6_1 = Target("P6_1", "ggagaaagaaaagatatttaaaa", "ggagaaagaaaagatatttaaaa", 521,
 
 print P6_1.grna
 print P6.target_location("P6_1")
+print P6_1.cut_probability
 
 P6_1.cut()
 P6_1.repair(dt)
 
 print P6_1.sequence
 print P6.target_location("P6_1")
+print P6_1.cut_probability
 print P6_1.shift

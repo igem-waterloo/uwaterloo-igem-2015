@@ -61,15 +61,15 @@ def prob_cut(grna, target, concentration, dt):
 DNA_ALPHABET = "acgt"
 
 def nt_rand(insertion_size):
-  insertion = ""
-  for x in range(insertion_size):
-    insertion += DNA_ALPHABET[randint(0,3)]
+    insertion = ""
+    for x in range(insertion_size):
+        insertion += DNA_ALPHABET[randint(0,3)]
 
-  return insertion
+    return insertion
 
 def indel():
-  del_left = randint(0,10)
-  del_right = randint(0,10)
-  insert = randint(0,20)
+    del_left = randint(0,4)
+    del_right = randint(0,4)
+    insert = randint(0,8)
 
-  return [del_left, del_right, insert]
+    return [del_left, del_right, insert]
