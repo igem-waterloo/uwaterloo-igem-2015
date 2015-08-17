@@ -1,4 +1,5 @@
 from numpy import prod
+from random import randint
 
 # constants which may be used in other scripts/the simulation itself
 # vector of mismatch values with index relative to distance from PAM (Hsu et al. from MIT)
@@ -49,7 +50,26 @@ def prob_cut(grna, target, concentration, dt):
     """
     assert len(grna) == len(target)
     prob_factor_time = dt/average_cut_time  # assume uniform distribution in time - TODO change to poisson
-    mismatch_decay_subset = [mismatch_decay_values[idx] for idx in xrange(len(grna)) if grna[idx] != target[idx]]
+    mismatch_decay_subset = [mismatch_decay_values[idx] for idx in xrange(len(grna)-3) if grna[idx+3] != target[idx+3]]
     prob_factor_mismatch = prod(mismatch_decay_subset)
     prob_factor_concentration = prob_concentration(concentration, len(mismatch_decay_subset))
     return prob_factor_time * prob_factor_mismatch * prob_factor_concentration
+
+# random insertion function
+# takes insertion size and produces random insertion string
+
+DNA_ALPHABET = "acgt"
+
+def nt_rand(insertion_size):
+  insertion = ""
+  for x in range(insertion_size):
+    insertion += DNA_ALPHABET[randint(0,3)]
+
+  return insertion
+
+def indel():
+  del_left = randint(0,10)
+  del_right = randint(0,10)
+  insert = randint(0,20)
+
+  return [del_left, del_right, insert]
