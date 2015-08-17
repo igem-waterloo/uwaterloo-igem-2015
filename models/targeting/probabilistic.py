@@ -50,7 +50,7 @@ def prob_cut(grna, target, concentration, dt):
     """
     assert len(grna) == len(target)
     prob_factor_time = dt/average_cut_time  # assume uniform distribution in time - TODO change to poisson
-    mismatch_decay_subset = [mismatch_decay_values[idx] for idx in xrange(len(grna)-3) if grna[idx+3] != target[idx+3]]
+    mismatch_decay_subset = [mismatch_decay_values[idx] for idx in xrange(len(grna)) if grna[idx] != target[idx]]
     prob_factor_mismatch = prod(mismatch_decay_subset)
     prob_factor_concentration = prob_concentration(concentration, len(mismatch_decay_subset))
     return prob_factor_time * prob_factor_mismatch * prob_factor_concentration

@@ -44,7 +44,7 @@ class Target(object):
         return self.shift
 
     def compute_cut_probability(self, dt):  # TODO fix time dependence scope
-        return prob_cut(self.grna, self.sequence, self.complex_concentration, dt)
+        return prob_cut(self.grna[3:], self.sequence[3:], self.complex_concentration, dt)
 
     def cut(self):
         self.total_cuts += 1
