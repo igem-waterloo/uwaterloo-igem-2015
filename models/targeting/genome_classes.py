@@ -1,3 +1,6 @@
+from probabilistic import prob_cut, nt_rand, indel
+
+
 # Script to store principle simulation classes and their interactions
 #
 # Gene/genome de-activation defined by
@@ -13,7 +16,6 @@
 # code for deletions
 # see specific TODOs / 'to be implemented' throughout the code
 
-from probabilistic import prob_cut, nt_rand, indel
 
 class Target(object):
 
@@ -119,6 +121,7 @@ class Domain(object):
 
     def set_location(self, label, location):
         self.targets[label][1] = location
+
 
 # Each Genome has >=1 Domains
 class Genome(object):
