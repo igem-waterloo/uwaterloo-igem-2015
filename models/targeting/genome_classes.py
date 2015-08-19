@@ -161,3 +161,10 @@ class Genome(object):
             location += shift  # shift location to the right
 
         return location
+
+    def get_targets_from_genome(self):
+        """Get a layered dictionary of all the targets in each domain of the genome
+        Notes:
+        - structure is {domain_label: dict_of_domain_targets, ...}
+        """
+        return {key: self.domains[key].targets for key in self.domains.keys()}
