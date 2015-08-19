@@ -1,19 +1,20 @@
+from probabilistic import prob_cut, nt_rand, indel
+
+
 # Script to store principle simulation classes and their interactions
-#
-# Gene/genome de-activation defined by
+# Gene/genome de-activation defined by:
 #   - frameshift mutation in an ORF
 #   - deletion of a promoter
+#   - deletion of a significant portion of the gene
 
 # TODO
-# function for cut probability: foo_cut_prob(self.grna, self.target, dt, complex_concentration)
-# function for cut location: foo_cut_posn()
-# function for indel type (L/R del, insert) foo_indel(), foo_nt_rand(insert) etc
-# if repair is big deletion, what do we fill in at the end of the target? cant be random, must come from sequence data
-# need to update all genome locations with each indel or deletion
-# code for deletions
-# see specific TODOs / 'to be implemented' throughout the code
+# - function for cut probability: foo_cut_prob(self.grna, self.target, dt, complex_concentration)
+# - function for cut location: foo_cut_posn()
+# - function for indel type (L/R del, insert) foo_indel(), foo_nt_rand(insert) etc
+# - if repair is big deletion, what do we fill in at the end of the target? cant be random, must come from sequence data
+# - code for deletions
+# - see specific TODOs / 'to be implemented' throughout the code
 
-from probabilistic import prob_cut, nt_rand, indel
 
 class Target(object):
 
@@ -68,13 +69,13 @@ class Target(object):
         self.shift += net_indel_size
 
 
-# Each Domain has >=1 targets and belongs to a Genome
 class Domain(object):
+    # Each Domain may contain targets and belongs to a Genome
 
     def __init__(self, label, domain_start, domain_end, domain_type, genome, promoter=None):
         assert domain_type in ["orf", "promoter", "ncr"]
         self.label = label  # string
-        self.domain_type = domain_type # 'orf' or 'promoter' or 'ncr'
+        self.domain_type = domain_type  # 'orf' or 'promoter' or 'ncr'
         self.domain_start = domain_start  # int
         self.domain_end = domain_end  # int
         if domain_type == 'orf':
@@ -120,15 +121,16 @@ class Domain(object):
     def set_location(self, label, location):
         self.targets[label][1] = location
 
-# Each Genome has >=1 Domains
+
 class Genome(object):
+    # Each Genome has >=1 Domains
 
     def __init__(self, sequence):
         self.length = len(sequence)  # int
         self.initial_genome = sequence  # string
         self.current_genome = sequence  # string
         self.repaired = True  # bool
-        self.domains = {}  # list of all domains (ORFs, promoters, NCRs)
+        self.domains = {}  # dict of all domains (ORFs, promoters, NCRs)
     
     def add_domain(self, domain):
         assert type(domain) is Domain
@@ -140,8 +142,8 @@ class Genome(object):
         del_left, del_right, insert = indel()  # e.g. 0, 0, 2
         insert_nt = nt_rand(insert)  # fill in random sequence
         net_indel_size = insert - del_left - del_right
-        left_genome = self.current_genome[0:location+cut_position-del_left] # genome to left of sequence
-        right_genome = self.current_genome[location+cut_position+del_right:] # to right of sequence
+        left_genome = self.current_genome[0:location+cut_position-del_left]  # genome to left of sequence
+        right_genome = self.current_genome[location+cut_position+del_right:]  # to right of sequence
 
         self.current_genome = left_genome + insert_nt + right_genome
         location = self.find_pam(location)  # fixing in case of damaged PAM
@@ -153,10 +155,9 @@ class Genome(object):
         # expands to left and right looking for nearest working PAM
         while self.current_genome[location+shift: location+shift+2] != "gg" and self.current_genome[location-shift: location-shift+2] != "gg":
             shift += 1
-        # if nearest PAM is on left
-        if self.current_genome[location-shift: location-shift+2] == "gg":
-            location -= shift # shift location to the left
-        else: # if nearest PAM is on right
-            location += shift # shift location to the right
+        if self.current_genome[location-shift: location-shift+2] == "gg":  # if nearest PAM is on left
+            location -= shift  # shift location to the left
+        else:  # if nearest PAM is on right
+            location += shift  # shift location to the right
 
         return location
