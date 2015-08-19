@@ -2,13 +2,12 @@ from numpy import prod
 from random import randint
 
 
-DNA_ALPHABET = "acgt"
 # constants which may be used in other scripts/the simulation itself
+DNA_ALPHABET = "acgt"
 # vector of mismatch values with index relative to distance from PAM (Hsu et al. from MIT)
 mismatch_decay_values = [0.000, 0.000, 0.014, 0.000, 0.000, 0.395, 0.317, 0.000, 0.389, 0.079,
                          0.445, 0.508, 0.613, 0.841, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583]
-# average time for SpyCas9 cutting in perfect match case
-average_cut_time = 60.0
+average_cut_time = 60.0  # average time for SpyCas9 cutting in perfect match case
 
 
 def prob_concentration(concentration, num_mismatches):
@@ -63,15 +62,15 @@ def nt_rand(insertion_size):
     """Takes insertion size and produces random insertion string
     """
     insertion = ""
-    for x in range(insertion_size):
+    for x in xrange(insertion_size):
         insertion += DNA_ALPHABET[randint(0, 3)]
-
     return insertion
 
 
 def indel():
+    """Returns highly random indel sizes
+    """
     del_left = randint(0, 4)
     del_right = randint(0, 4)
     insert = randint(0, 8)
-
     return [del_left, del_right, insert]
