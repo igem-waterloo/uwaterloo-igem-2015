@@ -14,15 +14,17 @@ from probabilistic import prob_cut, nt_rand, indel
 # - if repair is big deletion, what do we fill in at the end of the target? cant be random, must come from sequence data
 # - code for deletions
 # - see specific TODOs / 'to be implemented' throughout the code
+# - properly update target.current_start and domain genome repair method
 
 
 class Target(object):
 
-    def __init__(self, label, grna, sequence, start, complex_concentration, direction, dt, domain):
+    def __init__(self, label, grna, sequence, start, complex_concentration, direction, domain):
         self.label = label  # string
         self.grna = grna  # string
         self.sequence = sequence  # string, include PAM, should be ~ 23 chars, maybe need buffer on opposite end
-        self.start = start  # int
+        self.original_start = start  # int, shouldn't change
+        self.current_start = start  # int, changes with indels  TODO actually utilize
         self.total_cuts = 0  # int
         self.cut_position = None  # number of nt from PAM site, starting at 0
         self.repaired = True  # defined by open/closed
@@ -32,8 +34,8 @@ class Target(object):
         assert direction in [1, -1]
         self.direction = direction  # 1 or -1, direction (sense) target is pointing in the genome
         self.domain = domain
-        domain.add_target(self, start)
-        self.cut_probability = self.compute_cut_probability(dt)
+        domain.add_target(self)
+        self.cut_probability = None
 
     def is_repaired(self):
         return self.repaired
@@ -44,8 +46,9 @@ class Target(object):
     def get_shift(self):
         return self.shift
 
-    def compute_cut_probability(self, dt):  # TODO fix time dependence scope
-        return prob_cut(self.grna[3:], self.sequence[3:], self.complex_concentration, dt)
+    def compute_and_assign_cut_probability(self, dt):
+        self.cut_probability = prob_cut(self.grna[3:], self.sequence[3:], self.complex_concentration, dt)
+        return self.cut_probability
 
     def cut(self):
         self.total_cuts += 1
@@ -61,7 +64,7 @@ class Target(object):
             self.targetable = False
             self.cut_probability = 0.0
         else:
-            self.cut_probability = self.compute_cut_probability(dt)
+            self.compute_and_assign_cut_probability(dt)
 
         # update state properties
         self.cut_position = None
@@ -87,15 +90,14 @@ class Domain(object):
         self.genome = genome
         genome.add_domain(self)
     
-    def add_target(self, target, location):
+    def add_target(self, target):
         assert type(target) is Target
         assert target.domain is self
-        assert type(location) is int
-        self.targets[target.label] = [target, location]
+        self.targets[target.label] = target
 
     def update_functionality(self):
         if self.domain_type == "orf":
-            if not self.promoter.is_functional() or sum(target.get_shift() for target in self.targets) % 3 != 0:
+            if (not self.promoter.is_functional()) or (sum(target.get_shift() for target in self.targets.values()) % 3 != 0):
                 self.functional = False
             else:
                 self.functional = True
@@ -104,21 +106,22 @@ class Domain(object):
         else:  # TODO how to define functional NCR
             self.functional = True
 
-    def genome_repair(self, label, cut_position):
+    def genome_repair(self, label, cut_position):  # TODO FIX this method, broke it with latest PR
         location = self.target_location(label)
         location, net_indel_size, sequence = self.genome.repair_target(location, cut_position)
         self.set_location(label, location)
         # shift location of all targets to the right by net_indel_size
-        for label in self.targets:
-            if self.target_location(label) > location:
+        for target_label in self.targets.keys():
+            if self.targets[label].current_start > location:
                 self.set_location(label, self.target_location(label)+net_indel_size)
 
         return [net_indel_size, sequence]
 
-    def target_location(self, label):
-        return self.targets[label][1]
+    def target_location(self, target_label):
+        target = self.targets[target_label]
+        return target.current_start
 
-    def set_location(self, label, location):
+    def set_location(self, label, location):  # TODO FIX this method, broke it with latest PR
         self.targets[label][1] = location
 
 
@@ -168,3 +171,40 @@ class Genome(object):
         - structure is {domain_label: dict_of_domain_targets, ...}
         """
         return {key: self.domains[key].targets for key in self.domains.keys()}
+
+    def get_open_targets_from_genome(self):
+        """Get list of unrepaired/open targets
+        Notes:
+        - list with format [(key_domain, key_target), ...]
+        """
+        open_targets = []
+        target_dict = self.get_targets_from_genome()
+        for key_domain in target_dict.keys():
+            for key_target in target_dict[key_domain].keys():
+                if not target_dict[key_domain][key_target].repaired:
+                    open_targets.append((key_domain, key_target))
+        return open_targets
+
+    def get_closed_targets_from_genome(self):
+        """Get list of repaired/closed targets
+        Notes:
+        - list with format [(key_domain, key_target), ...]
+        """
+        closed_targets = []
+        target_dict = self.get_targets_from_genome()
+        for key_domain in target_dict.keys():
+            for key_target in target_dict[key_domain].keys():
+                if target_dict[key_domain][key_target].repaired:
+                    closed_targets.append((key_domain, key_target))
+        return closed_targets
+
+    def initialize_target_cut_probabilities(self, dt):
+        """Fill in all the target cut probabilities based on dt
+        Notes:
+        - target cut probability initializes to None because the class doesn't naturally have access to dt
+        """
+        target_dict = self.get_targets_from_genome()
+        for key_domain in target_dict.keys():
+            for key_target in target_dict[key_domain].keys():
+                target = target_dict[key_domain][key_target]
+                target.compute_and_assign_cut_probability(dt)
