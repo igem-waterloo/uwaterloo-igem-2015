@@ -205,7 +205,7 @@ nav.navbar-lower {
     }
 }
 
-nav.hide-lower {
+div.hide-lower {
   opacity: 0;
   display: none;
 }
