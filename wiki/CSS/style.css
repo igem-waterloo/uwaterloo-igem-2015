@@ -254,6 +254,9 @@ footer .footer-links a {
   color: inherit;
   padding-right: 18px;
 }
+footer .footer-links a.last {
+  padding-right: 0px;
+}
 /* If you don't want the footer to be responsive, remove these media queries */
 
 @media (max-width: 600px) {
