@@ -195,6 +195,7 @@ footer .footer-links a {
   display:inline-block;
   text-decoration: none;
   color: inherit;
+  padding-right: 18px;
 }
 /* If you don't want the footer to be responsive, remove these media queries */
 
