@@ -8,12 +8,12 @@ String.prototype.capitalize = function() {
 // detects scroll for top resizing and lower nav show
 $(window).scroll(function() {
   if ($(document).scrollTop() > 50) {
-    $('.navbar-fixed-top').addClass('shrink');
+    $('.main-nav').addClass('shrink');
     if ($('#inner-page-links').children().length > 0) {
       $('.navbar-lower').removeClass('hide-lower')
     }
   } else {
-    $('.navbar-fixed-top').removeClass('shrink');
+    $('.main-nav').removeClass('shrink');
     $('.navbar-lower').addClass('hide-lower')
   }
 });

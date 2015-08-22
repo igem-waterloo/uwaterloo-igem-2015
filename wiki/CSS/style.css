@@ -166,6 +166,10 @@ nav img {
   height: 100%;
 }
 
+nav.main-nav {
+  z-index: 2000;
+}
+
 nav.shrink a.navbar-brand {
   height: 60px !important;
 }
@@ -188,7 +192,6 @@ nav.navbar-lower {
   padding-right: 0px;
   
   opacity: 0.9;
-  transition: opacity .5s ease-in-out;
 }
 
 nav.navbar-lower div div {
