@@ -14,9 +14,12 @@ html {
 }
 
 h1, h2, h3, h4, h5, h6, p, a {
-    color: #565656;
+    color: #373B40;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     border-bottom: none;
+}
+h2 {
+    border-bottom: 1px solid #373B40;
 }
 
 /*---Changes to Default Wiki----------------------------------------------------------------------*/
@@ -195,7 +198,6 @@ div.inner-nav-box {
 nav.navbar-lower {
   padding-left: 0px;
   padding-right: 0px;
-  
   opacity: 0.9;
   transition: opacity .5s ease-in-out;
     text-align: center;
