@@ -137,6 +137,11 @@ div#top_menu_inside {
     margin-top: 15px;
     padding: 15px;
     padding-top: 5px;
+
+    -webkit-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+       -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+        -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+            box-shadow: 0 0 5px 0 rgba(66,66,66,1);
 }
 
 
@@ -297,7 +302,7 @@ footer .footer-links a.last {
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
-  background: rgba(232, 98, 86, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+  background: rgb(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
   visibility: hidden;
   opacity: 0;
   -webkit-transition: opacity .3s 0s, visibility 0s .3s;
@@ -319,7 +324,7 @@ footer .footer-links a.last {
   opacity: .5;
 }
 .no-touch .cd-top:hover {
-  background-color: #e86256;
+  background-color: rgb(35,181,147);
   opacity: 1;
 }
 
@@ -416,4 +421,10 @@ ul.sponsors li a {
 }
 .glyphicon {
     font-size: medium;
+}
+
+
+/*---Attributions---------------------------------------------------------------------------------*/
+dl.attributions dt {
+    font-weight: 100;
 }
