@@ -158,7 +158,9 @@ header > .navbar-nav {
 nav {
   margin-top: 16px !important;
   transition: all 1s !important;
-  -webkit-transition: top 0.5s; /* Safari */
+  -webkit-transition: all 1s; /* Safari */
+  -moz-transition: all 1s;
+  -o-transition: all 1s;
 }
 
 nav img {
