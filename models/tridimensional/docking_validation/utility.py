@@ -1,6 +1,7 @@
 import os
 
 import config
+from constants import DNA_ALPHABET
 
 
 def mutant_variants_dir_by_idx(mutant_idx):
@@ -51,3 +52,20 @@ def mutant_template_pdb_path_by_idx(mutant_idx):
                                             mutant_template_by_idx(mutant_idx))
     assert os.path.exists(mutant_template_pdb_path)
     return mutant_template_pdb_path
+
+
+def pam_string_from_int(int_pam, length_pam):
+    """Given an integer and the length of the pam sequence, return a unique pam
+    Args:
+        int_pam: integer between 0 and 4 ** (length_pam)
+        length_pam: length of the pam sequence (either 3 or 4 currently supported)
+    Returns:
+        unique 3 or 4 long string of nucleotide characters
+    """
+    assert 0 <= int_pam < 4 ** length_pam
+    if length_pam == 3:
+        return DNA_ALPHABET[int_pam / 16] + DNA_ALPHABET[int_pam / 4 % 4] + DNA_ALPHABET[int_pam % 4]
+    elif length_pam == 4:
+        return DNA_ALPHABET[int_pam / 64] + DNA_ALPHABET[int_pam / 16 % 4] + DNA_ALPHABET[int_pam / 4 % 4] + DNA_ALPHABET[int_pam % 4]
+    else:
+        raise Exception('Unsupported pam length -- must be 3 or 4 long')

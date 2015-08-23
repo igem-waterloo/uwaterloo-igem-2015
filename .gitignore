@@ -1,6 +1,6 @@
 # Do not track MATLAB .asv files or compiled Python files
 *.asv
-*.pyc 
+*.pyc
 # Do not track PyCharm project settings
 .idea/
 # Specific exclusions
