@@ -7,7 +7,7 @@ from time import time
 from rosetta import *
 
 from constants import PAM_TOOLS, SCOREFILE_LINES
-from results_csv import results_to_csv
+from csv_results import results_to_csv
 from utility import pam_string_from_int
 
 
