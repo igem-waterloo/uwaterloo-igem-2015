@@ -19,7 +19,7 @@ from probabilistic import prob_cut, nt_rand, indel
 
 class Target(object):
 
-    def __init__(self, label, grna, sequence, start, complex_concentration, direction, domain):
+    def __init__(self, label, grna, sequence, start, complex_concentration, sense, direction, domain):
         self.label = label  # string
         self.grna = grna  # string
         self.sequence = sequence  # string, include PAM, should be ~ 23 chars, maybe need buffer on opposite end
@@ -31,8 +31,10 @@ class Target(object):
         self.targetable = True  # defined by targetable or not (PAM broken or indel size > 5)
         self.complex_concentration = complex_concentration  # conc of gRNA-cas9 complex inside nucleus
         self.shift = 0  # defined by sum of net indel sizes, used to compute frameshift if orf region
+        assert sense in [1, -1]
         assert direction in [1, -1]
-        self.direction = direction  # 1 or -1, direction (sense) target is pointing in the genome
+        self.sense = sense  # 1 or -1, referring to top (explicit) or bottom (implicit) dna strand
+        self.direction = direction  # 1 or -1, 1 means ggn occurs before target (numerically)
         self.domain = domain
         domain.add_target(self)
         self.cut_probability = None
