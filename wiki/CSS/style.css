@@ -137,7 +137,7 @@ div#top_menu_inside {
     margin-top: 15px;
     padding: 15px;
     padding-top: 5px;
-
+    
     -webkit-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
        -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
         -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
@@ -206,6 +206,7 @@ nav.navbar-lower {
   margin-top: 76px !important;
   padding-left: 0px;
   padding-right: 0px;
+  
   opacity: 0.9;
 }
 
@@ -309,7 +310,7 @@ footer .footer-links a {
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
-  background: rgb(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+  background: rgba(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
   visibility: hidden;
   opacity: 0;
   -webkit-transition: opacity .3s 0s, visibility 0s .3s;
@@ -331,7 +332,7 @@ footer .footer-links a {
   opacity: .5;
 }
 .no-touch .cd-top:hover {
-  background-color: rgb(35,181,147);
+  background-color: rgb(35, 181, 147);
   opacity: 1;
 }
 
@@ -390,6 +391,9 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 }
 .accordion-inner {
     margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 .accordion-inner dl dt {
     min-width: 150px;
