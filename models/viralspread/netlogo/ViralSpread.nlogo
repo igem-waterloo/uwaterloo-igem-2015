@@ -13,6 +13,7 @@ globals
 [
   num-infected   ;; keep track of number infected
   num-viruses    ;; keep track of the viral particles
+  mod-num-viruses  ;; keep track of the modified viral particles
   lysed-cells    ;; keep track of apoptotic cells
 ]
 
@@ -30,7 +31,6 @@ cells-own
   mod-pregenomes    ;; as above with delta-P6
   mod-viral-count   ;; as above with delta-P6
   sar-level         ;; amount of "salicylic acid" present in the cell
-  apoptosis-timer   ;; number of ticks since this cell was infected
 ]
 
 
@@ -173,30 +173,43 @@ end
 
 
 
+;;  ----- CELL PROCEDURES -----
+
 ;; Cell Procedures
 to become-infected
   set infected? true
   set resistant? false
   set color red
   ;; determine number of viruses entering the susceptible cell
-  let new-viruses ( sum [viral-count] of link-neighbors )
-  set viral-count new-viruses
-  set num-viruses num-viruses + new-viruses
+  ;let new-viruses ( sum [viral-count] of link-neighbors )
+  ;set viral-count 0 ; new-viruses
+  set copy-number copy-number + 1
+  set num-viruses num-viruses + 1
+end
+
+to mod-become-infected
+  set infected? true
+  set resistant? false
+  set color red
+  set mod-copy-number copy-number + 1
+  set mod-num-viruses mod-num-viruses + 1
 end
 
 to become-susceptible
   set infected? false
   set resistant? false
   set color green
+  set copy-number 0
+  set pregenomes 0
+  set protein-six 0
   set viral-count 0
+  set mod-copy-number 0
+  set mod-pregenomes 0
+  set mod-viral-count 0
 end
 
-to become-resistant
-  set infected? false
-  set resistant? true
-  set color blue
-  ask my-links [ set color blue - 2 ] ;; make neighbours resistant as well
-end
+
+;; ---- SAR Molecule Spread & Apoptosis ----
 
 ;; Increase levels of signalling molecule based on neighbours' levels
 ;; Assuming the infected cells are unable to produce sar signal molecules, but 
@@ -239,10 +252,9 @@ end
 ;; Determine whether the cell can destroy itself to help prevent viral spread
 to do-apoptosis-checks
   ;; if the cell is infected and can still lyse, check 
-  ask cells with [infected? and apoptosis-timer > 0] 
+  ask cells with [infected?] 
   [
-    set apoptosis-timer apoptosis-timer - 1 
-    if sar-level >= lysis-threshold
+    if (sar-level >= lysis-threshold)
       [ 
         set color violet
         die 
@@ -252,18 +264,54 @@ to do-apoptosis-checks
 end
 
 
-;; Virus Procedures
+
+;;  ----- VIRUS PROCEDURES -----
+
+;; Procedure governing spread to neighbouring cells
 to spread-virus
   ask cells with [infected?]
     [ 
-      ask link-neighbors with [not resistant?]
-        [ 
-          if (random-float 100 < viral-spread-chance) and (not infected?)
+      if (viral-count + mod-viral-count > 500)
+        [
+          ask link-neighbors with [not resistant? and not infected?]
             [ 
-              become-infected                 ;; If chance has it, infect the cell
-              set num-infected num-infected + 1 ;; increase the count for infected cells
+              if (random-float 100 < viral-spread-chance)
+                [ 
+                  become-infected                   ;; If chance has it, infect the cell
+                  set num-infected num-infected + 1 ;; increase the count for infected cells
+                ] 
             ] 
-        ] 
+        ]
+    ]
+end
+
+to assemble-virus
+  ask cells with [infected?]
+    [
+      ;; 35S RNA formation
+      if (viral-count + mod-viral-count < 500)
+        [
+          set pregenomes pregenomes + 0.01 * copy-number
+          ;set mod-viral-count mod-viral-count + mod-copy-number
+        ]
+      ;; P6 production
+      if (protein-six < 1000)
+        [
+          set protein-six protein-six + 0.01 * copy-number
+        ]
+      ;; Viral assembly
+      if (viral-count + mod-viral-count < 500)
+        [
+          set viral-count viral-count + 0.01 * protein-six * pregenomes
+          ;set mod-viral-count mod-viral-count + mod-copy-number
+        ]
+      ;; Reentry in nucleus
+      if (copy-number + mod-copy-number < 100)
+        [
+          set copy-number copy-number + 0.01 * viral-count
+          ;set mod-copy-number 1.05 * mod-copy-number
+        ]
+      
     ]
 end
 @#$#@#$#@
@@ -400,7 +448,7 @@ viral-spread-chance
 viral-spread-chance
 1
 20
-2.5
+9
 0.5
 1
 NIL
@@ -448,7 +496,7 @@ true
 false
 "set-plot-x-range 0 num-ticks\nset-plot-y-range 0 num-cells" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot num-viruses"
+"default" 1.0 0 -16777216 true "" "plot (num-viruses + mod-num-viruses)"
 
 SLIDER
 22
@@ -473,8 +521,8 @@ SLIDER
 lysis-threshold
 lysis-threshold
 1
-100
-78
+10000
+10000
 1
 1
 NIL
@@ -494,7 +542,7 @@ ticks
 10.0
 true
 false
-"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 num-cells" ""
+"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 10" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot lysed-cells"
 
@@ -507,7 +555,7 @@ resistance-threshold
 resistance-threshold
 1
 100
-39
+89
 1
 1
 NIL
