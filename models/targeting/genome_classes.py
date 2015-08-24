@@ -22,11 +22,11 @@ class Target(object):
     def __init__(self, label, grna, sequence, start, complex_concentration, sense, direction, domain):
         self.label = label  # string
         self.grna = grna  # string
-        self.sequence = sequence  # string, include PAM, should be ~ 23 chars, maybe need buffer on opposite end
-        self.original_start = start  # int, shouldn't change
-        self.current_start = start  # int, changes with indels  TODO actually utilize
-        self.total_cuts = 0  # int
-        self.cut_position = None  # number of nt from PAM site, starting at 0
+        self.sequence = sequence  # string, exclude PAM, should be ~ 20 chars
+        self.original_start = start  # int, location of first target nucleotide adjacent to PAM, shouldn't change
+        self.current_start = start  # int, location of first target nucleotide adjacent to PAM, changes with indels
+        self.total_cuts = 0  # int, total time this target has been cut
+        self.cut_position = None  # absolute genome location of cut
         self.repaired = True  # defined by open/closed
         self.targetable = True  # defined by targetable or not (PAM broken or indel size > 5)
         self.complex_concentration = complex_concentration  # conc of gRNA-cas9 complex inside nucleus
@@ -49,12 +49,12 @@ class Target(object):
         return self.shift
 
     def compute_and_assign_cut_probability(self, dt):
-        self.cut_probability = prob_cut(self.grna[3:], self.sequence[3:], self.complex_concentration, dt)
+        self.cut_probability = prob_cut(self.grna, self.sequence, self.complex_concentration, dt)
         return self.cut_probability
 
     def cut(self):
         self.total_cuts += 1
-        self.cut_position = 6  # 0-indexed posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
+        self.cut_position = self.current_start + self.direction * 3  # posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
         self.repaired = False
 
     def repair(self, dt):
@@ -62,7 +62,7 @@ class Target(object):
         net_indel_size, self.sequence = self.domain.genome_repair(self.label, self.cut_position)
 
         # assess targetability and cut probability
-        if net_indel_size > 5 or self.sequence[0:2] != "gg":  # big insertion or broken PAM
+        if net_indel_size > 5:  # big insertion
             self.targetable = False
             self.cut_probability = 0.0
         else:
@@ -115,7 +115,7 @@ class Domain(object):
         # shift location of all targets to the right by net_indel_size
         for target_label in self.targets.keys():
             if self.targets[label].current_start > location:
-                self.set_location(label, self.target_location(label)+net_indel_size)
+                self.set_location(label, self.target_location(label) + net_indel_size)
 
         return [net_indel_size, sequence]
 
@@ -141,18 +141,21 @@ class Genome(object):
         assert type(domain) is Domain
         self.domains[domain.label] = domain
 
-    def repair_target(self, location, cut_position):
+    def repair_target(self, location, cut_position, direction, sequence):  # TODO pass target instead, clean this method
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
         # TODO: make indel() actually good
-        del_left, del_right, insert = indel()  # e.g. 0, 0, 2
+        if direction == 1:
+            del_left, del_right, insert = indel()  # e.g. 0, 0, 2
+        else:
+            del_right, del_left, insert = indel()  # e.g. 0, 0, 2
         insert_nt = nt_rand(insert)  # fill in random sequence
         net_indel_size = insert - del_left - del_right
-        left_genome = self.current_genome[0:location+cut_position-del_left]  # genome to left of sequence
-        right_genome = self.current_genome[location+cut_position+del_right:]  # to right of sequence
+        left_genome = self.current_genome[0: cut_position - del_left]  # genome to left of sequence
+        right_genome = self.current_genome[cut_position + del_right:]  # to right of sequence
 
         self.current_genome = left_genome + insert_nt + right_genome
         location = self.find_pam(location)  # fixing in case of damaged PAM
-        sequence = self.current_genome[location: location+23]
+        sequence = self.current_genome[location: location+len(sequence)]
         return [location, net_indel_size, sequence]
 
     def find_pam(self, location):
@@ -164,7 +167,6 @@ class Genome(object):
             location -= shift  # shift location to the left
         else:  # if nearest PAM is on right
             location += shift  # shift location to the right
-
         return location
 
     def get_targets_from_genome(self):
