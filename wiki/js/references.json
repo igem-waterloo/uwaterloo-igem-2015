@@ -1,0 +1,7 @@
+// JSON for all citations, key is first author's last name + year, value is text that should appear in the citation
+var references = {
+"Bak2013" : "Bak, A. et al., (2013). <em>Virus Factories of Cauliflower Mosaic Virus Are Virion Reservoirs That Engage Actively in Vector Transmission</em>. J Virol (Vol 87, p. 12207 - 12215). DOI: 10.1128/JVI.01883-13.",
+"Haas2002" : "Haas, M., Bureau, M., Geldreich, A., Yot, P., Keller, M. (2002). <em>Cauliflower Mosaic Virus: still in the news.</em> Mol Plant Pathol (Vol 3, p. 419-429). DOI: 10.1046/j.1364-3703.2002.00136.x.",
+"Khelifa2010" : "Khelifa, M., Massé, D., Blanc, S. and Drucker, M. (2010). <em>Evaluation of the minimal replication time of Cauliflower mosaic virus in different hosts.</em> Virology 296, 238-245.",
+"Laird2013" : "Laird et al. (2013). <em>Identification of the domains of cauliflower mosaic virus protein P6 responsible for suppression of RNA silencing and salicylic acid signalling.</em> J Gen Virol (Vol. 94, p. 2777-2789). DOI: 10.1099/vir.0.057729-0"
+}
