@@ -10,6 +10,7 @@ def init_genome_camv(pseudo_targets):
                                                      'target_sequence': ,
                                                      'target_start_idx': ,
                                                      'complex_concentration': ,
+                                                     'sense': ,
                                                      'direction': ,
                                                      'domain_label': }
     Returns:
@@ -53,12 +54,13 @@ def init_genome_camv(pseudo_targets):
                                 pseudo_target['target_sequence'],
                                 pseudo_target['target_start_idx'],
                                 pseudo_target['complex_concentration'],
+                                pseudo_target['sense'],
                                 pseudo_target['direction'],
                                 domain)
                 domain.add_target(target)
 
     """ isaac's testing block
-    target_P6_1 = Target("P6_1", "ggagaaagaaaagatatttaaaa", "ggagaaagaaaagatatttaaaa", 521, complex_concentration, 1, gene_P6)
+    target_P6_1 = Target("P6_1", "ggagaaagaaaagatatttaaaa", "ggagaaagaaaagatatttaaaa", 521, complex_concentration, 1, 1, gene_P6)
     print P6_1.grna
     print P6.target_location("P6_1")
     print P6_1.cut_probability
@@ -71,7 +73,6 @@ def init_genome_camv(pseudo_targets):
     print P6_1.cut_probability
     print P6_1.shift
     """
-
     return genome_camv
 
 
@@ -80,5 +81,6 @@ def init_targets_single_P6(complex_concentration):
              'target_sequence': "ggagaaagaaaagatatttaaaa",
              'target_start_idx': 521,
              'complex_concentration': complex_concentration,
+             'sense': 1,
              'direction': 1,
              'domain_label': "gene_P6"}]

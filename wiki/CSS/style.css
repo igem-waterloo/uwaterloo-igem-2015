@@ -18,8 +18,32 @@ h1, h2, h3, h4, h5, h6, p, a {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     border-bottom: none;
 }
-h2 {
+#mainContainer h1 {
+    font-size: 2em;
+}
+#mainContainer h2 {
+    font-size: 1.5em;
     border-bottom: 1px solid #373B40;
+}
+#mainContainer h3 {
+    font-size: 1.2em;
+}
+#mainContainer h4 {
+    font-size: 1em;
+}
+#mainContainer h5 {
+    font-size: 0.7em;
+}
+#mainContainer h6 {
+    font-size: 0.6em;
+}
+#mainContainer p {
+    font-size: 0.85em;
+}
+#mainContainer a {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #23b593;
 }
 
 /*---Changes to Default Wiki----------------------------------------------------------------------*/
@@ -55,16 +79,22 @@ div#top_menu_inside {
 }
 
 
+/*--- Bootstrap Modifications---------------------------------------------------------------------*/
+@media (min-width: 768px) and (max-width: 1000px) {
+   .collapse {
+       display: none !important;
+   }
+}
 /*---Div Properties-------------------------------------------------------------------------------*/
 /* Creates a container that will wrap all of the content inside your wiki pages. */
 #mainContainer {
   position: relative;
   width: 965px;
   margin: 0 auto;
-  margin-top: 150px; /*-- matches fixed header height --*/
+  margin-top: 50px;
+  padding: 0 5px;
   overflow: hidden;
   background-color: #fff;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Creates the container for the content */
@@ -73,18 +103,6 @@ div#top_menu_inside {
   width: 100%;
   float: left;
   background-color: #fff;
-}
-
-/*Change the styling of text for everything inside main container*/
-#mainContainer p {
-    font-size: 0.8em;
-    color: #000000;
-}
-
-/*Style of the links - links are different inside the menu */
-#contentContainer a {
-    font-weight: bold;
-    color: #23b593;
 }
 
 /* Styling links on hover- links are different inside the menu */
@@ -96,7 +114,7 @@ div#top_menu_inside {
 #contentContainer table {
     border: 1px solid #565656;
     border-collapse: collapse;
-    width: 90%
+    width: 90%;
     margin: auto;
     margin-bottom: 15px;
     margin-top: 15px;
@@ -162,7 +180,6 @@ header > .navbar-nav {
 }
 
 /* Styling for upper nav */
-
 nav {
   margin-top: 16px !important;
   transition: all 1s !important;
@@ -171,6 +188,10 @@ nav {
   -o-transition: all 1s;
 }
 
+nav a {
+    font-size: 1.2em;
+    padding-right: 1em;
+}
 nav img {
   transition: all 1s !important;
   height: 100%;
@@ -206,6 +227,7 @@ nav.navbar-lower {
   margin-top: 76px !important;
   padding-left: 0px;
   padding-right: 0px;
+
   opacity: 0.9;
 }
 
@@ -232,107 +254,106 @@ footer {
   bottom: 0;
   width: 100%;
   padding: 0;
-
   -webkit-box-shadow: inset 0 10px 15px -10px #424242;
      -moz-box-shadow: inset 0 10px 15px -10px #424242;
       -ms-box-shadow: inset 0 10px 15px -10px #424242;
           box-shadow: inset 0 10px 15px -10px #424242;
   background: #2a2e33;
-
-  font-size: 0.75em;
   line-height: 2em;
   color: #fff;
-
   box-sizing: border-box;
   text-align: center;
-
 }
 
 footer .footer-company-motto {
   color:  #8d9093;
-  font-size: 24px;
+  font-size: 0.9em;
   margin: 0;
 }
 
 footer .footer-company-name {
-  color:  #8f9296;
-  font-size: 14px;
+  color:  #8d9093;
+  font-size: 1.3em;
   margin: 0;
 }
 footer .footer-links {
   list-style: none;
-  color:  #ffffff;
-  padding: 35px 0 23px;
+  padding: 3em 0 2em;
   margin: 0;
 }
 
-footer .footer-links a {
+footer p.footer-links a {
   display:inline-block;
   text-decoration: none;
-  color: inherit;
+  padding-right: 1.2em;
+  color:  #ffffff;
+  font-size: 0.8em;
+}
+footer .footer-links a.last {
+    padding-right: 0;
 }
 /* If you don't want the footer to be responsive, remove these media queries */
 
-@media (max-width: 600px) {
-  footer {
-    padding: 35px;
-  }
-
-  footer .footer-company-motto {
-    font-size: 18px;
-  }
-
-  footer .footer-company-name {
-    font-size: 12px;
-  }
-
-  footer .footer-links {
-    font-size: 14px;
-    padding: 25px 0 20px;
-  }
-
-  footer .footer-links a {
-    line-height: 1.8;
-  }
+@media (max-width: 1000px) {
+    footer .footer-company-motto .footer-company-name .footer-links {
+        font-size: 1.2em;
+    }
+    footer .footer-links a {
+        padding: 25px 0 20px;
+        line-height: 1.8;
+    }
 }
 
 /*---Scroll to Top button ---------------------------*/
 .cd-top {
-  display: inline-block;
-  height: 40px;
-  width: 40px;
-  position: fixed;
-  bottom: 40px;
-  right: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  /* image replacement properties */
-  overflow: hidden;
-  text-indent: 100%;
-  white-space: nowrap;
-  background: rgb(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: opacity .3s 0s, visibility 0s .3s;
-  -moz-transition: opacity .3s 0s, visibility 0s .3s;
-  transition: opacity .3s 0s, visibility 0s .3s;
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    position: fixed;
+    bottom: 40px;
+    right: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    /* image replacement properties */
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+    background: rgba(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+    -moz-transition: opacity .3s 0s, visibility 0s .3s;
+    transition: opacity .3s 0s, visibility 0s .3s;
 }
 .cd-top.cd-is-visible, .cd-top.cd-fade-out, .no-touch .cd-top:hover {
-  -webkit-transition: opacity .3s 0s, visibility 0s 0s;
-  -moz-transition: opacity .3s 0s, visibility 0s 0s;
-  transition: opacity .3s 0s, visibility 0s 0s;
+    -webkit-transition: opacity .3s 0s, visibility 0s 0s;
+    -moz-transition: opacity .3s 0s, visibility 0s 0s;
+    transition: opacity .3s 0s, visibility 0s 0s;
 }
 .cd-top.cd-is-visible {
-  /* the button becomes visible */
-  visibility: visible;
-  opacity: 1;
+    /* the button becomes visible */
+    visibility: visible;
+    opacity: 1;
 }
 .cd-top.cd-fade-out {
-  /* if the user keeps scrolling down, the button is out of focus and becomes less visible */
-  opacity: .5;
+    /* if the user keeps scrolling down, the button is out of focus and becomes less visible */
+    opacity: .5;
 }
 .no-touch .cd-top:hover {
-  background-color: rgb(35,181,147);
-  opacity: 1;
+    background-color: rgb(35, 181, 147);
+    opacity: 1;
+}
+
+@media (min-width: 768px) and (max-width: 1000px) {
+    .cd-top {
+        height: 60px;
+        width: 60px;
+    }
+}
+@media (max-width: 768px) {
+    .cd-top {
+        height: 100px;
+        width: 100px;
+    }
 }
 
 /*---Splash images & team page --------------------------------------------------------------------*/
@@ -390,6 +411,10 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 }
 .accordion-inner {
     margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    max-width: 95%;
 }
 .accordion-inner dl dt {
     min-width: 150px;
@@ -401,7 +426,6 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 .accordion-inner dl dd {
     width: 60%;
     display: inline-block;
-    font-size: small;
     vertical-align: middle;
 }
 .accordion-inner dl dt img {

@@ -76,9 +76,9 @@ if [ -z $threads ] || [ -z $label ]  || [ -z $pdb_dir ]; then
     exit 1
 fi
 
-# parse optional arguments for dock_variants.py and results.csv.py
+# parse optional arguments for dock_variants.py and csv_results.py
 opt_dock_variants_args=""
-opt_results_csv_args=""
+opt_csv_results_args=""
 if [ ! -z $setup_foldtree ]; then
     echo "Adding '--setup_foldtree $setup_foldtree' argument to dock_variants"
     opt_dock_variants_args+=" --setup_foldtree $setup_foldtree"
@@ -94,9 +94,9 @@ if [ ! -z $pam64 ]; then
 fi
 if [ ! -z $pam_tool ]; then
     echo "Adding '--alt_tool' argument to dock_variants"
-    echo "Adding '--alt_tool' argument to results_csv"
+    echo "Adding '--alt_tool' argument to csv_results"
     opt_dock_variants_args+=" --alt_tool"
-    opt_results_csv_args=" --alt_tool"
+    opt_csv_results_args=" --alt_tool"
 fi
 
 # don't write to a directory that already exists
@@ -152,6 +152,6 @@ sleep 0.5
 
 # run CSV script
 echo "Writing to CSV"
-python $SCRIPTS/results_csv.py --results_dir $results_dir $opt_results_csv_args
+python $SCRIPTS/csv_results.py --results_dir $results_dir $opt_csv_results_args
 
 echo "Done!"
