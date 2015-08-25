@@ -122,7 +122,7 @@ class Domain(object):
         return target.current_start
 
     def set_location(self, label, location):  # TODO FIX this method, broke it with latest PR
-        self.targets[label][1] = location
+        self.targets[target_label].current_start = location
 
 
 class Genome(object):
@@ -148,7 +148,8 @@ class Genome(object):
         left_genome = self.current_genome[0:location+cut_position-del_left]  # genome to left of sequence
         right_genome = self.current_genome[location+cut_position+del_right:]  # to right of sequence
 
-        self.current_genome = left_genome + insert_nt + right_genome
+        new_genome = left_genome + insert_nt + right_genome
+        self.make_new_genome(len(left_genome), net_indel_size, new_genome)
         location = self.find_pam(location)  # fixing in case of damaged PAM
         sequence = self.current_genome[location: location+23]
         return [location, net_indel_size, sequence]
@@ -208,3 +209,26 @@ class Genome(object):
             for key_target in target_dict[key_domain].keys():
                 target = target_dict[key_domain][key_target]
                 target.compute_and_assign_cut_probability(dt)
+
+    def make_new_genome(self, indel_location, indel_size, new_genome):
+        """ Re-index all domains and targets after single indel
+        and set current_genome to new_genome
+
+        This is a bit headache inducing
+        """
+        target_dict = self.get_targets_from_genome()
+        for key_domain in target_dict.keys():
+            domain = self.domains[key_domain]
+            if domain.domain_start >= indel_location:
+                self.domains[key_domain].domain_start += indel_size
+            if domain.domain_end >= indel_location:
+                self.domains[key_domain].domain_end += indel_size
+                for key_target in target_dict[key_domain].keys():
+                    target = target_dict[key_domain][key_target]
+                    if target.current_start > indel_location:
+                        self.domains[key_domain][key_target].current_start += indel_size
+
+        self.current_genome = new_genome
+
+    def large_deletion(self, target1, target2):
+         
