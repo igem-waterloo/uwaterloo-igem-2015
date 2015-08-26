@@ -112,10 +112,11 @@ div#top_menu_inside {
     height: 10px;
 }
 
-/* highlight box for special messages */
-.highlightBox {
-    width:500px;
-    margin:auto;
+/* highlight box for special messages, prevHighlightBox for template content that needs to be removed */
+.highlightBox, .prevHighlightBox {
+    width: 500px;
+    max-width: 85%;
+    margin: auto;
     background-color: #E8E8E9;
     margin-bottom: 15px;
     margin-top: 15px;
@@ -126,6 +127,9 @@ div#top_menu_inside {
        -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
         -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
             box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+}
+.prevHighlightBox {
+    background-color: #ef9a9a;
 }
 
 
