@@ -7,7 +7,7 @@ from time import time
 from rosetta import *
 
 from constants import PAM_TOOLS, SCOREFILE_LINES
-from results_csv import results_to_csv
+from csv_results import results_to_csv
 from utility import pam_string_from_int
 
 
@@ -68,12 +68,39 @@ def dock_simple(pose, dock_partners, foldtree):
 
 def dock_complex(pose):
     """Complex docking of a pose representing a PAM / program variant
-    Returns:
+        Returns:
         list of scores in the form [fa_init, fa_final, dna_init, dna_final]
-    Notes:
-    - not implemented
-    """
-    raise Exception("Complex docking not implemented")
+        Notes:
+        - not sure about foldtrees, add it as you see fit. -k
+        """
+    #PyMOL observer assuming the initial call was already made  prior to this line.
+    AddPyMolObserver_to_energies(pose, True)
+    #  defining scoring functions (DNA + specific to structures of interests)
+    fa_score = get_fa_scorefxn()
+    dna_score = create_score_function('dna')
+    dna_score.set_weight(fa_elec, 1)
+    #  movemap minimization / fast relax
+    mm = MoveMap()
+    mm.set_bb_true_range("enter beginning region", "enter ending region")#min in this motif only
+    relax = FastRelax()
+    relax.set_scorefxn(scorefxn)
+    relax.apply(pose)
+    # defining specific complex docking protocol
+    docking = DockMCMProtocol()
+    docking.set_scorefxn(dna_score)
+    docking.set_scorefxn_pack(fa_score)
+    docking.set_partners("B_ACD")
+    # scoring pre and post docking
+    dna_init = dna_score(pose)
+    fa_init = fa_score(pose)
+    # dockng occurs here
+    docking.apply(pose)
+    # scoring post docking.
+    dna_final = dna_score(pose)
+    fa_final = fa_score(pose)
+    return [fa_init, fa_final, dna_init, dna_final]
+    #raise Exception("Complex docking not implemented")
+
 
 
 def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="B_ACD", foldtree=None,

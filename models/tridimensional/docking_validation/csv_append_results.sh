@@ -5,7 +5,7 @@
 csv_dir=$1
 if [ -z "$1" ]; then
     echo "ERROR: requires csv_dir argument"
-    echo "Example: append_results_csv.sh /results/csvs_July30"
+    echo "Example: csv_append_results.sh /results/csvs_July30"
     exit 1
 fi
 

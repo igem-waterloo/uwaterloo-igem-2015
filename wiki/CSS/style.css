@@ -2,6 +2,7 @@
 html, body {
   margin: 0 auto;
   padding: 0;
+  padding-top: 44px;
   width: 100%;
   height: 100%;
   background-color: #fff;
@@ -12,11 +13,10 @@ html {
   min-height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6, p, a {
-    color: #565656;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    border-bottom: none;
+a, a:link, a:visited {
+    color: #23b593;
 }
+
 
 /*---Changes to Default Wiki----------------------------------------------------------------------*/
 #globalWrapper, #content, #bodyContent {
@@ -55,32 +55,20 @@ div#top_menu_inside {
 /* Creates a container that will wrap all of the content inside your wiki pages. */
 #mainContainer {
   position: relative;
-  width: 965px;
+  width: 1000px;
   margin: 0 auto;
-  margin-top: 150px; /*-- matches fixed header height --*/
+  margin-top: 50px;
   overflow: hidden;
   background-color: #fff;
-  font-family: Helvetica, "Trebuchet MS", sans-serif;
 }
 
 /* Creates the container for the content */
 #contentContainer {
   padding: 0;
   width: 100%;
-  float: left;
+  max-width: 768px;
+  margin: 0 auto;
   background-color: #fff;
-}
-
-/*Change the styling of text for everything inside main container*/
-#mainContainer p {
-    font-size: 13px;
-    color: #000000;
-}
-
-/*Style of the links - links are different inside the menu */
-#contentContainer a {
-    font-weight: bold;
-    color: #23b593;
 }
 
 /* Styling links on hover- links are different inside the menu */
@@ -92,7 +80,7 @@ div#top_menu_inside {
 #contentContainer table {
     border: 1px solid #565656;
     border-collapse: collapse;
-    width: 90%
+    width: 90%;
     margin: auto;
     margin-bottom: 15px;
     margin-top: 15px;
@@ -124,15 +112,26 @@ div#top_menu_inside {
     height: 10px;
 }
 
-/* highlight box for special messages */
-.highlightBox {
-    width:500px;
-    margin:auto;
+/* highlight box for special messages, prevHighlightBox for template content that needs to be removed */
+.highlightBox, .prevHighlightBox {
+    width: 500px;
+    max-width: 85%;
+    margin: auto;
     background-color: #E8E8E9;
     margin-bottom: 15px;
     margin-top: 15px;
     padding: 15px;
     padding-top: 5px;
+
+    -webkit-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+       -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+        -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+            box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+}
+.prevHighlightBox {
+    background-color: #ef9a9a;
+    width: 100%;
 }
 
 
@@ -142,10 +141,10 @@ header {
   left: 0;
   right: 0;
   top: 16px; /*-- this matches the height of the top_menu_14 bar --*/
-
   -webkit-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
      -moz-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
       -ms-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
+       -o-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
           box-shadow: 0 0 10px 0 rgba(66,66,66,1);
 }
 
@@ -153,111 +152,193 @@ header > .navbar-nav {
   text-align: center;
 }
 
+/* Styling for upper nav */
+nav {
+    margin-top: 16px !important;
+    -webkit-transition: all 1s !important;
+       -moz-transition: all 1s !important;
+        -ms-transition: all 1s !important;
+         -o-transition: all 1s !important;
+            transition: all 1s !important;
+}
+
+nav a {
+    font-size: 1.2em;
+    padding-right: 1em;
+}
+nav img {
+    -webkit-transition: all 1s !important;
+       -moz-transition: all 1s !important;
+        -ms-transition: all 1s !important;
+         -o-transition: all 1s !important;
+            transition: all 1s !important;
+    height: 100%;
+}
+
+nav.main-nav {
+    z-index: 2000;
+}
+
+nav.shrink a.navbar-brand {
+    height: 60px !important;
+}
+
+nav.shrink {
+    min-height: 40px;
+}
+
+nav.shrink li a {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  min-height: 100% !ixmportant;
+}
+
+nav.shrink li li a {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  min-height: 100% !important;
+}
+
+/* Styling for lower nav */
+
+nav.navbar-lower {
+  margin-top: 76px !important;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  opacity: 0.9;
+}
+
+nav.navbar-lower div div {
+  text-align: center;
+}
+
+nav.navbar-lower li {
+  float: none;
+  display: inline-block;
+}
+
+nav.hide-lower {
+  opacity: 0;
+  display: none;
+}
+
+ul.inner-page-links{
+  width: 100% !important;
+  display: inline-block;
+}
+
 footer {
   bottom: 0;
   width: 100%;
   padding: 0;
-
   -webkit-box-shadow: inset 0 10px 15px -10px #424242;
      -moz-box-shadow: inset 0 10px 15px -10px #424242;
       -ms-box-shadow: inset 0 10px 15px -10px #424242;
+       -o-box-shadow: inset 0 10px 15px -10px #424242;
           box-shadow: inset 0 10px 15px -10px #424242;
   background: #2a2e33;
-
-  font-size: 0.75em;
   line-height: 2em;
   color: #fff;
-
   box-sizing: border-box;
   text-align: center;
-
 }
 
 footer .footer-company-motto {
   color:  #8d9093;
-  font-size: 24px;
+  font-size: 0.9em;
   margin: 0;
 }
 
 footer .footer-company-name {
-  color:  #8f9296;
-  font-size: 14px;
+  color:  #8d9093;
+  font-size: 1.3em;
   margin: 0;
 }
 footer .footer-links {
   list-style: none;
-  color:  #ffffff;
-  padding: 35px 0 23px;
+  padding: 3em 0 2em;
   margin: 0;
 }
 
-footer .footer-links a {
+footer p.footer-links a {
   display:inline-block;
   text-decoration: none;
-  color: inherit;
+  padding-right: 1.2em;
+  color:  #ffffff;
+  font-size: 0.8em;
 }
+
 /* If you don't want the footer to be responsive, remove these media queries */
 
-@media (max-width: 600px) {
-  footer {
-    padding: 35px;
-  }
-
-  footer .footer-company-motto {
-    font-size: 18px;
-  }
-
-  footer .footer-company-name {
-    font-size: 12px;
-  }
-
-  footer .footer-links {
-    font-size: 14px;
-    padding: 25px 0 20px;
-  }
-
-  footer .footer-links a {
-    line-height: 1.8;
-  }
+@media (max-width: 1000px) {
+    footer .footer-company-motto .footer-company-name .footer-links {
+        font-size: 1.2em;
+    }
+    footer .footer-links a {
+        padding: 25px 0 20px;
+        line-height: 1.8;
+    }
 }
 
 /*---Scroll to Top button ---------------------------*/
 .cd-top {
-  display: inline-block;
-  height: 40px;
-  width: 40px;
-  position: fixed;
-  bottom: 40px;
-  right: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  /* image replacement properties */
-  overflow: hidden;
-  text-indent: 100%;
-  white-space: nowrap;
-  background: rgba(232, 98, 86, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: opacity .3s 0s, visibility 0s .3s;
-  -moz-transition: opacity .3s 0s, visibility 0s .3s;
-  transition: opacity .3s 0s, visibility 0s .3s;
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    position: fixed;
+    bottom: 40px;
+    right: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    /* image replacement properties */
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+    background: rgba(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+       -moz-transition: opacity .3s 0s, visibility 0s .3s;
+        -ms-transition: opacity .3s 0s, visibility 0s .3s;
+         -o-transition: opacity .3s 0s, visibility 0s .3s;
+            transition: opacity .3s 0s, visibility 0s .3s;
 }
 .cd-top.cd-is-visible, .cd-top.cd-fade-out, .no-touch .cd-top:hover {
-  -webkit-transition: opacity .3s 0s, visibility 0s 0s;
-  -moz-transition: opacity .3s 0s, visibility 0s 0s;
-  transition: opacity .3s 0s, visibility 0s 0s;
+    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+       -moz-transition: opacity .3s 0s, visibility 0s .3s;
+        -ms-transition: opacity .3s 0s, visibility 0s .3s;
+         -o-transition: opacity .3s 0s, visibility 0s .3s;
+            transition: opacity .3s 0s, visibility 0s .3s;
 }
 .cd-top.cd-is-visible {
-  /* the button becomes visible */
-  visibility: visible;
-  opacity: 1;
+    /* the button becomes visible */
+    visibility: visible;
+    opacity: 1;
 }
 .cd-top.cd-fade-out {
-  /* if the user keeps scrolling down, the button is out of focus and becomes less visible */
-  opacity: .5;
+    /* if the user keeps scrolling down, the button is out of focus and becomes less visible */
+    opacity: .5;
 }
 .no-touch .cd-top:hover {
-  background-color: #e86256;
-  opacity: 1;
+    background-color: rgb(35, 181, 147);
+    opacity: 1;
+}
+
+/* tablet */
+@media only screen and (min-device-width: 768px) {
+    .cd-top {
+        height: 60px;
+        width: 60px;
+        background: rgba(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+    }
+}
+/* phone */
+@media only screen and (max-device-width: 768px) {
+    .cd-top {
+        height: 100px;
+        width: 100px;
+        background: rgba(35, 181, 147, 0.8) url(/wiki/images/b/bd/Waterloo_cd-top-arrow.png) no-repeat center 50%;
+    }
 }
 
 /*---Splash images & team page --------------------------------------------------------------------*/
@@ -315,6 +396,10 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 }
 .accordion-inner {
     margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    max-width: 95%;
 }
 .accordion-inner dl dt {
     min-width: 150px;
@@ -326,7 +411,6 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 .accordion-inner dl dd {
     width: 60%;
     display: inline-block;
-    font-size: small;
     vertical-align: middle;
 }
 .accordion-inner dl dt img {
@@ -336,6 +420,7 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
     -webkit-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
        -moz-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
         -ms-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
 
@@ -353,4 +438,10 @@ ul.sponsors li a {
 }
 .glyphicon {
     font-size: medium;
+}
+
+
+/*---Attributions---------------------------------------------------------------------------------*/
+dl.attributions dt {
+    font-weight: 100;
 }
