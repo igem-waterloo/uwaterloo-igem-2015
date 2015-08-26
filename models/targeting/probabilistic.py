@@ -8,7 +8,6 @@ DNA_ALPHABET = "acgt"
 # vector of mismatch values with index relative to distance from PAM (Hsu et al. from MIT)
 mismatch_decay_values = [0.000, 0.000, 0.014, 0.000, 0.000, 0.395, 0.317, 0.000, 0.389, 0.079,
                          0.445, 0.508, 0.613, 0.841, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583]
-<<<<<<< HEAD
 # average time for SpyCas9 cutting in perfect match case
 average_cut_time = 60.0
 # distribution of indel size from CRISPResso
@@ -20,10 +19,6 @@ indel_probs = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001,
 # distribution of insertions from CRISPResso
 insertion_sizes = range(0,9)
 insertion_probs = [0.43, 0.053, 0.01, 0.035, 0.42, 0.045, 0.005, 0.001, 0.001]
-=======
-average_cut_time = 60.0  # average time for SpyCas9 cutting in perfect match case
-
->>>>>>> 39797755dc8f30a57818855531d2e5c9e984244a
 
 def prob_concentration(concentration, num_mismatches):
     """Computes the concentration factor of the total cut probability
@@ -87,7 +82,6 @@ def nt_rand(insertion_size):
         insertion += DNA_ALPHABET[randint(0, 3)]
     return insertion
 
-<<<<<<< HEAD
 def indel():
     """
     Compute the indel characteristics for use in other functions, outputs
@@ -110,13 +104,4 @@ def indel():
     else:
         del_left = 0
         del_right = 0
-=======
-
-def indel():
-    """Returns highly random indel sizes
-    """
-    del_left = randint(0, 4)
-    del_right = randint(0, 4)
-    insert = randint(0, 8)
->>>>>>> 39797755dc8f30a57818855531d2e5c9e984244a
     return [del_left, del_right, insert]
