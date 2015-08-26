@@ -22,7 +22,7 @@ $(window).scroll(function() {
 $(document).ready(function(){
   $('.accordion-heading').addClass('link');
   $('.link').each(function(i, obj) {
-     $("#inner-page-links").append('<li><a href="#" class="scroll-link">'+obj.id.capitalize()+'</a></li>');
+     $("#inner-page-links").append('<li><a href="#" class="scroll-link">'+obj.title.capitalize()+'</a></li>');
   });
   $(".scroll-link").each(function(i, obj) {
     $(obj).click(function() {
