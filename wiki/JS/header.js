@@ -23,7 +23,6 @@ $(document).ready(function(){
         $("#inner-page-links").append('<li><a href="#" class="scroll-link">'+obj.title+'</a></li>');
         scrollLinks[obj.title] = obj.id;
     });
-    console.log(scrollLinks);
     $(".scroll-link").each(function(i, obj) {
         $(obj).click(function() {
             scrollToAnchor(scrollLinks[obj.text]);
