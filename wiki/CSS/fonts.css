@@ -1,0 +1,90 @@
+h1, h2, h3, h4, h5, h6, p, a {
+    color: #373B40;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-bottom: none;
+}
+#mainContainer h1 {
+    font-size: 2em;
+}
+#mainContainer h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #373B40;
+}
+#mainContainer h3 {
+    font-size: 1.2em;
+}
+#mainContainer h4 {
+    font-size: 1em;
+}
+#mainContainer h5 {
+    font-size: 0.7em;
+}
+#mainContainer h6 {
+    font-size: 0.6em;
+}
+#mainContainer p {
+    font-size: 0.85em;
+}
+#mainContainer a {
+    font-size: 1em;
+    font-weight: bold;
+    color: #23b593;
+}
+
+/* phones */
+@media only screen and (min-device-width: 480px) {
+    #mainContainer h1 {
+        font-size: 30em;
+    }
+    #mainContainer h2 {
+        font-size: 1.5em;
+        border-bottom: 1px solid #373B40;
+    }
+    #mainContainer h3 {
+        font-size: 1.2em;
+    }
+    #mainContainer h4 {
+        font-size: 1em;
+    }
+    #mainContainer h5 {
+        font-size: 0.7em;
+    }
+    #mainContainer h6 {
+        font-size: 0.6em;
+    }
+    #mainContainer p {
+        font-size: 0.85em;
+    }
+    #mainContainer a {
+        font-size: 1em;
+    }
+}
+
+/* tablets */
+@media only screen and (min-device-width: 768px) {
+    #mainContainer h1 {
+        font-size: 2em;
+    }
+    #mainContainer h2 {
+        font-size: 1.5em;
+        border-bottom: 1px solid #373B40;
+    }
+    #mainContainer h3 {
+        font-size: 1.2em;
+    }
+    #mainContainer h4 {
+        font-size: 1em;
+    }
+    #mainContainer h5 {
+        font-size: 0.7em;
+    }
+    #mainContainer h6 {
+        font-size: 0.6em;
+    }
+    #mainContainer p {
+        font-size: 0.85em;
+    }
+    #mainContainer a {
+        font-size: 1em;
+    }
+}
