@@ -54,12 +54,16 @@ class Target(object):
 
     def cut(self):
         self.total_cuts += 1
-        self.cut_position = self.current_start + self.direction * 3  # posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
+        self.set_cut_position()
         self.repaired = False
+
+    def set_cut_position(self):
+        # posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
+        self.cut_position = self.current_start + self.direction * 3  
 
     def repair(self, dt):
         # call Genome.target_repair through Domain
-        net_indel_size, self.sequence = self.domain.genome_repair(self.label, self.cut_position)
+        net_indel_size = self.domain.genome.repair_target(self)
 
         # assess targetability and cut probability
         if net_indel_size > 5:  # big insertion
@@ -97,6 +101,11 @@ class Domain(object):
         assert target.domain is self
         self.targets[target.label] = target
 
+    def remove_target(self, target):
+        assert type(target) is Target
+        assert target.domain is self
+        del self.targets[target.label]
+
     def update_functionality(self):
         if self.domain_type == "orf":
             if (not self.promoter.is_functional()) or (sum(target.get_shift() for target in self.targets.values()) % 3 != 0):
@@ -107,17 +116,6 @@ class Domain(object):
             self.functional = True
         else:  # TODO how to define functional NCR
             self.functional = True
-
-    def genome_repair(self, label, cut_position):  # TODO FIX this method, broke it with latest PR
-        location = self.target_location(label)
-        location, net_indel_size, sequence = self.genome.repair_target(location, cut_position)
-        self.set_location(label, location)
-        # shift location of all targets to the right by net_indel_size
-        for target_label in self.targets.keys():
-            if self.targets[label].current_start > location:
-                self.set_location(label, self.target_location(label) + net_indel_size)
-
-        return [net_indel_size, sequence]
 
     def target_location(self, target_label):
         target = self.targets[target_label]
@@ -141,6 +139,10 @@ class Genome(object):
         assert type(domain) is Domain
         self.domains[domain.label] = domain
 
+    def remove_domain(self, domain):
+        assert type(domain) is Domain
+        del self.domains[domain.label]
+
     def repair_target(self, location, cut_position, direction, sequence):  # TODO pass target instead, clean this method
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
         # TODO: make indel() actually good
@@ -155,9 +157,7 @@ class Genome(object):
 
         new_genome = left_genome + insert_nt + right_genome
         self.make_new_genome(len(left_genome), net_indel_size, new_genome)
-        location = self.find_pam(location)  # fixing in case of damaged PAM
-        sequence = self.current_genome[location: location+len(sequence)]
-        return [location, net_indel_size, sequence]
+        return net_indel_size
 
     def find_pam(self, location):
         shift = 0
@@ -215,24 +215,75 @@ class Genome(object):
                 target.compute_and_assign_cut_probability(dt)
 
     def make_new_genome(self, indel_location, indel_size, new_genome):
-        """ Re-index all domains and targets after single indel
+        """Re-index all domains and targets after single indel
         and set current_genome to new_genome
 
         This is a bit headache inducing
         """
+        deleted_domains = []
+        broken_targets = []
         target_dict = self.get_targets_from_genome()
         for key_domain in target_dict.keys():
             domain = self.domains[key_domain]
-            if domain.domain_start >= indel_location:
+            # if domain starts past indel location
+            if domain.domain_start > indel_location:
+                # re-index it
                 self.domains[key_domain].domain_start += indel_size
-            if domain.domain_end >= indel_location:
+                # if this pulls start past indel location
+                if self.domains[key_domain].domain_start < indel_location:
+                    # set it to indel location
+                    self.domains[key_domain].domain_start = indel_location
+            # if domain ends past indel location
+            if domain.domain_end > indel_location:
+                # re-index it
                 self.domains[key_domain].domain_end += indel_size
-                for key_target in target_dict[key_domain].keys():
-                    target = target_dict[key_domain][key_target]
-                    if target.current_start > indel_location:
-                        self.domains[key_domain][key_target].current_start += indel_size
-
+                # if this pulls end past indel location
+                if self.domains[key_domain].domain_end < indel_location:
+                    # set it to indel location
+                    self.domains[key_domain].domain_end = indel_location
+                # if start and end are the same (both location)
+                if self.domains[key_domain].domain_start == self.domains[key_domain].domain_end:
+                    # it has been deleted
+                    deleted_domains.append(domain)
+                else:
+                    # otherwise check if it has targets to be re-indexed
+                    for key_target in target_dict[key_domain].keys():
+                        target = target_dict[key_domain][key_target]
+                        if target.current_start > indel_location:
+                            self.domains[key_domain].targets[key_target].current_start += indel_size
+                            # if the target has been damaged or deleted
+                            if self.domains[key_domain].targets[key_target].current_start < indel_location:
+                                # deal with that later
+                                broken_targets.append(self.domains[key_domain].targets[key_target])
+        # remove all deleted domains
+        for domain in deleted_domains:
+            self.remove_domain(domain)
+        # set new genome
         self.current_genome = new_genome
+        # delete or fix all broken targets
+        for target in broken_targets:
+            domain_label = target.domain.label
+            # if whole target is deleted
+            if target.current_start + 20 < location:
+                self.domains[domain_label].remove_target(target)
+            # else it is just broken
+            else:
+                # find new pam, set new location, set new sequence
+                new_start = self.find_pam(target.current_start)
+                self.domains[domain_label].targets[target.label].current_start = new_start
+                self.domains[domain_label].targets[target.label].sequence = self.current_genome[new_start:new_start+20]
 
     def large_deletion(self, target1, target2):
-         
+        """Delete section between two open targets
+        """
+        # make sure cut_positions of targets are up to date
+        target1.set_cut_position()
+        target2.set_cut_position()
+        if target1.cut_position > target2.cut_position:
+            location = target2.cut_position
+            del_size = target1.cut_position - target2.cut_position
+        else:
+            location = target1.cut_position
+            del_size = target2.cut_position - target1.cut_position
+        new_genome = self.current_genome[0:location] + self.current_genome[location+del_size:]
+        make_new_genome(location, -del_size, new_genome)
