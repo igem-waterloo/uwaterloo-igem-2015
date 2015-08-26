@@ -13,16 +13,20 @@ $(window).scroll(function() {
   }
 });
 
+var scrollLinks = {};
+
 // fills in lower nav with inner page links
 $(document).ready(function(){
     $('.accordion-heading').addClass('link');
     $('section').addClass('link');
     $('.link').each(function(i, obj) {
         $("#inner-page-links").append('<li><a href="#" class="scroll-link">'+obj.title+'</a></li>');
+        scrollLinks[obj.title] = obj.id;
     });
+    console.log(scrollLinks);
     $(".scroll-link").each(function(i, obj) {
         $(obj).click(function() {
-            scrollToAnchor(obj.text.toLowerCase());
+            scrollToAnchor(scrollLinks[obj.text]);
         });
     });
     if ($('#inner-page-links').children().length < 1) {
