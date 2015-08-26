@@ -13,6 +13,10 @@ html {
   min-height: 100%;
 }
 
+a, a:link, a:visited {
+    color: #23b593;
+}
+
 
 /*---Changes to Default Wiki----------------------------------------------------------------------*/
 #globalWrapper, #content, #bodyContent {
