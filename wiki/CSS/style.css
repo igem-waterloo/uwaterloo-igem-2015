@@ -178,21 +178,17 @@ nav img {
 nav.main-nav {
     z-index: 2000;
 }
-
 nav.shrink a.navbar-brand {
     height: 60px !important;
 }
-
 nav.shrink {
     min-height: 40px;
 }
-
 nav.shrink li a {
   padding-top: 20px !important;
   padding-bottom: 20px !important;
-  min-height: 100% !ixmportant;
+  min-height: 100% !important;
 }
-
 nav.shrink li li a {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
@@ -200,32 +196,29 @@ nav.shrink li li a {
 }
 
 /* Styling for lower nav */
-
 nav.navbar-lower {
-  margin-top: 76px !important;
-  padding-left: 0px;
-  padding-right: 0px;
-
-  opacity: 0.9;
+    margin-top: 76px !important;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 1em;
+    font-size: 0.8em;
+    text-align: center;
+    opacity: 0.9;
 }
-
-nav.navbar-lower div div {
-  text-align: center;
-}
-
 nav.navbar-lower li {
   float: none;
   display: inline-block;
 }
-
 nav.hide-lower {
   opacity: 0;
   display: none;
 }
-
-ul.inner-page-links{
+ul.inner-page-links {
   width: 100% !important;
   display: inline-block;
+}
+ul.inner-page-links a.scroll-link {
+    padding: 0.5em 1em !important;
 }
 
 footer {
