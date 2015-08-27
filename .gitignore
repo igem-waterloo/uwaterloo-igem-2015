@@ -5,3 +5,4 @@
 .idea/
 # Specific exclusions
 sgRNA_design/output.csv
+_site/*
