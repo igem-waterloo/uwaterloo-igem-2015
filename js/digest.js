@@ -1,4 +1,6 @@
 function calculator (){
+    resetTable();
+
     var samples = $('.sample').map(function(i, obj){
         return obj.value;
     });
@@ -46,6 +48,15 @@ function addColumn (sample, col) {
         data.appendChild(td);
         data.lastChild.innerHTML = col[i];
     });
+}
+
+function resetTable () {
+    var table = $('#results table'),
+        default_table = '<tr id="res_label"><th></th></tr><tr id="res_dna"><td>DNA Template</td></tr><tr id="res_enzyme"><td>Enzyme (each)</td></tr><tr id="res_buffer"><td>Buffer</td></tr><tr id="res_milliq"><td>Milli Q Water</td></tr>';
+
+    // a bit hacky, but remove the contents of the table, then add the default table back in, since we have it saved as a string
+    table.empty();
+    table.append(default_table);
 }
 
 function addSample () {
