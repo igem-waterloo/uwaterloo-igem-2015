@@ -1,0 +1,135 @@
+\documentclass[fontsize=9pt,letter]{scrartcl}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND STUFF
+%      If you're reading this, don't...just skip to the equations
+%----------------------------------------------------------------------------------------
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}
+\usepackage[margin=0.7in]{geometry}
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering}% \normalfont} % Make all sections centered, the default font and small caps
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{
+\horrule{1pt} \\[0.2cm]			% horrule puts a horizontal line
+Viral Assembly Equation List
+%\horrule{1pt} \\[0.2cm]
+}
+
+\author{Waterloo iGEM}
+\date{\today}
+
+\begin{document}
+
+\maketitle % Print the title
+\vspace{-20pt}
+
+\horrule{1pt} %\\[0.4cm]
+\vspace{-20pt}
+
+%-------------------
+
+%----------------------------------------------------------------------------------------
+%	THE LIST OF EQUATIONS STARTS HERE
+%----------------------------------------------------------------------------------------
+
+\section{Equations}
+
+% By the way, the percent sign is used for comments
+
+\begin{align}
+% ----------------------------------
+% 1. Gapped DNA
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{GAP} &= \text{(out inf pure)} + k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{GAP}) - k_g (DNA_{GAP}) \\
+%
+% ----------------------------------
+% 2. cccDNA
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{CCC} &= \alpha_c (DNA_{GAP}) - \gamma_c (DNA_{CCC}) - k_c (DNA_{CCC}) \\
+%
+% ----------------------------------
+% 3. Modified gapped DNA
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{gmod} &= \text{(out inf mod)} + k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{gmod}) + k_g (DNA_{GAP}) \\
+% ----------------------------------
+% 4. Modified cccDNA
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{cmod} &= \alpha_c (DNA_{gmod}) - \gamma_c (DNA_{cmod}) + k_c (DNA_{CCC}) \\
+% ----------------------------------
+% 5. 19S RNA
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{19S} &= \alpha_{19S} (DNA_{CCC}) - \gamma_{19S} (RNA_{19S}) \\
+%
+% ----------------------------------
+% 6. Total pure 35S RNA
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35S} &= \alpha_{35S} (DNA_{CCC}) - \gamma_{35S} (RNA_{35S}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) \\
+%
+% ----------------------------------
+% 7. Total modified 35S RNA
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35Sm} &= \alpha_{35S} (DNA_{cmod}) - \gamma_{35S} (RNA_{35Sm}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+%
+% ----------------------------------
+% 8. P1
+\frac{\mathrm{d}}{\mathrm{d} t} P_1 &= \beta_1 (RNA_{35Su}) + \beta_1 (RNA_{35Smu}) - \delta_1 P_1 \\
+%
+% ----------------------------------
+% 9. P2
+\frac{\mathrm{d}}{\mathrm{d} t} P_2 &= \beta_2 (RNA_{35Su}) + \beta_2 (RNA_{35Smu}) - \delta_2 P_2 - k_l P_2 \\
+%
+% ----------------------------------
+% 10. P3
+\frac{\mathrm{d}}{\mathrm{d} t} P_3 &= \beta_3 (RNA_{35S}) + \beta_3 (RNA_{35Sm}) - \delta_3 P_3 - k_{anchor} P_3 V_{\text{int}} \\
+%
+% ----------------------------------
+% 11. P4
+\frac{\mathrm{d}}{\mathrm{d} t} P_4 &= \beta_4 (RNA_{35S}) + \beta_4 (RNA_{35Sm}) - \delta_4 P_4 - k_{splice} P_4 \\
+%
+% ----------------------------------
+% 12. P4 subunits
+\frac{\mathrm{d}}{\mathrm{d} t} P_{4 \text{,sub}} &= k_{splice} P_4 - \delta_4 P_{4 \text{,sub}} - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+%
+% ----------------------------------
+% 13. P5
+\frac{\mathrm{d}}{\mathrm{d} t} P_5 &= \beta_5 (RNA_{35S}) + \beta_5 (RNA_{35Sm}) - \delta_5 P_5 - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+%
+% ----------------------------------
+% 14. P6
+\frac{\mathrm{d}}{\mathrm{d} t} P_6 &= \beta_6 (RNA_{19S}) - \delta_6 P_6 \\
+%
+% ----------------------------------
+% 15. Intermediate pure virions
+\frac{\mathrm{d}}{\mathrm{d} t} V_{\text{int}} &= k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - k_{anchor} P_3 V_{\text{int}} \\
+%
+% ----------------------------------
+% 16. Intermediate impure virions
+\frac{\mathrm{d}}{\mathrm{d} t} V_{int_m} &= k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) - k_{anchor} P_3 V_{int_m} \\
+%
+% ----------------------------------
+% 17. Pure virions
+\frac{\mathrm{d}}{\mathrm{d} t} V &= k_{anchor} P_3 V_{\text{int}} - k_v V - \delta_v V - v_{exit} V \\
+%
+% ----------------------------------
+% 18. Impure virions
+\frac{\mathrm{d}}{\mathrm{d} t} V_m &= k_{anchor} P_3 V_{int_m} - k_v V_m - \delta_v V_m - v_{exit} V_m
+\end{align}
+
+%----------------------------------------------------------------------------------------
+%	THE LIST OF EQUATIONS ENDS HERE
+%----------------------------------------------------------------------------------------
+
+% template:     \frac{\mathrm{d}}{\mathrm{d} t} &= \text{stuff} \\
+
+%------------------------------------------------
+
+
+\end{document}
