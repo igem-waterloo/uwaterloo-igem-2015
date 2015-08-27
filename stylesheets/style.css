@@ -1,0 +1,3 @@
+.sample {
+    font-weight: bold;
+}
