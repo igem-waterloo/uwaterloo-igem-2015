@@ -1,7 +1,9 @@
 import csv
+import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as hac
 
 from constants import CSV_HEADER
+from utility import int_from_pam_string, pam_string_from_int
 
 
 def csv_load(fullpath):
@@ -80,8 +82,10 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA'):
     """
     csv_data_as_tuples = csv_dict[stat_to_cluster]
     sorted_data = sort_csv_data(csv_data_as_tuples)
-    cluster_linkage = hac.linkage(sorted_data)
+    data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in sorted_data]  # convert pams to ints
+    cluster_linkage = hac.linkage(data_to_cluster)
     return cluster_linkage
+
 
 # ====================================================================================
 # ====================================================================================
@@ -90,5 +94,8 @@ csv_dict = csv_to_dict("Chimera.csv")
 print csv_dict
 print sort_csv_data(csv_dict['Final DNA'])
 linkage = cluster_csv_data(csv_dict)
+f = plt.figure()
+cluster_dendrogram = hac.dendrogram(linkage)
+plt.show()
 print "and the linkage...\n"
 print linkage

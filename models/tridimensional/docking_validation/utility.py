@@ -69,3 +69,18 @@ def pam_string_from_int(int_pam, length_pam):
         return DNA_ALPHABET[int_pam / 64] + DNA_ALPHABET[int_pam / 16 % 4] + DNA_ALPHABET[int_pam / 4 % 4] + DNA_ALPHABET[int_pam % 4]
     else:
         raise Exception('Unsupported pam length -- must be 3 or 4 long')
+
+
+def int_from_pam_string(pam_string):
+    """Given a pam string, return a unique int
+    Args:
+        pam_string: unique 3 or 4 long string of nucleotide characters
+    Returns:
+        unique int corresponding to the pam string
+    """
+    length_pam = len(pam_string)
+    assert 3 <= length_pam <= 4
+    pam_int = 0
+    for i in xrange(length_pam):
+        pam_int += DNA_ALPHABET.index(pam_string[i]) * (4 ** (length_pam - 1 - i))
+    return pam_int
