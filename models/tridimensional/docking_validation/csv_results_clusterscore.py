@@ -1,6 +1,8 @@
 import csv
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy.cluster.hierarchy as hac
+import scipy.spatial.distance as scidist
 
 from constants import CSV_HEADER
 from utility import int_from_pam_string, pam_string_from_int
@@ -49,24 +51,53 @@ def csv_to_dict(fullpath, keys=['Final DNA']):
             for key in keys}
 
 
-def sort_csv_data(list_of_tuples, reverse_flag=False):
+def sort_tuples_by_idx(list_of_tuples, tuple_idx=1, reverse_flag=False):
     """Sort a list of (pam, score) tuples
     Args:
         list_of_tuples: list of tuples of the format [(str, float), ... , (str, float)]
+        tuple_idx: [default: 1] tuple index which defines sorting
         reverse_flag: [default: False] if True, sort descending instead of ascending
     Returns:
         sorted data in same format
     Notes:
         - sorts by score (second tuple element) in ascending order
     """
-    return sorted(list_of_tuples, key=lambda tup: tup[1], reverse=reverse_flag)
+    return sorted(list_of_tuples, key=lambda tup: tup[tuple_idx], reverse=reverse_flag)
 
 
-def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA'):
-    """
+def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
+    """Gets a linkage object representing heirarchical cluster options defined by distance thresholds
     Args:
         csv_dict: dictionary returned from the csv_to_dict() function
         stat_to_cluster: [default: 'Final DNA'] key for csv_dict corresponding to a statistic
+    Returns:
+        linkage object
+    See documentation:
+        http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
+    """
+    csv_data_as_tuples = csv_dict[stat_to_cluster]
+    data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
+    cluster_linkage = hac.linkage(data_to_cluster)
+    return cluster_linkage
+
+
+def plot_cluster_dendrogram(cluster_linkage, length_pam):
+    """Dendrograms are representations of heirarchical clusters
+    See documentation:
+        http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
+    """
+    leaf_label_map = lambda x: pam_string_from_int(x, length_pam)
+    plt.figure()
+    hac.dendrogram(cluster_linkage, leaf_label_func=leaf_label_map, leaf_rotation=45.0, leaf_font_size=8)
+    plt.show()
+
+
+def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag=False):
+    """Clusters linkage object by applying a threshold to get a flat clustering
+    Args:
+        csv_dict: dictionary returned from the csv_to_dict() function
+        stat_to_cluster: [default: 'Final DNA'] key for csv_dict corresponding to a statistic
+        plot_dendrogram_flag: plot dendrogram if True
     Returns:
         csv data for that statistic in a clustered dictionary format (see example)
     Example:
@@ -76,26 +107,35 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA'):
          ...
          n: [(pam, score), ... , (pam, score)]
         }
-    Notes:
-        - each list is of arbitrary length
-        - n is determined by the clustering algorithm (n <= number of elements in csv data), but can be enforced
+    See documentation:
+        http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
     """
+    # prepare data and compute distances
     csv_data_as_tuples = csv_dict[stat_to_cluster]
-    sorted_data = sort_csv_data(csv_data_as_tuples)
-    data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in sorted_data]  # convert pams to ints
-    cluster_linkage = hac.linkage(data_to_cluster)
-    return cluster_linkage
+    length_pam = len(csv_data_as_tuples[0][0])
+    length_data = len(csv_data_as_tuples)
+    data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
+    pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
+    # determine cluster membership
+    linkage = get_cluster_linkage(csv_dict, stat_to_cluster=stat_to_cluster)
+    threshold = np.std(pair_dists) / 2
+    cluster_membership_array = hac.fcluster(linkage, threshold)
+    print threshold
+    print cluster_membership_array
+    # assign cluster membership
+    clustered_data = [0] * length_data
+    for i, pair in enumerate(data_to_cluster):
+        clustered_data[i] = (pam_string_from_int(pair[0], length_pam), pair[1], cluster_membership_array[i])
+    # conditionally plot dendrogram
+    if plot_dendrogram_flag:
+        plot_cluster_dendrogram(linkage, length_pam)
+    return clustered_data
 
 
 # ====================================================================================
 # ====================================================================================
 # ====================================================================================
 csv_dict = csv_to_dict("Chimera.csv")
-print csv_dict
-print sort_csv_data(csv_dict['Final DNA'])
-linkage = cluster_csv_data(csv_dict)
-f = plt.figure()
-cluster_dendrogram = hac.dendrogram(linkage)
-plt.show()
-print "and the linkage...\n"
-print linkage
+clustered_data = cluster_csv_data(csv_dict, plot_dendrogram_flag=True)
+print clustered_data
+print sort_tuples_by_idx(clustered_data, tuple_idx=2)
