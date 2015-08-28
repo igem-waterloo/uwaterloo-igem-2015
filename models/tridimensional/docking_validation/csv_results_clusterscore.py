@@ -81,18 +81,18 @@ def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
     return cluster_linkage
 
 
-def plot_cluster_dendrogram(cluster_linkage, length_pam):
+def plot_cluster_dendrogram(cluster_linkage, length_pam, threshold='default'):
     """Dendrograms are representations of heirarchical clusters
     See documentation:
         http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
     """
     leaf_label_map = lambda x: pam_string_from_int(x, length_pam)
     plt.figure()
-    hac.dendrogram(cluster_linkage, leaf_label_func=leaf_label_map, leaf_rotation=45.0, leaf_font_size=8)
+    hac.dendrogram(cluster_linkage, color_threshold=threshold, leaf_label_func=leaf_label_map, leaf_rotation=45.0, leaf_font_size=8)
     plt.show()
 
 
-def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag=False):
+def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag=True):
     """Clusters linkage object by applying a threshold to get a flat clustering
     Args:
         csv_dict: dictionary returned from the csv_to_dict() function
@@ -118,17 +118,18 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
     # determine cluster membership
     linkage = get_cluster_linkage(csv_dict, stat_to_cluster=stat_to_cluster)
-    threshold = np.std(pair_dists) / 2
-    cluster_membership_array = hac.fcluster(linkage, threshold)
+    threshold = 0.5 * np.std(pair_dists)
+    cluster_membership_array = hac.fcluster(linkage, threshold, criterion='distance')
     print threshold
     print cluster_membership_array
+    print set(cluster_membership_array)
     # assign cluster membership
     clustered_data = [0] * length_data
     for i, pair in enumerate(data_to_cluster):
         clustered_data[i] = (pam_string_from_int(pair[0], length_pam), pair[1], cluster_membership_array[i])
     # conditionally plot dendrogram
     if plot_dendrogram_flag:
-        plot_cluster_dendrogram(linkage, length_pam)
+        plot_cluster_dendrogram(linkage, length_pam, threshold=threshold)
     return clustered_data
 
 
