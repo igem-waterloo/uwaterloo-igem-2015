@@ -77,8 +77,7 @@ def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
     """
     csv_data_as_tuples = csv_dict[stat_to_cluster]
     data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
-    #cluster_linkage = hac.linkage(data_to_cluster, method='single', metric='euclidean')
-    cluster_linkage = hac.linkage(data_to_cluster, method='complete', metric='euclidean')
+    cluster_linkage = hac.linkage(data_to_cluster, method='single', metric='euclidean')
     return cluster_linkage
 
 
@@ -115,7 +114,7 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     csv_data_as_tuples = csv_dict[stat_to_cluster]
     length_pam = len(csv_data_as_tuples[0][0])
     length_data = len(csv_data_as_tuples)
-    data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
+    data_to_cluster = [[pair[1]] for pair in csv_data_as_tuples]  # ignore pams, observation order is maintained
     pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
     print pair_dists
     # determine cluster membership
@@ -127,8 +126,8 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     print set(cluster_membership_array)
     # assign cluster membership
     clustered_data = [0] * length_data
-    for i, pair in enumerate(data_to_cluster):
-        clustered_data[i] = (pam_string_from_int(pair[0], length_pam), pair[1], cluster_membership_array[i])
+    for i, pair in enumerate(csv_data_as_tuples):
+        clustered_data[i] = (pair[0], pair[1], cluster_membership_array[i])
     # conditionally plot dendrogram
     if plot_dendrogram_flag:
         plot_cluster_dendrogram(linkage, length_pam, threshold=threshold)
