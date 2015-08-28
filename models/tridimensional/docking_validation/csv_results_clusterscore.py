@@ -77,7 +77,8 @@ def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
     """
     csv_data_as_tuples = csv_dict[stat_to_cluster]
     data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
-    cluster_linkage = hac.linkage(data_to_cluster)
+    #cluster_linkage = hac.linkage(data_to_cluster, method='single', metric='euclidean')
+    cluster_linkage = hac.linkage(data_to_cluster, method='complete', metric='euclidean')
     return cluster_linkage
 
 
@@ -116,6 +117,7 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     length_data = len(csv_data_as_tuples)
     data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_tuples]  # convert pams to ints
     pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
+    print pair_dists
     # determine cluster membership
     linkage = get_cluster_linkage(csv_dict, stat_to_cluster=stat_to_cluster)
     threshold = 0.5 * np.std(pair_dists)
