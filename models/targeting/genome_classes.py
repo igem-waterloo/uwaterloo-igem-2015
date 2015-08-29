@@ -121,7 +121,7 @@ class Domain(object):
         target = self.targets[target_label]
         return target.current_start
 
-    def set_location(self, label, location):  # TODO FIX this method, broke it with latest PR
+    def set_location(self, label, location):
         self.targets[target_label].current_start = location
 
 
@@ -276,14 +276,11 @@ class Genome(object):
     def large_deletion(self, target1, target2):
         """Delete section between two open targets
         """
+        assert not (target1.repaired or target2.repaired)
         # make sure cut_positions of targets are up to date
         target1.set_cut_position()
         target2.set_cut_position()
-        if target1.cut_position > target2.cut_position:
-            location = target2.cut_position
-            del_size = target1.cut_position - target2.cut_position
-        else:
-            location = target1.cut_position
-            del_size = target2.cut_position - target1.cut_position
+        location = min(target1.cut_position, target2.cut_position)
+        del_size = abs(target1.cut_position - target2.cut_position)
         new_genome = self.current_genome[0:location] + self.current_genome[location+del_size:]
         make_new_genome(location, -del_size, new_genome)
