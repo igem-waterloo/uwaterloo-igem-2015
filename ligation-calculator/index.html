@@ -10,12 +10,13 @@
         <link rel="stylesheet" type="text/css" href="../stylesheets/stylesheet.css" media="screen">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css" media="screen">
 
-        <script type="text/javascript" src="../js/digest.js"></script>
+        <script type="text/javascript" src="../js/ligate.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     </head>
 
     <body>
         <section class="page-header">
-            <h1 class="project-name">uwaterloo-igem-2015</h1>
+            <h1 class="project-name">Ligation Calculator</h1>
             <h2 class="project-tagline">Software for the 2015 Waterloo iGEM Team</h2>
             <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015" class="btn">View on GitHub</a>
             <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/zipball/master" class="btn">Download .zip</a>
@@ -23,12 +24,63 @@
         </section>
 
         <section class="main-content">
-            <h3>
-                <a id="title" class="anchor" href="#title" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ligation Calculator
-            </h3>
-            <p>
+        <div id="samples">
+            <h3>1. Concentration of Samples (ng/&mu;L)</h3>
+            <input type="text" class="sample" value="Sample Label">
+            <input type="number" class="vconcentration" value="0">
+            <input type="number" class="iconcentration" value="0">
+            <a href="javascript:void(0);" onclick="addSample();">+</a>
+            <br>
+        </div>
 
-            </p>
+        <div id="dna">
+            <br>
+            <h3>2. Sizes of Samples (kb)</h3>
+            <input type="number" class="vsize" value="0">
+            <input type="number" class="isize" value="0">
+        </div>
+
+        <div id="enzymes">
+            <br>
+            <h3>3. Number of enzymes</h3>
+            <input type="number" class="num_enzymes" value="0">
+        </div>
+
+        <div id="volume">
+            <br>
+            <h3>4. Desired total volume (&micro;L)</h3>
+            <input type="number" class="total_volume" value="0">
+        </div>
+
+        <br><br>
+        <button type="button" onclick="calculator()">Calculate</button>
+
+        <h3>Recipes for each sample (&mu;L)</h3>
+        <p style="font-size: small;">
+            If a recipe has a negative Milli Q value, you do not have enough DNA to perform the digest with the amount of DNA you put in Step 2.
+        </p>
+        <div id="results">
+            <table>
+                <tr id="res_label">
+                    <th></th>
+                </tr>
+                <tr id="res_dna">
+                    <td>DNA Template</td>
+                </tr>
+                <tr id="res_enzyme">
+                    <td>Enzyme (each)</td>
+                </tr>
+                <tr id="res_buffer">
+                    <td>Buffer</td>
+                </tr>
+                <tr id="res_milliq">
+                    <td>Milli Q Water</td>
+                </tr>
+            </table>
+        </div>
+      </div>
+
+          </div>
 
             <footer class="site-footer">
                 <span class="site-footer-owner"><a href="https://github.com/igem-waterloo/uwaterloo-igem-2015">uwaterloo-igem-2015</a> is maintained by <a href="https://github.com/igem-waterloo">igem-waterloo</a>.</span>
