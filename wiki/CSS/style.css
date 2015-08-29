@@ -112,10 +112,11 @@ div#top_menu_inside {
     height: 10px;
 }
 
-/* highlight box for special messages */
-.highlightBox {
-    width:500px;
-    margin:auto;
+/* highlight box for special messages, prevHighlightBox for template content that needs to be removed */
+.highlightBox, .prevHighlightBox {
+    width: 500px;
+    max-width: 85%;
+    margin: auto;
     background-color: #E8E8E9;
     margin-bottom: 15px;
     margin-top: 15px;
@@ -125,7 +126,12 @@ div#top_menu_inside {
     -webkit-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
        -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
         -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
             box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+}
+.prevHighlightBox {
+    background-color: #ef9a9a;
+    width: 100%;
 }
 
 
@@ -138,6 +144,7 @@ header {
   -webkit-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
      -moz-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
       -ms-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
+       -o-box-shadow: 0 0 10px 0 rgba(66,66,66,1);
           box-shadow: 0 0 10px 0 rgba(66,66,66,1);
 }
 
@@ -147,11 +154,12 @@ header > .navbar-nav {
 
 /* Styling for upper nav */
 nav {
-  margin-top: 16px !important;
-  transition: all 1s !important;
-  -webkit-transition: all 1s; /* Safari */
-  -moz-transition: all 1s;
-  -o-transition: all 1s;
+    margin-top: 16px !important;
+    -webkit-transition: all 1s !important;
+       -moz-transition: all 1s !important;
+        -ms-transition: all 1s !important;
+         -o-transition: all 1s !important;
+            transition: all 1s !important;
 }
 
 nav a {
@@ -159,28 +167,28 @@ nav a {
     padding-right: 1em;
 }
 nav img {
-  transition: all 1s !important;
-  height: 100%;
+    -webkit-transition: all 1s !important;
+       -moz-transition: all 1s !important;
+        -ms-transition: all 1s !important;
+         -o-transition: all 1s !important;
+            transition: all 1s !important;
+    height: 100%;
 }
 
 nav.main-nav {
-  z-index: 2000;
+    z-index: 2000;
 }
-
 nav.shrink a.navbar-brand {
-  height: 60px !important;
+    height: 60px !important;
 }
-
 nav.shrink {
-  min-height: 40px;
+    min-height: 40px;
 }
-
 nav.shrink li a {
   padding-top: 20px !important;
   padding-bottom: 20px !important;
   min-height: 100% !important;
 }
-
 nav.shrink li li a {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
@@ -188,32 +196,29 @@ nav.shrink li li a {
 }
 
 /* Styling for lower nav */
-
 nav.navbar-lower {
-  margin-top: 76px !important;
-  padding-left: 0px;
-  padding-right: 0px;
-
-  opacity: 0.9;
+    margin-top: 76px !important;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 1em;
+    font-size: 0.8em;
+    text-align: center;
+    opacity: 0.9;
 }
-
-nav.navbar-lower div div {
-  text-align: center;
-}
-
 nav.navbar-lower li {
   float: none;
   display: inline-block;
 }
-
 nav.hide-lower {
   opacity: 0;
   display: none;
 }
-
-ul.inner-page-links{
+ul.inner-page-links {
   width: 100% !important;
   display: inline-block;
+}
+ul.inner-page-links a.scroll-link {
+    padding: 0.5em 1em !important;
 }
 
 footer {
@@ -223,6 +228,7 @@ footer {
   -webkit-box-shadow: inset 0 10px 15px -10px #424242;
      -moz-box-shadow: inset 0 10px 15px -10px #424242;
       -ms-box-shadow: inset 0 10px 15px -10px #424242;
+       -o-box-shadow: inset 0 10px 15px -10px #424242;
           box-shadow: inset 0 10px 15px -10px #424242;
   background: #2a2e33;
   line-height: 2em;
@@ -285,13 +291,17 @@ footer p.footer-links a {
     visibility: hidden;
     opacity: 0;
     -webkit-transition: opacity .3s 0s, visibility 0s .3s;
-    -moz-transition: opacity .3s 0s, visibility 0s .3s;
-    transition: opacity .3s 0s, visibility 0s .3s;
+       -moz-transition: opacity .3s 0s, visibility 0s .3s;
+        -ms-transition: opacity .3s 0s, visibility 0s .3s;
+         -o-transition: opacity .3s 0s, visibility 0s .3s;
+            transition: opacity .3s 0s, visibility 0s .3s;
 }
 .cd-top.cd-is-visible, .cd-top.cd-fade-out, .no-touch .cd-top:hover {
-    -webkit-transition: opacity .3s 0s, visibility 0s 0s;
-    -moz-transition: opacity .3s 0s, visibility 0s 0s;
-    transition: opacity .3s 0s, visibility 0s 0s;
+    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+       -moz-transition: opacity .3s 0s, visibility 0s .3s;
+        -ms-transition: opacity .3s 0s, visibility 0s .3s;
+         -o-transition: opacity .3s 0s, visibility 0s .3s;
+            transition: opacity .3s 0s, visibility 0s .3s;
 }
 .cd-top.cd-is-visible {
     /* the button becomes visible */
@@ -403,6 +413,7 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
     -webkit-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
        -moz-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
         -ms-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
 
