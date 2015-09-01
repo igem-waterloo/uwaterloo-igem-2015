@@ -4,10 +4,10 @@ import numpy as np
 import os
 import scipy.cluster.hierarchy as hac
 import scipy.spatial.distance as scidist
-import shutil
 
-from constants import CSV_HEADER
-from utility import int_from_pam_string, pam_string_from_int
+from csv_results import csv_header_bugfix
+from constants import CSV_HEADER, DNA_ALPHABET
+from utility import pam_string_from_int
 
 
 def csv_load(fullpath):
@@ -27,6 +27,10 @@ def csv_load(fullpath):
                 csv_header = row
             else:
                 csv_data.append(row)
+    # legacy header bug fix check (64pam run but header is for 256pam)
+    if csv_header[3] == 'PAM_4' and csv_data[0][3] not in DNA_ALPHABET:
+        csv_header.pop(3)
+        csv_header_bugfix(fullpath)
     return csv_header, csv_data
 
 
@@ -47,10 +51,12 @@ def csv_to_dict(fullpath, keys=['Final DNA']):
     csv_header, csv_data = csv_load(fullpath)
     column_index_dict = {key: csv_header.index(key) for key in keys}  # select columns for referencing data
     pam_indices = [i for i, elem in enumerate(csv_header) if 'PAM_' in elem]  # use to concatenate pam columns
-    print pam_indices
-    csv_dict = {key: {''.join([row[i] for i in pam_indices]): float(row[column_index_dict[key]])
-                      for row in csv_data}  # concatenate pam / get stat score corresponding to pam (format as float)
-                for key in keys}  # do this for all the desired statistics
+    csv_dict = {}
+    for key in keys:
+        csv_dict[key] = {}
+        for row in csv_data:
+            pam = ''.join([row[i] for i in pam_indices])  # concatenate pam
+            csv_dict[key][pam] = float(row[column_index_dict[key]])  # get pam's stat value
     csv_dict['header'] = csv_header
     return csv_dict
 
@@ -182,7 +188,7 @@ def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Fina
             writer = csv.writer(csvout)
             for i, row in enumerate(reader):
                 if i == 0:
-                    writer.writerow(row + csv_cluster_header)
+                    writer.writerow(csv_header + csv_cluster_header)
                 else:
                     pam = ''.join([row[i] for i in pam_indices])
                     cluster_data_to_append = []

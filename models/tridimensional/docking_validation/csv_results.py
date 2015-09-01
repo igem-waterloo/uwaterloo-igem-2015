@@ -1,8 +1,10 @@
 import argparse
 import csv
 import os
+import shutil
+from tempfile import NamedTemporaryFile
 
-from constants import CSV_HEADER, CSV_HEADER_64, PAM_TOOLS, SCOREFILE_LINES
+from constants import CSV_HEADER, CSV_HEADER_64, DNA_ALPHABET, PAM_TOOLS, SCOREFILE_LINES
 
 
 def get_pam_and_tool_from_filename(score_filename):
@@ -43,6 +45,33 @@ def get_score_info(score_dir, score_filename):
         assert len(file_lines) == SCOREFILE_LINES
     # format scores
     return [file_lines[i].split(" ")[-1][:-1] for i in xrange(SCOREFILE_LINES)]
+
+
+def csv_header_bugfix(fullpath):
+    assert fullpath[-4:] == '.csv'
+    with open(fullpath, 'rb') as f:
+        reader = csv.reader(f)
+        csv_data = []
+        for i, row in enumerate(reader):
+            if i == 0:
+                assert CSV_HEADER[0] == row[0]  # make sure file has header and that it matches expected header start
+                csv_header = row
+            else:
+                csv_data.append(row)
+    # legacy header bug fix check (64pam run but header is for 256pam)
+    if csv_header[3] == 'PAM_4' and csv_data[0][3] not in DNA_ALPHABET:
+        print "Warning: this csv has a bug -- columns expect 4 letter pam, data is for 3 letter pam"
+        print "Notice: fixing the file by removing 'PAM_4' from header"
+        tempfile = NamedTemporaryFile(delete=False)
+        with open(fullpath, 'rb') as csvfile, tempfile:
+            reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+            writer = csv.writer(tempfile, delimiter=',', quotechar='"')
+            for i, row in enumerate(reader):
+                if i == 0:
+                    row.pop(3)
+                writer.writerow(row)
+        shutil.move(tempfile.name, fullpath)
+    return
 
 
 def results_to_csv(score_file_directory, pam_tool='Chimera'):
