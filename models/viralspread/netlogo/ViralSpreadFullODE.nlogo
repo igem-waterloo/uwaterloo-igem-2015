@@ -287,8 +287,8 @@ end
 to spread-virus
   ask cells with [infected?]
     [ 
-      if (viral-count + mod-viral-count > 500)
-        [
+      ;;if (viral-count + mod-viral-count > 5)
+        ;;[
           ask link-neighbors with [not resistant? and not infected?]
             [ 
               if (random-float 100 < viral-spread-chance)
@@ -297,36 +297,36 @@ to spread-virus
                   set num-infected num-infected + 1 ;; increase the count for infected cells
                 ] 
             ] 
-        ]
+        ;;]
     ]
 end
 
 to assemble-virus
   
   ;; Genome parameters
-  let max-genomes-in-nucleus 500
-  let intracellular-reinfection-rate 0.1
-  let gapped-dna-repair-rate 1
-  let dna-modification-rate 1
-  let dna-degradation-rate 1
+  let max-genomes-in-nucleus 100
+  let intracellular-reinfection-rate 0.01
+  let gapped-dna-repair-rate 0.1
+  let dna-modification-rate 0.01
+  let dna-degradation-rate 0.00001
   
   ;; RNA parameters
-  let transcription-rate-19s 1
-  let degradation-rate-19s 1
-  let transcription-rate-35s 1
-  let degradation-rate-35s 1
-  let packaging-rate 1
-  let frac-unspliced 0.7
+  let transcription-rate-19s 0.05
+  let degradation-rate-19s 0.001155
+  let transcription-rate-35s 0.0653
+  let degradation-rate-35s 0.001155
+  let packaging-rate 0.1
+  let frac-unspliced 0.3
   
   ;; Protein parameters
-  let translation-rate 1
-  let degradation-rate 1
+  let translation-rate 0.1
+  let degradation-rate 0.0001
   let p4-splicing-rate 1
   
   ;; Virion parameters
   let anchoring-rate 1
-  let virion-degradation-rate 1
-  let virion-exit-rate 1
+  let virion-degradation-rate 0.01
+  let virion-exit-rate 0.1
   
   ;; Time step
   let delta-t 0.001
