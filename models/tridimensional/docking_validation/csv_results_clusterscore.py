@@ -127,7 +127,7 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     # assign cluster membership
     clustered_data = [0] * length_data
     for i, pair in enumerate(csv_data_as_tuples):
-        clustered_data[i] = (pair[0], pair[1], cluster_membership_array[i])
+        clustered_data[i] = (pair[0], pair[1], cluster_membership_array[i], pam_string_from_int(i, length_pam))  # diagnose dendrogram mislabelling
     # conditionally plot dendrogram
     if plot_dendrogram_flag:
         plot_cluster_dendrogram(linkage, length_pam, threshold=threshold)
