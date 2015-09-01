@@ -120,6 +120,7 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     data_to_cluster = [[csv_data_as_keyvalue[key]] for key in csv_data_as_keyvalue.keys()]  # ignore pams, keep order
     pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
     print pair_dists
+
     # determine cluster membership
     linkage = get_cluster_linkage(csv_dict, stat_to_cluster=stat_to_cluster)
     threshold = 0.5 * np.std(pair_dists)
@@ -127,6 +128,14 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     print threshold
     print cluster_membership_array
     print set(cluster_membership_array)
+
+    # revise cluster membership so that 'best' means cluster 1 instead of the last cluster (lower energy is better)
+    cluster_low, cluster_high = np.min(cluster_membership_array), np.max(cluster_membership_array)
+    cluster_sum = cluster_low + cluster_high
+    transform = lambda val: cluster_sum - val
+    for i, elem in enumerate(cluster_membership_array):
+        cluster_membership_array[i] = transform(elem)
+
     # assign cluster membership
     clustered_data = {}
     for i, key in enumerate(csv_data_as_keyvalue.keys()):
@@ -134,9 +143,11 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
                                'stat_cluster': cluster_membership_array[i],  # TODO CHECK ORDER?
                                'stat_cluster_centroid': None,  # TODO CHECK ORDER? AND IMPLEMENT
                                'pam_sanity_check': pam_string_from_int(i, length_pam)}  # TODO FIX AND REMOVE
+
     # conditionally plot dendrogram
     if plot_dendrogram_flag:
         plot_cluster_dendrogram(linkage, length_pam, threshold=threshold)
+
     return clustered_data
 
 
@@ -155,9 +166,6 @@ def write_clustered_csv(fullpath_input, dir_output="", stats_to_cluster=['Final 
     filename_output = filename_input[:-4] + '_clustered.csv'
     fullpath_output = os.path.join(dirpath, filename_output)
 
-    # create clustered csv template
-    #shutil.copy2(fullpath_input, fullpath_output)
-
     # load data for clustering
     csv_dict = csv_to_dict(fullpath_input, keys=stats_to_cluster)
     csv_header = csv_dict['header']
@@ -169,11 +177,10 @@ def write_clustered_csv(fullpath_input, dir_output="", stats_to_cluster=['Final 
     for stat in stats_to_cluster:
         cluster_dict[stat] = cluster_csv_data(csv_dict, stat_to_cluster=stat, plot_dendrogram_flag=False)
         csv_cluster_header.append('%s cluster' % stat)
-        #csv_cluster_header.append('%s cluster centroid' % stat)  # TODO implement cluster centroid
+        # csv_cluster_header.append('%s cluster centroid' % stat)  # TODO implement cluster centroid
 
     # write clustered data to csv
-    data_to_append = ['stat_cluster'] #, 'stat_cluster_centroid']  # TODO implement cluster centroid
-
+    data_to_append = ['stat_cluster']  # , 'stat_cluster_centroid']  # TODO implement cluster centroid
     with open(fullpath_input, 'r') as csvin:
         reader = csv.reader(csvin)
         with open(fullpath_output, 'w') as csvout:
