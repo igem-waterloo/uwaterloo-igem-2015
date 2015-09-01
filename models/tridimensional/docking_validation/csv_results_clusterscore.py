@@ -168,11 +168,11 @@ def write_clustered_csv(fullpath_input, dir_output="", stats_to_cluster=['Final 
     csv_cluster_header = []
     for stat in stats_to_cluster:
         cluster_dict[stat] = cluster_csv_data(csv_dict, stat_to_cluster=stat, plot_dendrogram_flag=False)
-        csv_cluster_header.append('%s cluster idx' % stat)
-        csv_cluster_header.append('%s cluster centroid' % stat)
+        csv_cluster_header.append('%s cluster' % stat)
+        #csv_cluster_header.append('%s cluster centroid' % stat)  # TODO implement cluster centroid
 
     # write clustered data to csv
-    data_to_append = ['stat_cluster', 'stat_cluster_centroid']
+    data_to_append = ['stat_cluster'] #, 'stat_cluster_centroid']  # TODO implement cluster centroid
 
     with open(fullpath_input, 'r') as csvin:
         reader = csv.reader(csvin)
