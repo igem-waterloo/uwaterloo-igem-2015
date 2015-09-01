@@ -156,24 +156,38 @@ def write_clustered_csv(fullpath_input, dir_output="", stats_to_cluster=['Final 
     fullpath_output = os.path.join(dirpath, filename_output)
 
     # create clustered csv template
-    shutil.copy2(fullpath_input, fullpath_output)
+    #shutil.copy2(fullpath_input, fullpath_output)
 
     # load data for clustering
     csv_dict = csv_to_dict(fullpath_input, keys=stats_to_cluster)
     csv_header = csv_dict['header']
+    pam_indices = [i for i, elem in enumerate(csv_header) if 'PAM_' in elem]  # use to concatenate pam columns
 
     # cluster each stat separately and lengthen header
     cluster_dict = {}
+    csv_cluster_header = []
     for stat in stats_to_cluster:
         cluster_dict[stat] = cluster_csv_data(csv_dict, stat_to_cluster=stat, plot_dendrogram_flag=False)
-        csv_header.append('%s cluster idx' % stat)
-        csv_header.append('%s cluster centroid' % stat)
+        csv_cluster_header.append('%s cluster idx' % stat)
+        csv_cluster_header.append('%s cluster centroid' % stat)
 
     # write clustered data to csv
-    # TODO IMPLEMENT
-    with open(fullpath_output, 'r+') as f:
-        for stat in stats_to_cluster:
-            clustered_data = cluster_dict[stat]
+    data_to_append = ['stat_cluster', 'stat_cluster_centroid']
+
+    with open(fullpath_input, 'r') as csvin:
+        reader = csv.reader(csvin)
+        with open(fullpath_output, 'w') as csvout:
+            writer = csv.writer(csvout)
+            for i, row in enumerate(reader):
+                if i == 0:
+                    writer.writerow(row + csv_cluster_header)
+                else:
+                    pam = ''.join([row[i] for i in pam_indices])
+                    cluster_data_to_append = []
+                    for stat in stats_to_cluster:
+                        cluster_data_to_append += [cluster_dict[stat][pam][key] for key in data_to_append]
+                    writer.writerow(row + cluster_data_to_append)
+
     return fullpath_output
 
 
@@ -184,3 +198,5 @@ csv_dict = csv_to_dict("Chimera.csv")
 clustered_data = cluster_csv_data(csv_dict, plot_dendrogram_flag=True)
 print clustered_data
 print sort_tuples_by_idx(clustered_data, tuple_idx=2)
+
+write_clustered_csv("Chimera.csv")
