@@ -84,3 +84,17 @@ def int_from_pam_string(pam_string):
     for i in xrange(length_pam):
         pam_int += DNA_ALPHABET.index(pam_string[i]) * (4 ** (length_pam - 1 - i))
     return pam_int
+
+
+def sort_tuples_by_idx(list_of_tuples, tuple_idx=1, reverse_flag=False):
+    """Sort a list of (pam, score) tuples
+    Args:
+        list_of_tuples: list of tuples of the format [(str, float), ... , (str, float)]
+        tuple_idx: [default: 1] tuple index which defines sorting
+        reverse_flag: [default: False] if True, sort descending instead of ascending
+    Returns:
+        sorted data in same format
+    Notes:
+        - sorts by score (second tuple element) in ascending order
+    """
+    return sorted(list_of_tuples, key=lambda tup: tup[tuple_idx], reverse=reverse_flag)

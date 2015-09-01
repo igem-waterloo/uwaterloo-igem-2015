@@ -47,25 +47,12 @@ def csv_to_dict(fullpath, keys=['Final DNA']):
     csv_header, csv_data = csv_load(fullpath)
     column_index_dict = {key: csv_header.index(key) for key in keys}  # select columns for referencing data
     pam_indices = [i for i, elem in enumerate(csv_header) if 'PAM_' in elem]  # use to concatenate pam columns
+    print pam_indices
     csv_dict = {key: {''.join([row[i] for i in pam_indices]): float(row[column_index_dict[key]])
                       for row in csv_data}  # concatenate pam / get stat score corresponding to pam (format as float)
                 for key in keys}  # do this for all the desired statistics
     csv_dict['header'] = csv_header
     return csv_dict
-
-
-def sort_tuples_by_idx(list_of_tuples, tuple_idx=1, reverse_flag=False):
-    """Sort a list of (pam, score) tuples
-    Args:
-        list_of_tuples: list of tuples of the format [(str, float), ... , (str, float)]
-        tuple_idx: [default: 1] tuple index which defines sorting
-        reverse_flag: [default: False] if True, sort descending instead of ascending
-    Returns:
-        sorted data in same format
-    Notes:
-        - sorts by score (second tuple element) in ascending order
-    """
-    return sorted(list_of_tuples, key=lambda tup: tup[tuple_idx], reverse=reverse_flag)
 
 
 def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
@@ -79,7 +66,6 @@ def get_cluster_linkage(csv_dict, stat_to_cluster='Final DNA'):
         http://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
     """
     csv_data_as_keyvalue = csv_dict[stat_to_cluster]
-    #data_to_cluster = [[int_from_pam_string(pair[0]), pair[1]] for pair in csv_data_as_keyvalue]  # convert pams to ints
     data_to_cluster = [[csv_data_as_keyvalue[key]] for key in csv_data_as_keyvalue.keys()]
     cluster_linkage = hac.linkage(data_to_cluster, method='single', metric='euclidean')
     return cluster_linkage
@@ -126,6 +112,8 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     # prepare data and compute distances
     csv_data_as_keyvalue = csv_dict[stat_to_cluster]
     length_pam = len(csv_data_as_keyvalue.keys()[0])
+    print csv_data_as_keyvalue.keys()
+    print length_pam
     length_data = len(csv_data_as_keyvalue.keys())
     data_to_cluster = [[csv_data_as_keyvalue[key]] for key in csv_data_as_keyvalue.keys()]  # ignore pams, keep order
     pair_dists = scidist.pdist(data_to_cluster, metric='euclidean')
@@ -207,8 +195,10 @@ def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Fina
 
 if __name__ == '__main__':
     # TODO sys.argv
-    csv_dict = csv_to_dict("Chimera.csv")
+    #csv_dict = csv_to_dict("Chimera.csv")
+    csv_dict = csv_to_dict("Chimera_64.csv")
     clustered_data = cluster_csv_data(csv_dict, plot_dendrogram_flag=True)
     print clustered_data
 
-    write_clustered_csv("Chimera.csv")
+    #write_clustered_csv("Chimera.csv")
+    write_clustered_csv("Chimera_64.csv")
