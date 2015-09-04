@@ -1,37 +1,86 @@
+;; ----- DECLARATIONS -----
+;; Create "breed" of 'turtle' called cell
+breed [cells cell]          ;; eventually separate mesophyll?
+breed [vasculars vascular]  ;; phloem vascular bundles 
+
+;; Create "breed" of 'link' called phloem
+directed-link-breed [phloems phloem]  
+;; Note: I know there shouldn't be an s, but it wanted a different plural :(
+undirected-link-breed [plasmodesmata plasmodesma]
+
+;; Declare global variables
 globals
 [
-  total-leaf1
-  total-leaf2
-  total-leaf3
-  total-leaf4
-  infected-leaf1
-  infected-leaf2
-  infected-leaf3
-  infected-leaf4
+  num-infected   ;; keep track of number infected
+  num-viruses    ;; keep track of the viral particles
+  mod-num-viruses  ;; keep track of the modified viral particles
+  lysed-cells    ;; keep track of apoptotic cells
 ]
 
-;; Create "breed" of 'turtle' called cell
-breed [cells cell]  ;; will eventually want mesophyll and vascular
-
+;; Declare the cell-specific (turtle breed) variables
 cells-own
 [
   infected?         ;; if true, the cell is infectious
   resistant?        ;; if true, cell can't be infected
   num-plasmodesmata ;; number of connections with other cells
-  time-since-infection   ;; number of ticks since this cell was infected
-  virus-check-timer ;; period before host first checks 
+  copy-number       ;; track the number of genomes in the nucleus
+  pregenomes        ;; track the number of pregenomes in the cell
+  protein-six       ;; track functional P6
+  viral-count       ;; keeps track of the virions produced by the cell
+  mod-copy-number   ;; as above with delta-P6
+  mod-pregenomes    ;; as above with delta-P6
+  mod-viral-count   ;; as above with delta-P6
+  sar-level         ;; amount of "salicylic acid" present in the cell
 ]
 
+
+
+
+
+;; Setup procedures
 to setup
   clear-all    ;; remove anything from previous runs
-  random-seed 1 ;; Consistent setup (if other parameters constant)
+  setup-stem   ;; make a stem structure to connect the leaves
   setup-cells  ;; set up the cells
   setup-leaf   ;; set up the connections between cells
-  ask n-of initial-infection cells   ;; determine how many viruses
-    [ become-infected ]
+  ask n-of initial-infection-sites cells   ;; infect this number of cells
+    [ 
+      become-infected 
+      set copy-number founder-population-viruses ;; start with x genomes per infected cell
+    ]
   ask links [ set color white ]  ;; make the symplastic connections white
-  count-leaves 
+  ask phloems 
+    [ 
+      set color green            ;; make the vascular bundles green and thicker
+      set thickness 0.3
+    ]
   reset-ticks  ;; reset timer from previous run
+end
+
+to setup-stem
+  set-default-shape vasculars "plant" ;; uses stem-looking shape for vasculature
+  ;; Create and position vascular cells
+  create-vasculars 1 [ setxy 0 -16 ]
+  create-vasculars 1 
+  [ 
+    setxy 0 -6 
+    create-phloem-from vascular 0 ;; directed stem connection
+  ]
+  create-vasculars 1 
+  [ 
+    setxy 0 6 
+    create-phloem-from vascular 1 ;; directed stem connection
+  ]
+  create-vasculars 1 
+  [ 
+    setxy 0 16 
+    create-phloem-from vascular 2 ;; directed stem connection
+  ]
+  ask vasculars         ;; make the vasculature stand out from the leaf cells
+    [ 
+      set color green 
+      set size 2.5
+    ]
 end
 
 to setup-cells
@@ -48,122 +97,232 @@ to setup-cells
       
     setxy xguess yguess ;; no nodes too close to edges
     become-susceptible
-  ]
-  ask cells [
-    set size 0.75  ;; easier to see
-    set num-plasmodesmata (random-poisson avg-num-plasmodesmata)
-    set virus-check-timer (random-poisson virus-check-period)
+    ask cells [ set size 0.5 ]       ;; makes the circles smaller for larger scale
   ]
 end
-
 
 to setup-leaf
-  ask cells [
-  while [count my-links < num-plasmodesmata]
-  [make-connection]
+  ask cells 
+  [ 
+    ;; using random-possion to give a more realistic distribution of links per cell
+    while [ count my-links < random-poisson avg-num-plasmodesmata ]
+    [ 
+      let choice (min-one-of (other cells with [not link-neighbor? myself])
+                              [distance myself])
+      if choice != nobody [ create-plasmodesma-with choice ]
+    ]
   ]
-    repeat 0 ; to make the network look nicer
-  [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
+  ;; to make the network look nicer
+  repeat 10 [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
+  ;; connect leaves to the vasculature
+  ask vascular 0 
+  [ 
+    let choice ( one-of (cells with [pxcor < 0 and pycor < 0]) )
+    if choice != nobody [ create-phloem-from choice ]
+  ]
+  ask vascular 1 
+  [ 
+    let choice ( one-of (cells with [pxcor > 0 and pycor < 0]) )
+    if choice != nobody [ create-phloem-from choice ]
+  ]
+  ask vascular 2 
+  [ 
+    let choice ( one-of (cells with [pxcor < 0 and pycor > 0]) )
+    if choice != nobody [ create-phloem-from choice ]
+  ]
+  ask vascular 3
+  [ 
+    let choice ( one-of (cells with [pxcor > 0 and pycor > 0]) )
+    if choice != nobody [ create-phloem-from choice ]
+  ]
 end
 
-to make-connection  ;; leave to later option to have long-distance cell types
-  create-link-with min-one-of other cells with [not link-neighbor? myself] [distance myself]
-end
 
 
+
+;; ----- MAIN -----
+
+;; This is the main process - what is activated when the user clicks "go"
 to go
- ;; ideally improve on this by checking if there is a link between infected and not-infected
-  if all? cells [not infected?] or all? cells [infected?]
-    [ stop ]
+  ;; if the user specified a duration, stop after that
+  if specified-duration
+  [
+    if ticks > num-ticks [ stop ] 
+  ]
+  ;; otherwise, check if all cells are infected
+  if all? cells [ infected? ] 
+  [  
+    ;; if they are, run 40 more times (make the graph look nice)
+    let i 0 
+    while [i <= 40] 
+    [
+      spread-virus
+      set i i + 1
+      tick
+    ]
+    stop  ;; stop model completely
+  ]
+  
+  ;; otherwise, continue to spread the virus
   spread-virus
+  spread-sar
   do-apoptosis-checks
   tick
 end
 
 
+
+
+;;  ----- CELL PROCEDURES -----
+
 ;; Cell Procedures
 to become-infected
   set infected? true
   set resistant? false
-  set time-since-infection 0
   set color red
+  ;; determine number of viruses entering the susceptible cell
+  ;let new-viruses ( sum [viral-count] of link-neighbors )
+  ;set viral-count 0 ; new-viruses
+  set copy-number copy-number + 1
+  set num-viruses num-viruses + 1
+end
+
+to mod-become-infected
+  set infected? true
+  set resistant? false
+  set color red
+  set mod-copy-number copy-number + 1
+  set mod-num-viruses mod-num-viruses + 1
 end
 
 to become-susceptible
   set infected? false
   set resistant? false
-  set time-since-infection -1
   set color green
+  set copy-number 0
+  set pregenomes 0
+  set protein-six 0
+  set viral-count 0
+  set mod-copy-number 0
+  set mod-pregenomes 0
+  set mod-viral-count 0
 end
 
-to become-resistant
-  set infected? false
-  set resistant? true
-  set color blue
-end
 
-;; Virus Procedure
-to spread-virus
-  ask cells with [infected?]
-    ; spread to susceptibles
-    [ ask link-neighbors with [not resistant?] 
-      [ if random-float 100 < viral-spread-chance
-        [ become-infected ] ] 
-    ; some chance to spread to resistant cells - no perfect immunity
-     ask link-neighbors with [resistant?]
-      [ if random-float 100 < viral-spread-chance * (1 - resistance-effectiveness)
-        [ become-infected ] ]   
-    ; possibly spread resistance to adjacent cells
-     ask link-neighbors with [not infected? and not resistant?]
-      [ if random-float 100 < resistance-from-viral-contact 
-        [become-resistant ] ] ] 
-end
+;; ---- SAR Molecule Spread & Apoptosis ----
 
+;; Increase levels of signalling molecule based on neighbours' levels
+;; Assuming the infected cells are unable to produce sar signal molecules, but 
+to spread-sar
+  ;; initial generation of sar based on neighbouring cells being infected
+  ask cells
+  [
+    let neighboured false           ;; remember if a neighbour is infected
+    ask link-neighbors 
+    [
+      if (infected?) [ set neighboured true ]
+    ]
+    ;; if a neighbour is infected, increase this cell's sar signalling molecule
+    if (neighboured) [ set sar-level sar-level + 1 ]
+  ]
+  ;; assume the resistant cells are better able to spread the sar molecule
+  ask cells with [resistant?]
+  [
+    let shared-sar sar-level / 2     ;; saying half the sar-level will be spread
+    ask link-neighbors 
+    [ 
+      set sar-level sar-level + shared-sar 
+      if sar-level >= resistance-threshold [ set resistant? true ]
+    ]
+    set sar-level sar-level + shared-sar / 2  ;; not much kept in the cell
+  ]
+  ;; assume the susceptible cells can produce an okay amount of sar molecule
+  ask cells with [not infected? and not resistant?]
+  [
+    let shared-sar sar-level / 5     ;; fifth of the molecules will be shared
+    ask link-neighbors
+    [
+      set sar-level sar-level + shared-sar
+      if sar-level >= resistance-threshold [ set resistant? true ]
+    ]
+    set sar-level sar-level + shared-sar / 2
+  ]
+end  
 
 ;; Determine whether the cell can destroy itself to help prevent viral spread
 to do-apoptosis-checks
-  ;; update clocks
-  ask cells with [infected?]
-   [set time-since-infection time-since-infection + 1]
   ;; if the cell is infected and can still lyse, check 
-  ask cells with [infected? and 
-    time-since-infection > virus-check-timer 
-    and time-since-infection < virus-check-timer + virus-check-period] 
+  ask cells with [infected?] 
   [
-    if random-float 100 < lysis-chance
-      [ die ] 
+    if (sar-level >= lysis-threshold)
+      [ 
+        set color violet
+        die 
+        set lysed-cells lysed-cells + 1
+      ] 
   ]
 end
 
-to spread-resistance
-  ask cells with [resistant?]
-   [ask link-neighbors with [not infected? and not resistant?]
-     [if random-float 100 < resistance-spread 
-       [become-resistant] ] ]
+
+
+;;  ----- VIRUS PROCEDURES -----
+
+;; Procedure governing spread to neighbouring cells
+to spread-virus
+  ask cells with [infected?]
+    [ 
+      if (viral-count + mod-viral-count > 500)
+        [
+          ask link-neighbors with [not resistant? and not infected?]
+            [ 
+              if (random-float 100 < viral-spread-chance)
+                [ 
+                  become-infected                   ;; If chance has it, infect the cell
+                  set num-infected num-infected + 1 ;; increase the count for infected cells
+                ] 
+            ] 
+        ]
+    ]
 end
 
-to count-leaves
-  set total-leaf1 
-  count cells with [pxcor > 0 and pycor > 0] 
-  set total-leaf2 
-  count cells with [pxcor < 0 and pycor > 0]
-  set total-leaf3 
-  count cells with [pxcor < 0 and pycor < 0] 
-  set total-leaf1 
-  count cells with [pxcor > 0 and pycor < 0]  
+to assemble-virus
+  ask cells with [infected?]
+    [
+      ;; 35S RNA formation
+      if (viral-count + mod-viral-count < 500)
+        [
+          set pregenomes pregenomes + 0.01 * copy-number
+          ;set mod-viral-count mod-viral-count + mod-copy-number
+        ]
+      ;; P6 production
+      if (protein-six < 1000)
+        [
+          set protein-six protein-six + 0.01 * copy-number
+        ]
+      ;; Viral assembly
+      if (viral-count + mod-viral-count < 500)
+        [
+          set viral-count viral-count + 0.01 * protein-six * pregenomes
+          ;set mod-viral-count mod-viral-count + mod-copy-number
+        ]
+      ;; Reentry in nucleus
+      if (copy-number + mod-copy-number < 100)
+        [
+          set copy-number copy-number + 0.01 * viral-count
+          ;set mod-copy-number 1.05 * mod-copy-number
+        ]
+      
+    ]
 end
-
-
-  
 @#$#@#$#@
 GRAPHICS-WINDOW
-277
+238
 10
-716
-470
+672
+465
 16
 16
-13.0
+12.85
 1
 10
 1
@@ -184,28 +343,11 @@ ticks
 30.0
 
 BUTTON
-4
-10
-67
-43
-NIL
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-84
-10
-147
-43
-NIL
+116
+288
+179
+321
+go
 go
 T
 1
@@ -218,163 +360,212 @@ NIL
 1
 
 SLIDER
-8
-232
-182
-265
-initial-infection
-initial-infection
+22
+102
+196
+135
+initial-infection-sites
+initial-infection-sites
 1
+4
 4
 1
 1
-1
 NIL
 HORIZONTAL
 
 SLIDER
-9
-84
-181
-117
-lysis-chance
-lysis-chance
-0
-50
-0
-1
-1
-%
-HORIZONTAL
-
-SLIDER
-10
-158
-182
-191
-num-cells
-num-cells
-100
-500
-200
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-8
-195
-196
-228
-avg-num-plasmodesmata
-avg-num-plasmodesmata
-1
-10
-5
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-198
-21
-231
-268
-viral-spread-chance
-viral-spread-chance
-0.2
-10
-2.1
-0.1
-1
-%
-VERTICAL
-
-SLIDER
-10
-120
-216
-153
-resistance-effectiveness
-resistance-effectiveness
-0
-1
-0.82
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-8
-48
-187
-81
-virus-check-period
-virus-check-period
-0
-100
 20
+10
+192
+43
+num-cells
+num-cells
+1
+1000
+275
 1
 1
-ticks
+NIL
 HORIZONTAL
 
 SLIDER
-8
-267
-234
-300
-resistance-from-viral-contact
-resistance-from-viral-contact
-0
-10
-0.9
-0.1
+20
+49
+208
+82
+avg-num-plasmodesmata
+avg-num-plasmodesmata
 1
-%
+10
+6
+1
+1
+NIL
 HORIZONTAL
-
-SLIDER
-236
-118
-269
-268
-resistance-spread
-resistance-spread
-0
-10
-10
-0.1
-1
-%
-VERTICAL
 
 PLOT
+231
+475
+454
+672
+#infected over time
+ticks
+#infected cells
+0.0
+50.0
+0.0
+50.0
+true
+false
+"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 num-cells" ""
+PENS
+"infected" 1.0 0 -13791810 true "" "plot num-infected"
+
+BUTTON
+38
+289
+101
+322
+setup
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+25
+356
+197
+389
+viral-spread-chance
+viral-spread-chance
+1
+20
+9
+0.5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+227
+193
+260
+num-ticks
+num-ticks
+0
+500
+167
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+22
+190
+177
+223
+specified-duration
+specified-duration
+1
+1
+-1000
+
+PLOT
+466
+485
+666
+635
+Number of Viruses
+ticks
+#viruses
+0.0
+10.0
+1.0
+1000.0
+true
+false
+"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 num-cells" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot (num-viruses + mod-num-viruses)"
+
+SLIDER
+22
+141
+215
+174
+founder-population-viruses
+founder-population-viruses
+1
+30
 10
-307
-210
-457
-Infected and resistant cells
+1
+1
 NIL
+HORIZONTAL
+
+SLIDER
+24
+446
+196
+479
+lysis-threshold
+lysis-threshold
+1
+10000
+10000
+1
+1
 NIL
+HORIZONTAL
+
+PLOT
+19
+490
+219
+640
+Lysed Cells
+ticks
+#cells
 0.0
 10.0
 0.0
 10.0
 true
 false
-"" ""
+"set-plot-x-range 0 num-ticks\nset-plot-y-range 0 10" ""
 PENS
-"infected" 1.0 0 -16777216 true "" "plot count cells with [infected?]"
-"resistant" 1.0 0 -7500403 true "" "plot count cells with [resistant?]"
+"default" 1.0 0 -16777216 true "" "plot lysed-cells"
+
+SLIDER
+23
+410
+195
+443
+resistance-threshold
+resistance-threshold
+1
+100
+89
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
 
-THis model has a network of cells, in which we track viral spread. The spatial locations of the cells are divided into "leaves", and individual cells are connected by plasmodesmata. 
+This is a model tracking viral spread in a plant-structure made of leaf cells and vascular cells. The spatial locations of the cells are divided into "leaves", and individual cells are connected by plasmodesmata. 
+
 
 ## HOW IT WORKS
 
@@ -384,34 +575,41 @@ All the cells start as susceptible, except for some small initial infection. The
 
 In this model there's also a chance of cells becoming resistant. This is triggered by either proximity to infected cells, or by spreading among 
 
+
 ## HOW TO USE IT
 
-Set the sliders to various ranges, click setup & go, and see what happens. 
+Set the sliders as you see fit and click setup. Hit go to see what happens!
+
 
 ## THINGS TO NOTICE
 
 How does the viral infection curve change as # of connections is increased and viral spread chance is decreased?
 
+
 ## THINGS TO TRY
 
 Move the sliders! And note the variations in the random setup, especially as it concerns connections between different leaves.
 
+
 ## EXTENDING THE MODEL
 
-The big thing missing from this is the viral count. Other models will have this. As a result, though we also don't have a change in the viral count over time. 
+Giving appropriate parameters for the viral spread chance. 
+
 
 ## NETLOGO FEATURES
 
 (interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
 
+
 ## RELATED MODELS
 
 (models in the NetLogo Models Library and elsewhere which are of related interest)
 
-## CREDITS AND REFERENCES
-Robert & Zoe.
 
-Aiming to reproduce Rodrigo & other papers by Elena lab on viral spread. 
+## CREDITS AND REFERENCES
+
+UWaterloo's 2015 iGEM team 
+Zoë Humphries & Robert Gooding-Townsend
 @#$#@#$#@
 default
 true

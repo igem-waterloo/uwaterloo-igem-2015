@@ -41,7 +41,7 @@ if __name__ == '__main__':
     else:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
         csv_output_dir = os.path.join("results", timestamp)
-        os.makedirs(csv_output_dir)
+    os.makedirs(csv_output_dir)
 
     # For each CSV, the column containing the merge_stat will be associated in a dictionary with the PAM
     merge_stat_idx = CSV_HEADER.index(args.merge_stat)
