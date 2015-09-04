@@ -143,7 +143,7 @@ function dS = mathva(~,S)
 	eq15 = k_p*P_4s*P_5*R_35u - k_anchor*P_3*V_i;
 
 	% Intermediate impure virions
-	eq16 = k_p*P_4*P_5*R_35m - k_anchor*P_3*V_mi; % Brandon to update
+	eq16 = k_p*P_4*P_5*R_35mu - k_anchor*P_3*V_mi; % Brandon to update
 
 	% Complete pure virions
 	eq17 = k_anchor*P_3*V_i - k_v*V - delta_v*V - v_exit*V;
