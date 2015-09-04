@@ -438,3 +438,10 @@ ul.sponsors li a {
 dl.attributions dt {
     font-weight: 100;
 }
+
+
+/*---Quote Styling--------------------------------------------------------------------------------*/
+q {
+    display: block;
+    font-weight: bolder;
+}
