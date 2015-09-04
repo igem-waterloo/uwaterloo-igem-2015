@@ -456,7 +456,19 @@ dl.attributions dt {
 
 
 /*---Quote Styling--------------------------------------------------------------------------------*/
-q {
+q:before, blockquote:before {
+    content: "\201C" !important;
+    font-family: serif !important;
+    font-size: 5em;
+    font-style: normal;
+    line-height: normal;
+    z-index: -999;
+}
+q, blockquote {
     display: block;
-    font-weight: bolder;
+    font-size: 1.2em;
+    font-weight: lighter;
+    font-style: italic;
+    font-family: inherit;
+    padding: 0 0 0 120px;
 }
