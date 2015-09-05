@@ -1,3 +1,4 @@
+import errno
 import os
 
 import config
@@ -98,3 +99,18 @@ def sort_tuples_by_idx(list_of_tuples, tuple_idx=1, reverse_flag=False):
         - sorts by score (second tuple element) in ascending order
     """
     return sorted(list_of_tuples, key=lambda tup: tup[tuple_idx], reverse=reverse_flag)
+
+
+def safe_mkdir(dirpath):
+    """Safe directory creator for avoiding concurrency issues
+    """
+    if not os.path.isdir(dirpath):
+        try:
+            os.makedirs(dirpath)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(dirpath):
+                print "Notice - concurrency problem handled during directory creation"
+                pass
+            else:
+                raise
+    return
