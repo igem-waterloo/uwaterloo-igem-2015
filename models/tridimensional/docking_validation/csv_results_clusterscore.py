@@ -1,3 +1,4 @@
+import argparse
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +8,7 @@ import scipy.spatial.distance as scidist
 
 from csv_results import csv_header_bugfix
 from constants import CSV_HEADER, DNA_ALPHABET
-from utility import pam_string_from_int
+from utility import safe_mkdir
 
 
 def csv_load(fullpath):
@@ -45,8 +46,7 @@ def csv_to_dict(fullpath, keys=['Final DNA']):
         {'Final DNA':
             {'aaaa': 1234.56,
              ...
-            'tttt': 4321.65}
-        }
+            'tttt': 4321.65}}
     """
     csv_header, csv_data = csv_load(fullpath)
     column_index_dict = {key: csv_header.index(key) for key in keys}  # select columns for referencing data
@@ -82,7 +82,9 @@ def plot_cluster_dendrogram(cluster_linkage, keylist, threshold='default'):
     """
     leaf_label_map = lambda x: keylist[x]
     plt.figure()
-    dendrodata = hac.dendrogram(cluster_linkage, color_threshold=threshold, leaf_label_func=leaf_label_map, leaf_rotation=45.0, leaf_font_size=8)
+    dendrodata = hac.dendrogram(cluster_linkage, color_threshold=threshold, leaf_label_func=leaf_label_map,
+                                leaf_rotation=45.0, leaf_font_size=8)
+    # TODO find a way to make the extra information below less cramped when plotting
     """# segment to plot distances between clusters
     for i, d in zip(dendrodata['icoord'], dendrodata['dcoord']):
         x = 0.5 * sum(i[1:3])
@@ -91,6 +93,8 @@ def plot_cluster_dendrogram(cluster_linkage, keylist, threshold='default'):
         plt.annotate("%.3g" % y, (x, y), xytext=(0, -8),
                      textcoords='offset points',
                      va='top', ha='center')"""
+    if threshold != 'default':
+        plt.axhline(threshold, color='k', linestyle='--', label='threshold')
     plt.show()
 
 
@@ -119,11 +123,7 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     # determine cluster membership
     linkage = get_cluster_linkage(data_to_cluster)
     threshold = 0.5 * np.std(pair_dists)
-    #threshold = 10
     cluster_membership_array = hac.fcluster(linkage, threshold, criterion='distance')
-    print threshold
-    print cluster_membership_array
-    print set(cluster_membership_array)
 
     # compute cluster centroid dictionary
     lens_dict = {cluster_idx: 0 for cluster_idx in set(cluster_membership_array)}
@@ -140,22 +140,19 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     for cluster_idx in set(cluster_membership_array):
         min_centroid = np.min(centroid_dict_reversed.keys())
         order_map[cluster_idx] = centroid_dict_reversed[min_centroid]
-        print min_centroid, centroid_dict_reversed[min_centroid]
         del centroid_dict_reversed[min_centroid]
     order_map = {order_map[key]: key for key in order_map.keys()}  # invert order map so it functions as intended
     transform = lambda cluster_idx: order_map[cluster_idx]
     for i, elem in enumerate(cluster_membership_array):  # transform cluster_membership_array references
         cluster_membership_array[i] = transform(elem)
-        #print elem, transform(elem)
     centroid_dict = {order_map[cluster_idx]: centroid_dict[cluster_idx] for cluster_idx in centroid_dict.keys()}
-    print centroid_dict
 
     # assign cluster membership
     clustered_data = {}
     for i, key in enumerate(csv_data_as_keyvalue.keys()):
         clustered_data[key] = {'stat_value': csv_data_as_keyvalue[key],
-                               'stat_cluster': cluster_membership_array[i],  # TODO CHECK ORDER?
-                               'stat_cluster_centroid': centroid_dict[cluster_membership_array[i]]}  # TODO CHECK ORDER? AND IMPLEMENT
+                               'stat_cluster': cluster_membership_array[i],
+                               'stat_cluster_centroid': centroid_dict[cluster_membership_array[i]]}
 
     # conditionally plot dendrogram
     if plot_dendrogram_flag:
@@ -164,12 +161,13 @@ def cluster_csv_data(csv_dict, stat_to_cluster='Final DNA', plot_dendrogram_flag
     return clustered_data
 
 
-def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Final DNA']):
+def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Final DNA'], plot_dendrogram_flag=False):
     """Clusters specific data from an input csv and writes a new csv with appended clustering information
     Args:
         fullpath_input: full path to the input csv
         dir_output: directory where the output csv will be placed
         stats_to_cluster: list of stats to cluster
+        plot_dendrogram_flag: selectively plot the dendrogram of clusters
     Returns:
         full path to new csv with appended clustering information
     """
@@ -180,6 +178,7 @@ def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Fina
     if dir_output is None:
         fullpath_output = os.path.join(dirpath, filename_output)
     else:
+        safe_mkdir(dir_output)
         fullpath_output = os.path.join(dir_output, filename_output)
 
     # load data for clustering
@@ -191,12 +190,12 @@ def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Fina
     cluster_dict = {}
     csv_cluster_header = []
     for stat in stats_to_cluster:
-        cluster_dict[stat] = cluster_csv_data(csv_dict, stat_to_cluster=stat, plot_dendrogram_flag=False)
+        cluster_dict[stat] = cluster_csv_data(csv_dict, stat_to_cluster=stat, plot_dendrogram_flag=plot_dendrogram_flag)
         csv_cluster_header.append('%s cluster' % stat)
-        csv_cluster_header.append('%s cluster centroid' % stat)  # TODO implement cluster centroid
+        csv_cluster_header.append('%s cluster centroid' % stat)
 
     # write clustered data to csv
-    data_to_append = ['stat_cluster', 'stat_cluster_centroid']  # TODO implement cluster centroid
+    data_to_append = ['stat_cluster', 'stat_cluster_centroid']
     with open(fullpath_input, 'r') as csvin:
         reader = csv.reader(csvin)
         with open(fullpath_output, 'wb') as csvout:
@@ -211,15 +210,18 @@ def write_clustered_csv(fullpath_input, dir_output=None, stats_to_cluster=['Fina
                         cluster_data_to_append += [cluster_dict[stat][pam][key] for key in data_to_append]
                     writer.writerow(row + cluster_data_to_append)
 
+    print "Finished writing cluster results to %s" % fullpath_output
     return fullpath_output
 
 
 if __name__ == '__main__':
-    # TODO sys.argv
-    #csvfile = "Chimera.csv"
-    csvfile = "Chimera_64_flat.csv"
-
-    csv_dict = csv_to_dict(csvfile)
-    clustered_data = cluster_csv_data(csv_dict, plot_dendrogram_flag=True)
-
-    write_clustered_csv(csvfile)
+    # argument parsing
+    parser = argparse.ArgumentParser(description='Cluster given csv data into a new clustered csv.')
+    parser.add_argument('--path_input', metavar='C', type=str, help='directory of input csv file')
+    parser.add_argument('--dir_output', metavar='S', nargs='?', default=None,
+                        type=str, help='directory to place output csv (default: same as input)')
+    parser.add_argument('--plot_on', metavar='F', nargs='?', const=True, default=False,
+                        type=str, help='[switch] plot cluster dendrogram (default: no plot)')
+    args = parser.parse_args()
+    # write to csv
+    write_clustered_csv(args.path_input, dir_output=args.dir_output, plot_dendrogram_flag=args.plot_on)
