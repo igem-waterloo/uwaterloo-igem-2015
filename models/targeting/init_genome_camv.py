@@ -28,8 +28,8 @@ def init_genome_camv(pseudo_targets):
     #genome_camv.add_domain(ncr_right_of_35S)
     promoter_35S = Domain("promoter_35S", 7092, 7435, "promoter", genome_camv)
     genome_camv.add_domain(promoter_35S)
-    #promoter_19S = ...
-    #genome_camv.add_domain(promoter_19S)
+    promoter_19S = Domain("promoter_19S", 5380, 5773, "promoter", genome_camv)
+    genome_camv.add_domain(promoter_19S)
     gene_P1 = Domain("gene_P1", 364, 1347, "orf", genome_camv)
     genome_camv.add_domain(gene_P1)
     gene_P2 = Domain("gene_P2", 1349, 1828, "orf", genome_camv)
