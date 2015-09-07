@@ -95,10 +95,15 @@ function dS = mathva(~,S)
 
 	D_max = 0.001;   % Maximum number of gapped DNA in nucleus
 
+	MaxP6 = 0.5 * ; % made up parameters
+	k_log = 0.01; % made up parameters
+
+	RNAiFactor = MaxP6 / (1 + exp(-k_log(P_6 - 0.5)));
+
 	%% Equations
 
 	% Gapped DNA in nucleus
-	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - k_g*D_gap;
+	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - k_g*D_gap ;
 
 	% Covalently closed circular DNA in nucleus
 	eq2 = alpha_c*D_gap - gamma_c*D_ccc - k_c*D_ccc;
@@ -110,13 +115,13 @@ function dS = mathva(~,S)
 	eq4 = alpha_c*D_gmod - gamma_c*D_cmod + k_c*D_ccc; % Brandon to update
 
 	% 19S RNA
-	eq5 = alpha_19*D_ccc - gamma_19*R_19s;
+	eq5 = alpha_19*D_ccc - gamma_19*R_19s - RNAiFactor;
 
 	% Total pure 35S RNA (spliced or unspliced)
-	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u;
+	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u - RNAiFactor;
 
 	% Total impure 35S RNA (spliced or unspliced)
-	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu; % Brandon to update
+	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu - RNAiFactor; % Brandon to update
 
 	% Protein 1
 	eq8 = beta_1*R_35u + beta_1*R_35mu - delta_1*P_1;
