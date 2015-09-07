@@ -103,13 +103,13 @@ function dS = mathva(~,S)
 	%% Equations
 
 	% Gapped DNA in nucleus
-	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - k_g*D_gap ;
+	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - alpha_c*D_gap - k_g*D_gap ;
 
 	% Covalently closed circular DNA in nucleus
 	eq2 = alpha_c*D_gap - gamma_c*D_ccc - k_c*D_ccc;
 
 	% Modified gapped DNA in nucleus
-	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod) - alpha_c*D_gmod + k_g*D_gap; % Brandon to update
+	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - alpha_c*D_gmod + k_g*D_gap; % Brandon to update
 
 	% Modified cccDNA in nucleus
 	eq4 = alpha_c*D_gmod - gamma_c*D_cmod + k_c*D_ccc; % Brandon to update
