@@ -24,8 +24,8 @@ def init_genome_camv(pseudo_targets):
     # gene coordinates from http://www.ncbi.nlm.nih.gov/nuccore/9626938
     #ncr_left_of_35S = ...
     #genome_camv.add_domain(ncr_left_of_35S)
-    #ncr_right_of_35S = ...
-    #genome_camv.add_domain(ncr_right_of_35S)
+    ncr_right_of_35S = Domain("ncr_right_of_35S", 7436, 8024, "ncr", genome_camv)
+    genome_camv.add_domain(ncr_right_of_35S)
     promoter_35S = Domain("promoter_35S", 7092, 7435, "promoter", genome_camv)
     genome_camv.add_domain(promoter_35S)
     promoter_19S = Domain("promoter_19S", 5380, 5773, "promoter", genome_camv)
