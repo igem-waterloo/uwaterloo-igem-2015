@@ -54,7 +54,7 @@ Viral Assembly Equation List
 \begin{align}
 % ----------------------------------
 % 1. Gapped DNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{GAP} &= \text{(out inf pure)} + k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{GAP}) - k_g (DNA_{GAP}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{GAP} &= \text{(out inf pure)} + k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \alpha_c (DNA_{GAP}) - k_g (DNA_{GAP}) \\
 %
 % ----------------------------------
 % 2. cccDNA
@@ -62,7 +62,7 @@ Viral Assembly Equation List
 %
 % ----------------------------------
 % 3. Modified gapped DNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{gmod} &= \text{(out inf mod)} + k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{gmod}) + k_g (DNA_{GAP}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{gmod} &= \text{(out inf mod)} + k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \alpha_c (DNA_{gmod}) + k_g (DNA_{GAP}) \\
 % ----------------------------------
 % 4. Modified cccDNA
 \frac{\mathrm{d}}{\mathrm{d} t} DNA_{cmod} &= \alpha_c (DNA_{gmod}) - \gamma_c (DNA_{cmod}) + k_c (DNA_{CCC}) \\
