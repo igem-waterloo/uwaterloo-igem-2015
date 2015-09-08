@@ -474,4 +474,5 @@ q, blockquote {
     font-style: italic;
     font-family: inherit;
     padding: 0 0 0 120px;
+    border-left: none !important;
 }
