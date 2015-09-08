@@ -15,7 +15,7 @@ function viralAssemblyModel ()
 	tic
 	[t, out] = ode15s(@mathva, [0,Tend], initial);
 	toc
-
+    
 	%% Plot!
 	% This plots concentration of virions over time
 	figure(1);
@@ -94,17 +94,17 @@ function dS = mathva(~,S)
 	k_anchor = 1;   % Rate of P3 binding to virions
 
 	D_max = 0.001;   % Maximum number of gapped DNA in nucleus
-
-	%% Equations
+    
+	%% Differential Equations
 
 	% Gapped DNA in nucleus
-	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - k_g*D_gap;
+	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - pure2modg*D_gap;
 
 	% Covalently closed circular DNA in nucleus
 	eq2 = alpha_c*D_gap - gamma_c*D_ccc - k_c*D_ccc;
 
 	% Modified gapped DNA in nucleus
-	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod) - alpha_c*D_gmod + k_g*D_gap; % Brandon to update
+	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod) - alpha_c*D_gmod + pure2modc*D_gap;
 
 	% Modified cccDNA in nucleus
 	eq4 = alpha_c*D_gmod - gamma_c*D_cmod + k_c*D_ccc; % Brandon to update
