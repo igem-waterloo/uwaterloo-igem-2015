@@ -1,3 +1,15 @@
+globals
+[
+  total-leaf1
+  total-leaf2
+  total-leaf3
+  total-leaf4
+  infected-leaf1
+  infected-leaf2
+  infected-leaf3
+  infected-leaf4
+]
+
 ;; Create "breed" of 'turtle' called cell
 breed [cells cell]  ;; will eventually want mesophyll and vascular
 
@@ -12,11 +24,13 @@ cells-own
 
 to setup
   clear-all    ;; remove anything from previous runs
+  random-seed 1 ;; Consistent setup (if other parameters constant)
   setup-cells  ;; set up the cells
   setup-leaf   ;; set up the connections between cells
   ask n-of initial-infection cells   ;; determine how many viruses
     [ become-infected ]
   ask links [ set color white ]  ;; make the symplastic connections white
+  count-leaves 
   reset-ticks  ;; reset timer from previous run
 end
 
@@ -127,6 +141,20 @@ to spread-resistance
      [if random-float 100 < resistance-spread 
        [become-resistant] ] ]
 end
+
+to count-leaves
+  set total-leaf1 
+  count cells with [pxcor > 0 and pycor > 0] 
+  set total-leaf2 
+  count cells with [pxcor < 0 and pycor > 0]
+  set total-leaf3 
+  count cells with [pxcor < 0 and pycor < 0] 
+  set total-leaf1 
+  count cells with [pxcor > 0 and pycor < 0]  
+end
+
+
+  
 @#$#@#$#@
 GRAPHICS-WINDOW
 277
@@ -198,7 +226,7 @@ initial-infection
 initial-infection
 1
 4
-2
+1
 1
 1
 NIL
@@ -226,9 +254,9 @@ SLIDER
 191
 num-cells
 num-cells
-0
-300
-225
+100
+500
+200
 1
 1
 NIL
