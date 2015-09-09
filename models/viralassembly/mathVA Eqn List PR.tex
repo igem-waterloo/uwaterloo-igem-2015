@@ -88,7 +88,7 @@ Viral Assembly Equation List
 %
 % ----------------------------------
 % 10. P3
-\frac{\mathrm{d}}{\mathrm{d} t} P_3 &= \beta_3 (RNA_{35S}) + \beta_3 (RNA_{35Sm}) - \delta_3 P_3 - k_{anchor} P_3 V_{\text{int}} \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_3 &= \beta_3 (RNA_{35S}) + \beta_3 (RNA_{35Sm}) - \delta_3 P_3 - k_{anchor} P_3 V_{\text{int} - k_{anchor} P_3 V_{\text{int_m}} \\
 %
 % ----------------------------------
 % 11. P4
@@ -96,11 +96,11 @@ Viral Assembly Equation List
 %
 % ----------------------------------
 % 12. P4 subunits
-\frac{\mathrm{d}}{\mathrm{d} t} P_{4 \text{,sub}} &= k_{splice} P_4 - \delta_4 P_{4 \text{,sub}} - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_{4 \text{,sub}} &= k_{splice} P_4 - \delta_4 P_{4 \text{,sub}} - k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) \\
 %
 % ----------------------------------
 % 13. P5
-\frac{\mathrm{d}}{\mathrm{d} t} P_5 &= \beta_5 (RNA_{35S}) + \beta_5 (RNA_{35Sm}) - \delta_5 P_5 - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_5 &= \beta_5 (RNA_{35S}) + \beta_5 (RNA_{35Sm}) - \delta_5 P_5 - k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) \\
 %
 % ----------------------------------
 % 14. P6
@@ -116,11 +116,11 @@ Viral Assembly Equation List
 %
 % ----------------------------------
 % 17. Pure virions
-\frac{\mathrm{d}}{\mathrm{d} t} V &= k_{anchor} P_3 V_{\text{int}} - k_v V - \delta_v V - v_{exit} V \\
+\frac{\mathrm{d}}{\mathrm{d} t} V &= k_{anchor} P_3 V_{\text{int}} - k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \delta_v V - v_{exit} V \\
 %
 % ----------------------------------
 % 18. Impure virions
-\frac{\mathrm{d}}{\mathrm{d} t} V_m &= k_{anchor} P_3 V_{int_m} - k_v V_m - \delta_v V_m - v_{exit} V_m
+\frac{\mathrm{d}}{\mathrm{d} t} V_m &= k_{anchor} P_3 V_{int_m} - k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \delta_v V_m - v_{exit} V_m
 \end{align}
 
 %----------------------------------------------------------------------------------------

@@ -97,6 +97,7 @@ function dS = mathva(~,S)
 
 	MaxP6 = 0.5 * ; % made up parameters
 	k_log = 0.01; % made up parameters
+	p6_activation = 
 
 	RNAiFactor = MaxP6 / (1 + exp(-k_log(P_6 - 0.5)));
 
@@ -118,19 +119,19 @@ function dS = mathva(~,S)
 	eq5 = alpha_19*D_ccc - gamma_19*R_19s - RNAiFactor;
 
 	% Total pure 35S RNA (spliced or unspliced)
-	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u - RNAiFactor;
+	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u - gamma_35*RNAiFactor;
 
 	% Total impure 35S RNA (spliced or unspliced)
-	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu - RNAiFactor; % Brandon to update
+	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu - gamma_35*RNAiFactor; % Brandon to update
 
 	% Protein 1
-	eq8 = beta_1*R_35u + beta_1*R_35mu - delta_1*P_1;
+	eq8 = beta_1*(1 + P_6/ (P_6 + p6_activation)) * (R_35u + R_35mu) - delta_1 * P_1;
 
 	% Protein 2
 	eq9 = beta_2*R_35u + beta_2*R_35mu - delta_2*P_2 - k_l*P_2;
 
 	% Protein 3
-	eq10 = beta_3*R_35 + beta_3*R_35m - delta_3*P_3 - k_anchor*P_3*V_i;
+	eq10 = beta_3*R_35 + beta_3*R_35m - delta_3*P_3 - k_anchor*P_3*V_i - k_anchor*P_3*V_mi;
 
 	% Protein 4
 	eq11 = beta_4*R_35 + beta_4*R_35m - delta_4*P_4 - k_p5s*P_4;
@@ -151,12 +152,12 @@ function dS = mathva(~,S)
 	eq16 = k_p*P_4*P_5*R_35mu - k_anchor*P_3*V_mi; % Brandon to update
 
 	% Complete pure virions
-	eq17 = k_anchor*P_3*V_i - k_v*V - delta_v*V - v_exit*V;
+	eq17 = k_anchor*P_3*V_i - k_v*V*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - delta_v*V - v_exit*V;
 
 	% Complete impure virions
-	eq18 = k_anchor*P_3*V_mi - k_v*V_m - delta_v*V_m - v_exit*V_m; % Brandon to update
+	eq18 = k_anchor*P_3*V_mi - k_v*V_m*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - delta_v*V_m - v_exit*V_m; % Brandon to update
 
 	% Altogether now!
-	dS = [eq1 eq2 eq3 eq4 eq5 eq6 eq7 eq8 eq9 eq10 eq11 eq12 eq13 eq14 eq15 eq16 eq17 eq18]';    
+	dS = [eq1 eq2 eq3 eq4 eq5 eq6 eq7 eq8 eq10 eq11 eq12 eq13 eq14 eq15 eq16 eq17 eq18]';    
 
 end
