@@ -24,7 +24,7 @@ cells-own
 
 to setup
   clear-all    ;; remove anything from previous runs
-  random-seed 1 ;; Consistent setup (if other parameters constant)
+ ; random-seed 1 ;; Consistent setup (if other parameters constant)
   setup-cells  ;; set up the cells
   setup-leaf   ;; set up the connections between cells
   ask n-of initial-infection cells   ;; determine how many viruses
@@ -32,6 +32,7 @@ to setup
   ask links [ set color white ]  ;; make the symplastic connections white
   count-leaves 
   reset-ticks  ;; reset timer from previous run
+  if file-exists? "Tromas_sim.csv" [file-delete "Tromas_sim.csv"]
 end
 
 to setup-cells
@@ -77,6 +78,7 @@ to go
     [ stop ]
   spread-virus
   do-apoptosis-checks
+  record-data
   tick
 end
 
@@ -87,6 +89,8 @@ to become-infected
   set resistant? false
   set time-since-infection 0
   set color red
+  count-leaf-infect
+
 end
 
 to become-susceptible
@@ -102,11 +106,21 @@ to become-resistant
   set color blue
 end
 
+to count-leaf-infect
+  if pxcor > 0 and pycor > 0
+   [set infected-leaf1 1 + infected-leaf1]
+  if pxcor < 0 and pycor > 0
+   [set infected-leaf2 1 + infected-leaf2]
+  if pxcor < 0 and pycor < 0
+   [set infected-leaf3 1 + infected-leaf3]
+  if pxcor > 0 and pycor < 0
+   [set infected-leaf4 1 + infected-leaf4]
+end
 ;; Virus Procedure
 to spread-virus
   ask cells with [infected?]
     ; spread to susceptibles
-    [ ask link-neighbors with [not resistant?] 
+    [ ask link-neighbors with [not resistant? and not infected?] 
       [ if random-float 100 < viral-spread-chance
         [ become-infected ] ] 
     ; some chance to spread to resistant cells - no perfect immunity
@@ -149,9 +163,27 @@ to count-leaves
   count cells with [pxcor < 0 and pycor > 0]
   set total-leaf3 
   count cells with [pxcor < 0 and pycor < 0] 
-  set total-leaf1 
+  set total-leaf4 
   count cells with [pxcor > 0 and pycor < 0]  
 end
+
+
+
+
+to record-data
+  file-open "Tromas_sim.csv"
+   file-write infected-leaf1
+    file-type ","
+   file-write infected-leaf2
+    file-type ","
+   file-write infected-leaf3
+    file-type ","
+   file-write infected-leaf4
+    file-type ","
+   file-type "\n"
+   file-close
+end
+
 
 
   
@@ -256,7 +288,7 @@ num-cells
 num-cells
 100
 500
-200
+281
 1
 1
 NIL
@@ -286,7 +318,7 @@ viral-spread-chance
 viral-spread-chance
 0.2
 10
-2.1
+3.8
 0.1
 1
 %
@@ -301,7 +333,7 @@ resistance-effectiveness
 resistance-effectiveness
 0
 1
-0.82
+0.85
 0.01
 1
 NIL
@@ -331,7 +363,7 @@ resistance-from-viral-contact
 resistance-from-viral-contact
 0
 10
-0.9
+1.4
 0.1
 1
 %
