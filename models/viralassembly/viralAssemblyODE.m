@@ -1,7 +1,5 @@
 function dS = viralAssemblyODE(~,S,params)
 
-%Virions accumulate after 16-18 hours
-
 	%% STATE VARIABLES
     
 	D_gap  = S(1);  % Gapped DNA in nucleus
