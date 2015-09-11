@@ -52,55 +52,60 @@ Viral Assembly Equation List
 % By the way, the percent sign is used for comments
 
 \begin{align}
+
+% ----------------------------------
+% 0. RNAi Factor
+f_{RNAi} &= \frac{L}{(1+exp(-k(P_6 - x_0)))}
 % ----------------------------------
 % 1. Gapped DNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{GAP} &= \text{(out inf pure)} + k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{GAP}) - k_g (DNA_{GAP}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{GAP} &= \text{(out inf pure)} + k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \alpha_c (DNA_{GAP}) - k_g (DNA_{GAP}) - \gamma_{DNA} DNA_{GAP} \\
 %
 % ----------------------------------
 % 2. cccDNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{CCC} &= \alpha_c (DNA_{GAP}) - \gamma_c (DNA_{CCC}) - k_c (DNA_{CCC}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{CCC} &= \alpha_c (DNA_{GAP}) - \gamma_{DNA} (DNA_{CCC}) - k_c (DNA_{CCC}) \\
 %
 % ----------------------------------
 % 3. Modified gapped DNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{gmod} &= \text{(out inf mod)} + k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod}) - \alpha_c (DNA_{gmod}) + k_g (DNA_{GAP}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{gmod} &= \text{(out inf mod)} + k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \alpha_c (DNA_{gmod}) + k_g (DNA_{GAP}) - \gamma_{DNA} DNA_{gmod} \\
 % ----------------------------------
 % 4. Modified cccDNA
-\frac{\mathrm{d}}{\mathrm{d} t} DNA_{cmod} &= \alpha_c (DNA_{gmod}) - \gamma_c (DNA_{cmod}) + k_c (DNA_{CCC}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} DNA_{cmod} &= \alpha_c (DNA_{gmod}) - \gamma_{DNA} (DNA_{cmod}) + k_c (DNA_{CCC}) \\
 % ----------------------------------
 % 5. 19S RNA
-\frac{\mathrm{d}}{\mathrm{d} t} RNA_{19S} &= \alpha_{19S} (DNA_{CCC}) - \gamma_{19S} (RNA_{19S}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{19S} &= \alpha_{19S} (DNA_{CCC}) - \gamma_{19S} (RNA_{19S}) - f_{RNAi}\\
 %
 % ----------------------------------
 % 6. Total pure 35S RNA
-\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35S} &= \alpha_{35S} (DNA_{CCC}) - \gamma_{35S} (RNA_{35S}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35S} &= \alpha_{35S} (DNA_{CCC}) - \gamma_{35S} (RNA_{35S}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - f_{RNAi}\\
 %
 % ----------------------------------
 % 7. Total modified 35S RNA
-\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35Sm} &= \alpha_{35S} (DNA_{cmod}) - \gamma_{35S} (RNA_{35Sm}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} RNA_{35Sm} &= \alpha_{35S} (DNA_{cmod}) - \gamma_{35S} (RNA_{35Sm}) -  k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) - f_{RNAi}\\
 %
 % ----------------------------------
 % 8. P1
-\frac{\mathrm{d}}{\mathrm{d} t} P_1 &= \beta_1 (RNA_{35Su}) + \beta_1 (RNA_{35Smu}) - \delta_1 P_1 \\
+%add in the stuff to latex
+\frac{\mathrm{d}}{\mathrm{d} t} P_1 &= \beta_1 (1 + \frac{P_6}{P_6 + E_{p6}}) (((RNA_{35Su}) + (RNA_{35Smu})) - \delta_1 P_1 \\
 %
 % ----------------------------------
 % 9. P2
-\frac{\mathrm{d}}{\mathrm{d} t} P_2 &= \beta_2 (RNA_{35Su}) + \beta_2 (RNA_{35Smu}) - \delta_2 P_2 - k_l P_2 \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_2 &= \beta_2 (1 + \frac{P_6}{P_6 + E_{p6}}) ((RNA_{35Su}) + (RNA_{35Smu}) - \delta_2 P_2 - k_l P_2 \\
 %
 % ----------------------------------
 % 10. P3
-\frac{\mathrm{d}}{\mathrm{d} t} P_3 &= \beta_3 (RNA_{35S}) + \beta_3 (RNA_{35Sm}) - \delta_3 P_3 - k_{anchor} P_3 V_{\text{int}} \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_3 &= \beta_3 (1 + \frac{P_6}{P_6 + E_{p6}})((RNA_{35S}) + (RNA_{35Sm})) - \delta_3 P_3 - k_{anchor} P_3 V_{\text{int} - k_{anchor} P_3 V_{\text{int_m}} \\
 %
 % ----------------------------------
 % 11. P4
-\frac{\mathrm{d}}{\mathrm{d} t} P_4 &= \beta_4 (RNA_{35S}) + \beta_4 (RNA_{35Sm}) - \delta_4 P_4 - k_{splice} P_4 \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_4 &= \beta_4 (1 + \frac{P_6}{P_6 + E_{p6}}) ((RNA_{35S}) + (RNA_{35Sm})) - \delta_4 P_4 - k_{splice} P_4 \\
 %
 % ----------------------------------
 % 12. P4 subunits
-\frac{\mathrm{d}}{\mathrm{d} t} P_{4 \text{,sub}} &= k_{splice} P_4 - \delta_4 P_{4 \text{,sub}} - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_{4 \text{,sub}} &= k_{splice} P_4 - \delta_4 P_{4 \text{,sub}} - k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) \\
 %
 % ----------------------------------
 % 13. P5
-\frac{\mathrm{d}}{\mathrm{d} t} P_5 &= \beta_5 (RNA_{35S}) + \beta_5 (RNA_{35Sm}) - \delta_5 P_5 - k_p P_{4 \text{,sub}} P_5 (RNA_{35S}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Sm}) \\
+\frac{\mathrm{d}}{\mathrm{d} t} P_5 &= \beta_5 (1 + \frac{P_6}{P_6 + E_{p6}}) ((RNA_{35S}) + (RNA_{35Sm})) - \delta_5 P_5 - k_p P_{4 \text{,sub}} P_5 (RNA_{35Su}) - k_p P_{4 \text{,sub}} P_5 (RNA_{35Smu}) \\
 %
 % ----------------------------------
 % 14. P6
@@ -116,11 +121,11 @@ Viral Assembly Equation List
 %
 % ----------------------------------
 % 17. Pure virions
-\frac{\mathrm{d}}{\mathrm{d} t} V &= k_{anchor} P_3 V_{\text{int}} - k_v V - \delta_v V - v_{exit} V \\
+\frac{\mathrm{d}}{\mathrm{d} t} V &= k_{anchor} P_3 V_{\text{int}} - k_v V (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \delta_v V - v_{exit} V \\
 %
 % ----------------------------------
 % 18. Impure virions
-\frac{\mathrm{d}}{\mathrm{d} t} V_m &= k_{anchor} P_3 V_{int_m} - k_v V_m - \delta_v V_m - v_{exit} V_m
+\frac{\mathrm{d}}{\mathrm{d} t} V_m &= k_{anchor} P_3 V_{int_m} - k_v V_m (DNA_{max} - DNA_{GAP} - DNA_{gmod} - DNA_{CCC} - DNA_{cmod}) - \delta_v V_m - v_{exit} V_m
 \end{align}
 
 %----------------------------------------------------------------------------------------
@@ -133,3 +138,4 @@ Viral Assembly Equation List
 
 
 \end{document}
+
