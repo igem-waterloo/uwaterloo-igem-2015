@@ -8,7 +8,7 @@ from rosetta import *
 
 from constants import PAM_TOOLS, SCOREFILE_LINES
 from csv_results import results_to_csv
-from utility import pam_string_from_int
+from utility import pam_string_from_int, safe_mkdir
 
 
 def write_dock_stats(score_directory, filename, dock_stats, time_diff_total, time_diff_docking):
@@ -102,7 +102,6 @@ def dock_complex(pose):
     #raise Exception("Complex docking not implemented")
 
 
-
 def dock_variants(pam_variants, path_to_scores, path_to_pdbs='', dock_partners="B_ACD", foldtree=None,
                   pam_length=4, pam_tool='Chimera', complex_docking_flag=False):
     """Docks and scores a pdb for each PAM variant (created using pam_tool) using simple docking
@@ -183,13 +182,7 @@ if __name__ == '__main__':
         results_folder = "results"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
         path_to_scores = os.path.join("results", timestamp)
-    try: # check existence again to handle concurrency problems
-        os.makedirs(path_to_scores)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(path_to_scores):
-            pass
-        else:
-            raise
+    safe_mkdir(path_to_scores)
 
     # initialize pyrosetta and score variants
     init(extra_options="-mute all")  # reduce rosetta print calls

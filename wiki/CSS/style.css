@@ -265,7 +265,7 @@ footer .footer-company-name {
 }
 footer .footer-links {
   list-style: none;
-  padding: 3em 0 2em;
+  padding: 1.5em 0 0;
   margin: 0;
 }
 
@@ -275,6 +275,10 @@ footer p.footer-links a {
   padding-right: 1.2em !important;
   color:  #ffffff;
   font-size: 0.8em;
+}
+
+footer p.footer-links a:hover {
+    color: #23b593;
 }
 
 /* If you don't want the footer to be responsive, remove these media queries */
@@ -432,6 +436,44 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
 
+.img-att {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    border-radius: 40px;
+    display: inline-block;
+    background-color: #989;
+    color: #261a28;
+    text-align: center;
+    font-family: georgia, serif;
+    font-style: italic;
+}
+.img-att .img-att-bubble {
+    position: absolute;
+    top: -105px;
+    left: -310px;
+    display: none;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    color: #000;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    text-align: left;
+    padding: 1em;
+    font-size: 14px;
+}
+.img-att .img-att-bubble li {
+    list-style: none;
+    line-height: normal;
+    margin: 5px 0;
+}
+.img-att:hover .img-att-bubble {
+    display: block;
+}
 
 /*---Sponsor images-------------------------------------------------------------------------------*/
 ul.sponsors {

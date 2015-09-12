@@ -1,3 +1,4 @@
+import errno
 import os
 
 import config
@@ -69,3 +70,47 @@ def pam_string_from_int(int_pam, length_pam):
         return DNA_ALPHABET[int_pam / 64] + DNA_ALPHABET[int_pam / 16 % 4] + DNA_ALPHABET[int_pam / 4 % 4] + DNA_ALPHABET[int_pam % 4]
     else:
         raise Exception('Unsupported pam length -- must be 3 or 4 long')
+
+
+def int_from_pam_string(pam_string):
+    """Given a pam string, return a unique int
+    Args:
+        pam_string: unique 3 or 4 long string of nucleotide characters
+    Returns:
+        unique int corresponding to the pam string
+    """
+    length_pam = len(pam_string)
+    assert 3 <= length_pam <= 4
+    pam_int = 0
+    for i in xrange(length_pam):
+        pam_int += DNA_ALPHABET.index(pam_string[i]) * (4 ** (length_pam - 1 - i))
+    return pam_int
+
+
+def sort_tuples_by_idx(list_of_tuples, tuple_idx=1, reverse_flag=False):
+    """Sort a list of (pam, score) tuples
+    Args:
+        list_of_tuples: list of tuples of the format [(str, float), ... , (str, float)]
+        tuple_idx: [default: 1] tuple index which defines sorting
+        reverse_flag: [default: False] if True, sort descending instead of ascending
+    Returns:
+        sorted data in same format
+    Notes:
+        - sorts by score (second tuple element) in ascending order
+    """
+    return sorted(list_of_tuples, key=lambda tup: tup[tuple_idx], reverse=reverse_flag)
+
+
+def safe_mkdir(dirpath):
+    """Safe directory creator for avoiding concurrency issues
+    """
+    if not os.path.isdir(dirpath):
+        try:
+            os.makedirs(dirpath)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(dirpath):
+                print "Notice - concurrency problem handled during directory creation"
+                pass
+            else:
+                raise
+    return
