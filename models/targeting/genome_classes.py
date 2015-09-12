@@ -19,10 +19,13 @@ from probabilistic import prob_cut, nt_rand, indel
 
 class Target(object):
 
-    def __init__(self, label, grna, sequence, start, complex_concentration, sense, direction, domain):
+    def __init__(self, label, grna, sequence, start, complex_concentration, sense, domain):
         self.label = label  # string
         self.grna = grna  # string
-        self.sequence = sequence  # string, exclude PAM, should be ~ 20 chars
+        if sense == 1:
+            self.sequence = sequence  # string, exclude PAM, should be ~ 20 chars
+        else:
+            self.sequence = self.convert_sense(sequence)
         self.original_start = start  # int, location of first target nucleotide adjacent to PAM, shouldn't change
         self.current_start = start  # int, location of first target nucleotide adjacent to PAM, changes with indels
         self.total_cuts = 0  # int, total time this target has been cut
@@ -32,12 +35,22 @@ class Target(object):
         self.complex_concentration = complex_concentration  # conc of gRNA-cas9 complex inside nucleus
         self.shift = 0  # defined by sum of net indel sizes, used to compute frameshift if orf region
         assert sense in [1, -1]
-        assert direction in [1, -1]
         self.sense = sense  # 1 or -1, referring to top (explicit) or bottom (implicit) dna strand
-        self.direction = direction  # 1 or -1, 1 means ggn occurs before target (numerically)
         self.domain = domain
         domain.add_target(self)
         self.cut_probability = None
+
+    def convert_sense(self, sequence):
+        # flips characters and reverses string
+        pairs = [['a', 't'], ['g', 'c']]
+        converted_sequence = ""
+        for nt in sequence:
+            for pair in pairs:
+                if nt in pair:
+                    for item in pair:
+                        if nt != item:
+                            converted_sequence += item
+        return converted_sequence[::-1]
 
     def is_repaired(self):
         return self.repaired
@@ -59,7 +72,11 @@ class Target(object):
 
     def set_cut_position(self):
         # posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
-        self.cut_position = self.current_start + self.direction * 3  
+        # hardcoded for now
+        if sense == 1:  
+            self.cut_position = self.current_start + 17
+        else:
+            self.cut_position = self.current_start + 3
 
     def repair(self, dt):
         # call Genome.target_repair through Domain
@@ -147,8 +164,7 @@ class Genome(object):
 
     def repair_target(self, location, cut_position, direction, sequence):  # TODO pass target instead, clean this method
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
-        # TODO: make indel() actually good
-        if direction == 1:
+        if sense == 1:
             del_left, del_right, insert = indel()  # e.g. 0, 0, 2
         else:
             del_right, del_left, insert = indel()  # e.g. 0, 0, 2
@@ -161,15 +177,23 @@ class Genome(object):
         self.make_new_genome(len(left_genome), net_indel_size, new_genome)
         return net_indel_size
 
-    def find_pam(self, location):
+    def find_pam(self, location, sense):
         shift = 0
         # expands to left and right looking for nearest working PAM
-        while self.current_genome[location+shift: location+shift+2] != "gg" and self.current_genome[location-shift: location-shift+2] != "gg":
-            shift += 1
-        if self.current_genome[location-shift: location-shift+2] == "gg":  # if nearest PAM is on left
-            location -= shift  # shift location to the left
-        else:  # if nearest PAM is on right
-            location += shift  # shift location to the right
+        if sense == 1:
+            while self.current_genome[location+shift+20: location+shift+23] != "gg" and self.current_genome[location-shift: location-shift+2] != "gg":
+                shift += 1
+            if self.current_genome[location-shift+20: location-shift+23] == "gg":  # if nearest PAM is on left
+                location -= shift  # shift location to the left
+            else:  # if nearest PAM is on right
+                location += shift  # shift location to the right
+        else:
+            while self.current_genome[location+shift-3: location+shift] != "cc" and self.current_genome[location-shift: location-shift+2] != "gg":
+                shift += 1
+            if self.current_genome[location-shift-3: location-shift] == "cc":  # if nearest PAM is on left
+                location -= shift  # shift location to the left
+            else:  # if nearest PAM is on right
+                location += shift  # shift location to the right
         return location
 
     def get_targets_from_genome(self):
@@ -273,7 +297,7 @@ class Genome(object):
             # else it is just broken
             else:
                 # find new pam, set new location, set new sequence
-                new_start = self.find_pam(target.current_start)
+                new_start = self.find_pam(target.current_start, target.sense)
                 self.domains[domain_label].targets[target.label].current_start = new_start
                 self.domains[domain_label].targets[target.label].sequence = self.current_genome[new_start:new_start+20]
 

@@ -77,6 +77,11 @@ def init_genome_camv(pseudo_targets):
     return genome_camv
 
 
+targets = []
+targets.append(Target("P1_1", "cattcacgatgccacaggta", "cattcacgatgccacaggta", 636, complex_concentration, 1, 1, gene_P1))
+targets.append(Target("P1_1", "aggacaatcattgatgagct", "aggacaatcattgatgagct", 1993, complex_concentration, -1, 1, gene_P3))
+
+
 def init_targets_single_P6(complex_concentration):
     return [{'label': "target_P6_1",
              'target_sequence': "ggagaaagaaaagatatttaaaa",
