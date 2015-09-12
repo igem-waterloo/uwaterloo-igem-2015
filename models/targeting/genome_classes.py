@@ -88,8 +88,10 @@ class Domain(object):
         self.domain_start = domain_start  # int
         self.domain_end = domain_end  # int
         if domain_type == 'orf':
-            assert promoter is not None
-            self.promoter = promoter  # promoter is a domain too
+            # assert promoter is not None
+            # for now to test
+            if self.promoter is not None:
+                self.promoter = promoter  # promoter is a domain too
         self.sequence = None  # to be implemented
         self.functional = True  # bool
         self.targets = {}  # dict of Target objects and locations with labels as keys
@@ -260,11 +262,13 @@ class Genome(object):
             self.remove_domain(domain)
         # set new genome
         self.current_genome = new_genome
+        self.length = len(new_genome)
+        # self.repaired = True
         # delete or fix all broken targets
         for target in broken_targets:
             domain_label = target.domain.label
             # if whole target is deleted
-            if target.current_start + 20 < location:
+            if target.current_start + 20 < indel_location:
                 self.domains[domain_label].remove_target(target)
             # else it is just broken
             else:
@@ -281,6 +285,14 @@ class Genome(object):
         target1.set_cut_position()
         target2.set_cut_position()
         location = min(target1.cut_position, target2.cut_position)
-        del_size = abs(target1.cut_position - target2.cut_position)
-        new_genome = self.current_genome[0:location] + self.current_genome[location+del_size:]
-        make_new_genome(location, -del_size, new_genome)
+        middle = abs(target1.cut_position - target2.cut_position)
+        if del_size < self.length / 2: # if middle is smaller, should delete
+            new_genome = self.current_genome[0:location] + self.current_genome[location+middle:]
+            self.make_new_genome(location, -del_size, new_genome)
+        else: # otherwise, should keep (delete beginning and end)
+            # first delete beginning
+            new_genome = self.current_genome[location:]
+            self.make_new_genome(0, -location, new_genome)
+            # then delete end
+            new_genome = self.current_genome[0:middle]
+            self.make_new_genome(middle, -(self.length - middle), new_genome)
