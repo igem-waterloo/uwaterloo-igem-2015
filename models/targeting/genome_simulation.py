@@ -10,7 +10,7 @@ total_turns = int((t1 - t0) / dt)
 time_sim = t0
 
 # initialize genome
-pseudo_targets = init_targets_single_P6(complex_concentration)
+pseudo_targets = init_targets_all_domains(complex_concentration)
 genome_camv = init_genome_camv(pseudo_targets)
 genome_camv.initialize_target_cut_probabilities(dt)
 
@@ -18,7 +18,7 @@ genome_camv.initialize_target_cut_probabilities(dt)
 target_dict = genome_camv.get_targets_from_genome()
 open_targets = genome_camv.get_open_targets_from_genome()
 
-# constants for logging data
+# for logging data
 data_log = ""
 data_file = "simulation_data"
 
