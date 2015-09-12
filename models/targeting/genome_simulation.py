@@ -18,8 +18,15 @@ genome_camv.initialize_target_cut_probabilities(dt)
 target_dict = genome_camv.get_targets_from_genome()
 open_targets = genome_camv.get_open_targets_from_genome()
 
+# constants for logging data
+data_log = ""
+data_file = "simulation_data"
+
 
 for turn in xrange(total_turns):
+
+    # clear turn log and set to turn
+    turn_log = "Turn", turn + "\n"
 
     # get current targets
     targets_from_genome = genome_camv.get_targets_from_genome()
@@ -27,6 +34,9 @@ for turn in xrange(total_turns):
     # deletion module
     if len(open_targets) > 1:
         # do deletion permutation probabilities for deletion of pairs based on distance
+        # if large deletion:
+        #   first, second = min(target1,target2), max(target1, target2)
+        #   turn_log += "Large deletion spanning from", first, "to", second + "\n"
 
     # cut and repair module
     for key_domain in targets_from_genome.keys():
@@ -40,6 +50,7 @@ for turn in xrange(total_turns):
                 if success_cut:
                     target.cut()
                     open_targets.append((key_domain, key_target))
+                    turn_log += target.label, "cut at", target.cut_position + "\n"
 
             else:
                 probability_to_repair = ???  # TODO
@@ -47,12 +58,20 @@ for turn in xrange(total_turns):
                 if success_repair:
                     target.repair()
                     open_targets.remove((key_domain, key_target))
+                    turn_log += target.label, "repaired at", target.cut_position + "\n"
 
     # save turn data (maybe only if stuff happened?)
-    # do...
+    # \n's count number of events in turn (starts with one)
+    if turn_log.count('\n') > 1:
+        data_log += turn_log
 
     # update plots if actively showing plots
     # do...
 
     # increment timer
     time_sim += dt
+
+print data_log
+f = open(data_file,'w')
+f.write(data_log)
+f.close()
