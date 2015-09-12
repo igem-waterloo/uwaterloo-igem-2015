@@ -20,26 +20,27 @@ def init_genome_camv(pseudo_targets):
     sequence = convert_fasta_to_string("genome_camv.fasta")
     genome_camv = Genome(sequence)
 
-    # initialize camv genome domains
+    # initialize camv genome 
+    # gene coordinates from http://www.ncbi.nlm.nih.gov/nuccore/9626938
     #ncr_left_of_35S = ...
     #genome_camv.add_domain(ncr_left_of_35S)
     #ncr_right_of_35S = ...
     #genome_camv.add_domain(ncr_right_of_35S)
-    #promoter_35S = ...
-    #genome_camv.add_domain(promoter_35S)
-    #promoter_19S = ...
-    #genome_camv.add_domain(promoter_19S)
-    #gene_P1 = ...
-    #genome_camv.add_domain(gene_P1)
-    #gene_P2 = ...
-    #genome_camv.add_domain(gene_P2)
-    #gene_P3 = ...
-    #genome_camv.add_domain(gene_P3)
-    #gene_P4 = ...
-    #genome_camv.add_domain(gene_P4)
-    #gene_P5 = ...
-    #genome_camv.add_domain(gene_P5)
-    gene_P6 = Domain("gene_P6", 500, 600, "orf", genome_camv)
+    promoter_35S = Domain("promoter_35S", 7092, 7435, "promoter", genome_camv)
+    genome_camv.add_domain(promoter_35S)
+    promoter_19S = Domain("promoter_19S", 5380, 5773, "promoter", genome_camv)
+    genome_camv.add_domain(promoter_19S)
+    gene_P1 = Domain("gene_P1", 364, 1347, "orf", genome_camv)
+    genome_camv.add_domain(gene_P1)
+    gene_P2 = Domain("gene_P2", 1349, 1828, "orf", genome_camv)
+    genome_camv.add_domain(gene_P2)
+    gene_P3 = Domain("gene_P3", 1830, 2219, "orf", genome_camv)
+    genome_camv.add_domain(gene_P3)
+    gene_P4 = Domain("gene_P4", 2201, 3670, "orf", genome_camv)
+    genome_camv.add_domain(gene_P4)
+    gene_P5 = Domain("gene_P5", 3633, 5672, "orf", genome_camv)
+    genome_camv.add_domain(gene_P5)
+    gene_P6 = Domain("gene_P6", 5776, 7338, "orf", genome_camv)
     genome_camv.add_domain(gene_P6)
 
     # initialize camv genome targets
