@@ -78,7 +78,7 @@ function dS = viralAssemblyODE(~,S,params)
 	delta_5 = delta;
     
 	RNAi_factor = L / (1 + exp(-k_value * (P_6 - 0.5)));
-    D_total     = D_gap - D_gmod - D_ccc - D_cmod;
+    D_total     = D_gap + D_gmod + D_ccc + D_cmod;
     
 	%% DIFFERENTIAL EQUATIONS
 
