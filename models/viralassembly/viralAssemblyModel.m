@@ -6,7 +6,7 @@ function viralAssemblyModel ()
 	% This simulates the initial infection 
 	initial = zeros(18,1);
 	initial(1) = 0.0001;
-	vol = 1; % Volume of cell
+	vol = 75; % Volume of cell
 
 	%% Run the simulation
 	% Run for 100 time units (minutes?)
@@ -61,12 +61,12 @@ function dS = mathva(~,S)
 	out_inf_mod  = 0;          % No outside infection (for now)
 	k_v      = 0.01;       % Rate of virions reentering host nucleus
 	alpha_c  = 0.1;        % Rate of repair of gapped DNA, value from Nakabayashi
-	gamma_c  = 0.00001;    % Degradation rate of CCC DNA
+	DNA_degrade  = 0.0001;    % Degradation rate of CCC DNA
 
 	pure2modg = 0.01 %rate in which pure 35s gapped is changed to modified 35s gapped
 	pure2modc = 0.01 %rate in which pure 35s ccc is changed to modified 35s ccc
 
-	alpha_19 = 0.05;       % Transcription rate of 19S, value from Nakabayashi
+	alpha_19 = 0.05;       % Transcription rate of 19S, value from Nakabayashi (tunable)
 	gamma_19 = log(2)/600; % Degradation rate = ln(2)/(half-life)
 	alpha_35 = 0.0653;     % Transcription rate of 35S, value from Martiene
 	gamma_35 = log(2)/600; % Degradation rate = ln(2)/(half-life)
@@ -78,63 +78,71 @@ function dS = mathva(~,S)
 	beta_5  = 0.1; % From Nakabayashi
 	beta_6  = 0.1; % From Nakabayashi
 
-	delta_1 = 0.0001;   % From Nakabayashi
-	delta_2 = 0.0001;   % From Nakabayashi
-	delta_3 = 0.0001;   % From Nakabayashi
-	delta_4 = 0.0001;   % From Nakabayashi
-	delta_5 = 0.0001;   % From Nakabayashi
-	delta_6 = 0.0001;   % From Nakabayashi
+	delta_1 = 0.001;   % From Nakabayashi
+	delta_2 = 0.001;   % From Nakabayashi
+	delta_3 = 0.001;   % From Nakabayashi
+	delta_4 = 0.001;   % From Nakabayashi
+	delta_5 = 0.001;   % From Nakabayashi
+	delta_6 = 0.001;   % From Nakabayashi
 
-	delta_v = 0.01;    % Rate of degradation of virions
-	v_exit  = 0.1;    % Rate that virions leave the cell
+	delta_v = 0.001;    % Rate of degradation of virions
+	v_exit  = log(2)/100;    % Rate that virions leave the cell
 
 	k_p   = 0.1;    % Packaging rate
 	k_l   = 1;      % Rate of P2 leaving for elIB
-	k_p5s = 1;      % Splicing of P4
+	k_p5s = 1;      % Splicing of P4 (tunable)
 	k_anchor = 1;   % Rate of P3 binding to virions
 
-	D_max = 0.001;   % Maximum number of gapped DNA in nucleus
+	D_max = 0.5;   % Maximum number of gapped DNA in nucleus
+
+	L = 1; % made up parameters
+	k_value = 0.01; % made up parameters
+	p6_activation = (9.3/1.6)/10;
+
+	RNAiFactor = L / (1 + exp(-k_value * (P_6 - 0.5)));
 
 	%% Equations
 
 	% Gapped DNA in nucleus
-	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod) - alpha_c*D_gap - k_g*D_gap;
+	eq1 = out_inf_pure + k_v*V*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - alpha_c*D_gap - pure2modg*D_gap - DNA_degrade * D_gap ;
 
 	% Covalently closed circular DNA in nucleus
-	eq2 = alpha_c*D_gap - gamma_c*D_ccc - k_c*D_ccc;
+	eq2 = alpha_c*D_gap - DNA_degrade*D_ccc - pure2modc*D_ccc;
 
 	% Modified gapped DNA in nucleus
-	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod) - alpha_c*D_gmod + k_g*D_gap; % Brandon to update
+	eq3 = out_inf_mod + k_v*V_m*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - alpha_c*D_gmod + pure2modg*D_gap - DNA_degrade*D_gmod; % Brandon to update
 
 	% Modified cccDNA in nucleus
-	eq4 = alpha_c*D_gmod - gamma_c*D_cmod + k_c*D_ccc; % Brandon to update
+	eq4 = alpha_c*D_gmod - DNA_degrade*D_cmod + pure2modc*D_ccc; % Brandon to update
 
 	% 19S RNA
-	eq5 = alpha_19*D_ccc - gamma_19*R_19s;
+	eq5 = alpha_19*D_ccc - gamma_19*R_19s - RNAiFactor;
+
+	%when multiplied by gamma 19 gets a weird result in DE
 
 	% Total pure 35S RNA (spliced or unspliced)
-	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u;
+	eq6 = alpha_35*D_ccc - gamma_35*R_35 - k_p*P_4s*P_5*R_35u - RNAiFactor;
 
 	% Total impure 35S RNA (spliced or unspliced)
-	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu; % Brandon to update
+	eq7 = alpha_35*D_cmod - gamma_35*R_35m - k_p*P_4s*P_5*R_35mu - RNAiFactor; % Brandon to update
 
 	% Protein 1
-	eq8 = beta_1*R_35u + beta_1*R_35mu - delta_1*P_1;
+	eq8 = beta_1*(1 + P_6/ (P_6 + p6_activation)) * (R_35u + R_35mu) - delta_1 * P_1;
 
 	% Protein 2
-	eq9 = beta_2*R_35u + beta_2*R_35mu - delta_2*P_2 - k_l*P_2;
+	eq9 = beta_2 * (1 + P_6/ (P_6 + p6_activation)) * (R_35u + R_35mu) - delta_2*P_2 - k_l*P_2;
 
 	% Protein 3
-	eq10 = beta_3*R_35 + beta_3*R_35m - delta_3*P_3 - k_anchor*P_3*V_i;
+	eq10 = beta_3 * (1 + P_6/ (P_6 + p6_activation)) * (R_35 + R_35m) - delta_3*P_3 - k_anchor*P_3*V_i - k_anchor*P_3*V_mi;
 
 	% Protein 4
-	eq11 = beta_4*R_35 + beta_4*R_35m - delta_4*P_4 - k_p5s*P_4;
+	eq11 = beta_4 * (1 + P_6/ (P_6 + p6_activation)) * (R_35 + R_35m) - delta_4*P_4 - k_p5s*P_4;
 
 	% Protein 4, subunits
-	eq12 = k_p5s*P_4 - delta_4*P_4s - k_p*P_4s*P_5*R_35u - k_p*P_4s*P_5*R_35mu;
+	eq12 = k_p5s * P_4 - delta_4 * P_4s - k_p*P_4s*P_5*R_35u - k_p*P_4s*P_5*R_35mu;
 
 	% Protein 5
-	eq13 = beta_5*R_35 - delta_5*P_5 - k_p*P_4s*P_5*R_35u - k_p*P_4s*P_5*R_35mu;
+	eq13 = beta_5 * (1 + P_6/ (P_6 + p6_activation)) * R_35 - delta_5*P_5 - k_p*P_4s*P_5*R_35u - k_p*P_4s*P_5*R_35mu;
 
 	% Protein 6
 	eq14 = beta_6*R_19s - delta_6*P_6;
@@ -143,13 +151,13 @@ function dS = mathva(~,S)
 	eq15 = k_p*P_4s*P_5*R_35u - k_anchor*P_3*V_i;
 
 	% Intermediate impure virions
-	eq16 = k_p*P_4*P_5*R_35m - k_anchor*P_3*V_mi; % Brandon to update
+	eq16 = k_p*P_4s*P_5*R_35mu - k_anchor*P_3*V_mi; % Brandon to update
 
 	% Complete pure virions
-	eq17 = k_anchor*P_3*V_i - k_v*V - delta_v*V - v_exit*V;
+	eq17 = k_anchor*P_3*V_i - k_v*V*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - delta_v*V - v_exit*V;
 
 	% Complete impure virions
-	eq18 = k_anchor*P_3*V_mi - k_v*V_m - delta_v*V_m - v_exit*V_m; % Brandon to update
+	eq18 = k_anchor*P_3*V_mi - k_v*V_m*(D_max-D_gap-D_gmod-D_cmod-D_ccc) - delta_v*V_m - v_exit*V_m; % Brandon to update
 
 	% Altogether now!
 	dS = [eq1 eq2 eq3 eq4 eq5 eq6 eq7 eq8 eq9 eq10 eq11 eq12 eq13 eq14 eq15 eq16 eq17 eq18]';    

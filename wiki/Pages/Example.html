@@ -35,6 +35,16 @@
             Text with class="prevHighlightBox" (reserved for default wiki content that is to be removed)
         </p>
     </section>
+
+    <section id="references" title="References">
+        <h2>References</h2>
+        This is a minimal example of the cite tag <cite ref="Khelifa2010"></cite>. Good to check if your changes will work <cite ref="Bak2013"></cite>. This sentence is followed by a non-existent cite tag <cite ref="thereisnone"></cite> which just displays "undefined". I don't think that's much of a problem.
+
+        References will show up in a list at the bottom of the page, like so:
+        <ol id="reflist">
+        </ol>
+    </section>
+
     <section id="math" title="Math">
         <h2>Math</h2>
         <p>MathJax is used to write equations using <span>$</span>.</p>
@@ -50,8 +60,17 @@
         </p>
     </section>
     <section id="images" title="Images &amp; Files">
+        <h2>Images &amp; Files</h2>
         <figure>
-            <img src="" alt="Example Image" />
+            <img src="/wiki/images/1/1c/Waterloo_crispier_logo.png" alt="Example Image" style="width:200px;"/>
+            <figcaption>Example caption</figcaption>
+            <div class="img-att">i
+                <ul class="img-att-bubble">
+                    <li>Photo &copy; <a href="#">Name of IP holder</a></li>
+                    <li>List modifications made (if any)</li>
+                    <li><a href="#">Link to original Photo</a></li>
+                </ul>
+            </div>
         </figure>
     </section>
 

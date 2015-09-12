@@ -1,4 +1,7 @@
 ;; ----- DECLARATIONS -----
+;; use arrays
+extensions [array]
+
 ;; Create "breed" of 'turtle' called cell
 breed [cells cell]          ;; eventually separate mesophyll?
 breed [vasculars vascular]  ;; phloem vascular bundles 
@@ -15,14 +18,18 @@ globals
   num-viruses    ;; keep track of the viral particles
   mod-num-viruses  ;; keep track of the modified viral particles
   lysed-cells    ;; keep track of apoptotic cells
+  infect-per-leaf ;; array of infection counts
 ]
 
+
 ;; Declare the cell-specific (turtle breed) variables
-cells-own
+turtles-own
 [
   infected?         ;; if true, the cell is infectious
   resistant?        ;; if true, cell can't be infected
   num-plasmodesmata ;; number of connections with other cells
+  leaf              ;; for IC setup
+  
   dna-gap           ;; track the number of genomes in the nucleus
   dna-ccc           ;;
   mod-dna-gap       ;;
@@ -50,7 +57,9 @@ to setup
   setup-stem   ;; make a stem structure to connect the leaves
   setup-cells  ;; set up the cells
   setup-leaf   ;; set up the connections between cells
-  ask n-of initial-infection-sites cells   ;; infect this number of cells
+  set infect-per-leaf array:from-list n-values num-leaves [0] ;; initialize as 1xn array of 0's
+  ask n-of initial-infection-sites cells with [leaf = 1]  ;; infect initial cells
+                                         ;; currently all in leaf 1, but could change
     [ 
       become-infected 
       set dna-gap founder-population-viruses ;; start with x genomes per infected cell
@@ -62,6 +71,7 @@ to setup
       set thickness 0.3
     ]
   reset-ticks  ;; reset timer from previous run
+  if file-exists? "netlogo_sim.csv" [file-delete "netlogo_sim.csv"]  ;; clean slate for output
 end
 
 to setup-stem
@@ -92,59 +102,94 @@ end
 
 to setup-cells
   set-default-shape cells "circle"   ;; uses circle shape for displayed cells
-  create-cells num-cells
-  [
-    let xguess random-pxcor
-    while [abs xguess < 0.1 * max-pxcor or abs xguess > 0.95 * max-pxcor]
-      [set xguess random-pxcor]
-      
-     let yguess random-pycor
-    while [abs yguess < 0.1 * max-pycor or abs yguess > 0.95 * max-pycor]
-      [set yguess random-pycor] 
-      
-    setxy xguess yguess ;; no nodes too close to edges
+  let cells-per-leaf floor (num-cells / num-leaves)
+  let extra-cells remainder num-cells num-leaves
+  
+  let angular-spacing 10 ;; degrees between leaves
+  if angular-spacing * num-leaves > 360   ;; throw an error if the leaves don't fit
+   [ error "Not enough space for leaves"]
+  let leaf-angle (360 - angular-spacing * num-leaves) / num-leaves ;; angular width per leaf
+  let rmin 0.1 * max-pxcor  ;; minimum distrance from the origin
+  let rmax min list max-pxcor max-pycor  ;; max distance -- 
+  
+  foreach n-values  extra-cells [?]  ;; ? here is just identity, making n-values 0:n-1
+  [create-cells cells-per-leaf + 1 ;; 
+    [
+    set size 0.5            ;; netlogo is a freak, so '?' == loop iteration - 1
+    let theta (? * (leaf-angle + angular-spacing)) + random-float leaf-angle  
+    let r random-radius rmin rmax
+    let x r * cos(theta)
+    let y r * sin(theta)
+    setxy x y
+    set leaf ? + 1
     become-susceptible
-    ask cells [ set size 0.5 ]       ;; makes the circles smaller for larger scale
-  ]
+    ]
+   ]   
+  ;; now do it again for leaves without extra cells 
+  foreach n-values  (num-leaves - extra-cells) [? + extra-cells]  ;; ? here is just identity, making n-values 0:n-1
+  [create-cells cells-per-leaf ;; 
+    [
+    set size 0.5            ;; netlogo is a freak, so '?' == loop iteration - 1
+    let theta (? * (leaf-angle + angular-spacing)) + random-float leaf-angle  
+    let r random-radius rmin rmax
+    let x r * cos(theta)
+    let y r * sin(theta)
+    setxy x y
+    set leaf ? + 1
+    become-susceptible
+    ]
+   ] 
 end
 
 to setup-leaf
   ask cells 
   [ 
     ;; using random-possion to give a more realistic distribution of links per cell
+    let my-leaf leaf
     while [ count my-links < random-poisson avg-num-plasmodesmata ]
     [ 
-      let choice (min-one-of (other cells with [not link-neighbor? myself])
+      let choice (min-one-of (other cells with [(not link-neighbor? myself) and leaf = my-leaf])
                               [distance myself])
       if choice != nobody [ create-plasmodesma-with choice ]
     ]
   ]
   ;; to make the network look nicer
-  repeat 10 [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
+;;repeat 10 [ layout-spring turtles links 0.3 (world-width / (sqrt num-cells)) 1 ]
   ;; connect leaves to the vasculature
   ask vascular 0 
   [ 
-    let choice ( one-of (cells with [pxcor < 0 and pycor < 0]) )
+    let choice ( one-of (cells with [leaf = 1]) )
     if choice != nobody [ create-phloem-from choice ]
+    become-susceptible
   ]
   ask vascular 1 
   [ 
     let choice ( one-of (cells with [pxcor > 0 and pycor < 0]) )
     if choice != nobody [ create-phloem-from choice ]
+    become-susceptible
   ]
   ask vascular 2 
   [ 
     let choice ( one-of (cells with [pxcor < 0 and pycor > 0]) )
     if choice != nobody [ create-phloem-from choice ]
+    become-susceptible
   ]
   ask vascular 3
   [ 
     let choice ( one-of (cells with [pxcor > 0 and pycor > 0]) )
     if choice != nobody [ create-phloem-from choice ]
+    become-susceptible
   ]
 end
 
 
+to-report random-radius [rmin rmax]
+  ;; picks a radius at random such that points will be uniform in a circle
+  ;; pdf is r/const ; use inverse transform method
+  let u random-float 1
+  let r sqrt(u * (rmax ^ 2 - rmin ^ 2) + rmin ^ 2 )
+  report r
+end
 
 
 ;; ----- MAIN -----
@@ -173,12 +218,23 @@ to go
   ;; otherwise, continue to assemble and spread the virus
   assemble-virus
   spread-virus
-  ;spread-sar
-  ;do-apoptosis-checks
+  ;;spread-sar
+  ;;do-apoptosis-checks
+  record-data
   tick
 end
 
+;; ----- DATA OUTPUT -----
 
+to record-data
+  file-open "netlogo_sim.csv"
+  let leaf-infect-list array:to-list infect-per-leaf
+  foreach leaf-infect-list  ;; iterate through this list
+  [ file-write ?            ;; type number then comma
+    file-type ","]
+  file-type "\n"            ;; newline
+  file-close                ;; apparently bad things happen if you don't
+end
 
 
 ;;  ----- CELL PROCEDURES -----
@@ -192,6 +248,7 @@ to become-infected
   ;let new-viruses ( sum [viral-count] of link-neighbors )
   set dna-gap dna-gap + 1
   set num-viruses num-viruses + 1
+  array:set infect-per-leaf (leaf - 1) (array:item infect-per-leaf (leaf - 1) + 1) ;; increment counter
 end
 
 to mod-become-infected
@@ -285,7 +342,7 @@ end
 
 ;; Procedure governing spread to neighbouring cells
 to spread-virus
-  ask cells with [infected?]
+  ask turtles with [infected?]
     [ 
       ;;if (viral-count + mod-viral-count > 5)
         ;;[
@@ -425,7 +482,7 @@ num-cells
 num-cells
 1
 1000
-275
+217
 1
 1
 NIL
@@ -440,7 +497,7 @@ avg-num-plasmodesmata
 avg-num-plasmodesmata
 1
 10
-6
+4
 1
 1
 NIL
@@ -490,7 +547,7 @@ viral-spread-chance
 viral-spread-chance
 1
 20
-9
+15
 0.5
 1
 NIL
@@ -505,7 +562,7 @@ num-ticks
 num-ticks
 0
 500
-167
+102
 1
 1
 NIL
@@ -518,7 +575,7 @@ SWITCH
 223
 specified-duration
 specified-duration
-1
+0
 1
 -1000
 
@@ -597,7 +654,22 @@ resistance-threshold
 resistance-threshold
 1
 100
-89
+94
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+206
+314
+378
+347
+num-leaves
+num-leaves
+1
+10
+3
 1
 1
 NIL
