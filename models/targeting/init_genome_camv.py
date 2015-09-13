@@ -45,9 +45,9 @@ def init_genome_camv(pseudo_targets):
     # initialize camv genome targets
     domain_labels = genome_camv.domains.keys()
     for pseudo_target in pseudo_targets:
-        assert pseudo_target.domain_label in domain_labels
+        assert pseudo_target["domain_label"] in domain_labels
         for domain_label in domain_labels:
-            if pseudo_target.domain_label == domain_label:
+            if pseudo_target["domain_label"] == domain_label:
                 domain = genome_camv.domains[domain_label]
                 target = Target(pseudo_target['label'],
                                 pseudo_target['target_sequence'],

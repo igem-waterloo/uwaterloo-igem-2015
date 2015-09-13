@@ -30,6 +30,7 @@ class Target(object):
         self.current_start = start  # int, location of first target nucleotide adjacent to PAM, changes with indels
         self.total_cuts = 0  # int, total time this target has been cut
         self.cut_position = None  # absolute genome location of cut
+        self.repair_position = None # formerly cut position after repair
         self.repaired = True  # defined by open/closed
         self.targetable = True  # defined by targetable or not (PAM broken or indel size > 5)
         self.complex_concentration = complex_concentration  # conc of gRNA-cas9 complex inside nucleus
@@ -73,7 +74,7 @@ class Target(object):
     def set_cut_position(self):
         # posn of the nt right of the cut, usually 3-4nt from pam: foo_cut_posn()
         # hardcoded for now
-        if sense == 1:  
+        if self.sense == 1:  
             self.cut_position = self.current_start + 17
         else:
             self.cut_position = self.current_start + 3
@@ -81,15 +82,15 @@ class Target(object):
     def repair(self, dt):
         # call Genome.target_repair through Domain
         net_indel_size = self.domain.genome.repair_target(self)
-
         # assess targetability and cut probability
-        if net_indel_size > 5:  # big insertion
+        if abs(net_indel_size) > 5:  # big insertion
             self.targetable = False
             self.cut_probability = 0.0
         else:
             self.compute_and_assign_cut_probability(dt)
 
         # update state properties
+        self.repair_position = self.cut_position
         self.cut_position = None
         self.repaired = True
         self.shift += net_indel_size
@@ -104,6 +105,7 @@ class Domain(object):
         self.domain_type = domain_type  # 'orf' or 'promoter' or 'ncr'
         self.domain_start = domain_start  # int
         self.domain_end = domain_end  # int
+        self.promoter = promoter
         if domain_type == 'orf':
             # assert promoter is not None
             # for now to test
@@ -162,18 +164,20 @@ class Genome(object):
         assert type(domain) is Domain
         del self.domains[domain.label]
 
-    def repair_target(self, location, cut_position, direction, sequence):  # TODO pass target instead, clean this method
+    def repair_target(self, target):  # TODO pass target instead, clean this method
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
-        if sense == 1:
+        if target.sense == 1:
             del_left, del_right, insert = indel()  # e.g. 0, 0, 2
         else:
             del_right, del_left, insert = indel()  # e.g. 0, 0, 2
         insert_nt = nt_rand(insert)  # fill in random sequence
         net_indel_size = insert - del_left - del_right
-        left_genome = self.current_genome[0: cut_position - del_left]  # genome to left of sequence
-        right_genome = self.current_genome[cut_position + del_right:]  # to right of sequence
+        left_genome = self.current_genome[0: target.cut_position - del_left]  # genome to left of sequence
+        right_genome = self.current_genome[target.cut_position + del_right:]  # to right of sequence
 
         new_genome = left_genome + insert_nt + right_genome
+        # target.current_start = self.find_pam(target.current_start, target.sense)
+        target.sequence = self.current_genome[target.current_start: target.current_start + 20]
         self.make_new_genome(len(left_genome), net_indel_size, new_genome)
         return net_indel_size
 
@@ -194,6 +198,7 @@ class Genome(object):
                 location -= shift  # shift location to the left
             else:  # if nearest PAM is on right
                 location += shift  # shift location to the right
+        print shift
         return location
 
     def get_targets_from_genome(self):

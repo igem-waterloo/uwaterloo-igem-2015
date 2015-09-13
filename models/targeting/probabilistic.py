@@ -74,6 +74,12 @@ def prob_cut(grna, target, concentration, dt):
     return prob_factor_time * prob_factor_mismatch * prob_factor_concentration
 
 
+def prob_repair(dt):
+    """Probability of repair in a given time step dt.
+    480 seconds comes from 8 minute half-life in Reynolds et al.
+    """
+    return 1.0-math.exp(dt*math.log(0.5)/480.0)
+
 def nt_rand(insertion_size):
     """Takes insertion size and produces random insertion string
     """
