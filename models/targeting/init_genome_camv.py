@@ -11,7 +11,6 @@ def init_genome_camv(pseudo_targets):
                                                      'target_start_idx': ,
                                                      'complex_concentration': ,
                                                      'sense': ,
-                                                     'direction': ,
                                                      'domain_label': }
     Returns:
         complete Genome instance corresponding to CaMV with targets
@@ -46,9 +45,9 @@ def init_genome_camv(pseudo_targets):
     # initialize camv genome targets
     domain_labels = genome_camv.domains.keys()
     for pseudo_target in pseudo_targets:
-        assert pseudo_target.domain_label in domain_labels
+        assert pseudo_target["domain_label"] in domain_labels
         for domain_label in domain_labels:
-            if pseudo_target.domain_label == domain_label:
+            if pseudo_target["domain_label"] == domain_label:
                 domain = genome_camv.domains[domain_label]
                 target = Target(pseudo_target['label'],
                                 pseudo_target['target_sequence'],
@@ -56,7 +55,6 @@ def init_genome_camv(pseudo_targets):
                                 pseudo_target['target_start_idx'],
                                 pseudo_target['complex_concentration'],
                                 pseudo_target['sense'],
-                                pseudo_target['direction'],
                                 domain)
                 domain.add_target(target)
 
@@ -85,3 +83,29 @@ def init_targets_single_P6(complex_concentration):
              'sense': 1,
              'direction': 1,
              'domain_label': "gene_P6"}]
+
+def init_targets_all_domains(complex_concentration):
+    return [{'label': "target_P1_1",
+             'target_sequence': "cattcacgatgccacaggta",
+             'target_start_idx': 635,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P1"},
+             {'label': "target_P3_1",
+             'target_sequence': "aggacaatcattgatgagct",
+             'target_start_idx': 1992,
+             'complex_concentration': complex_concentration,
+             'sense': -1,
+             'domain_label': "gene_P3"},
+             {'label': "target_P5_1",
+             'target_sequence': "cttcactgtttcgtagacac",
+             'target_start_idx': 3749,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P5"},
+             {'label': "target_P6_1",
+             'target_sequence': "gtgtataacggacctcatgc",
+             'target_start_idx': 6201,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"},]
