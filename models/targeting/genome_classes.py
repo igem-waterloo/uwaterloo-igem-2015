@@ -315,9 +315,9 @@ class Genome(object):
         target2.set_cut_position()
         location = min(target1.cut_position, target2.cut_position)
         middle = abs(target1.cut_position - target2.cut_position)
-        if del_size < self.length / 2: # if middle is smaller, should delete
+        if middle < self.length / 2: # if middle is smaller, should delete
             new_genome = self.current_genome[0:location] + self.current_genome[location+middle:]
-            self.make_new_genome(location, -del_size, new_genome)
+            self.make_new_genome(location, -middle, new_genome)
         else: # otherwise, should keep (delete beginning and end)
             # first delete beginning
             new_genome = self.current_genome[location:]
