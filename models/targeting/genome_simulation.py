@@ -1,12 +1,14 @@
+import random
+
 from init_genome_camv import init_genome_camv, init_targets_all_domains
-from random import random
 from probabilistic import prob_repair
+
 
 # simulation parameters (time in seconds)
 complex_concentration = 135000000000
 dt = 0.1
 t0 = 0.0
-t1 = 3600.0 # * 18.0
+t1 = 3600.0  # 18.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
 
@@ -51,7 +53,7 @@ for turn in xrange(total_turns):
             target = targets_from_domain[key_target]
             if target.repaired:  # i.e. not cut
                 probability_to_cut = target.cut_probability
-                if random() < probability_to_cut:
+                if random.random() < probability_to_cut:
                     success_cut = True
                 if success_cut:
                     target.cut()
@@ -59,7 +61,7 @@ for turn in xrange(total_turns):
                     turn_log += target.label + " cut at " + str(target.cut_position) + "\n"
 
             else:
-                if random() < probability_to_repair:
+                if random.random() < probability_to_repair:
                     success_repair = True
                 if success_repair:
                     extra = ""
@@ -71,7 +73,6 @@ for turn in xrange(total_turns):
                     if old_sequence != target.sequence:
                         extra = "The sequence was changed from " + old_sequence + " to " + target.sequence
                     turn_log += target.label + " repaired at " + str(target.repair_position) + " with an indel of " + str(net_indel_size) + "\n" + extra + "\n"
-
 
     # save turn data (maybe only if stuff happened?)
     # \n's count number of events in turn (starts with one)
