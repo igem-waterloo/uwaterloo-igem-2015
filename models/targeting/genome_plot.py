@@ -4,9 +4,17 @@ import numpy as np
 from math import pi
 
 
-domain_colours = {'orf': '#66FF66',
-                  'ncr': '#9999FF',
-                  'promoter': '#FF9999'}
+#domain_colours = {'orf': '#66FF66',
+#                  'ncr': '#9999FF',
+#                  'promoter': '#FF9999'}
+
+domain_colours = {'orf': {True: '#81c784',  # pastel green '#80cbc4'
+                          False: '#e57373'},  # pastel light red
+                  'ncr': {True: '#9999FF',  # light grey
+                          False: '#9999FF'},  # light grey
+                  'promoter': {True: '#ba68c8',  # pastel light purple
+                               False: '#ba68c8'}  # pastel light purple
+                  }
 
 
 def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_show=True):
@@ -30,17 +38,19 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
     ax.bar(0, domain_radius, width=2*pi, color='lightgray', ec='k', alpha=0.50)
 
     # plot genome metadata
+    fs_title = 16
+    fs_data = 14
     genome_length = float(genome.length)
-    ax.annotate("Genome: %s" % genome_label, xy=(2, 2), xytext=(pi/2, rmax * 0.65), textcoords='data', fontsize=16,
+    ax.annotate("Genome: %s" % genome_label, xy=(2, 2), xytext=(pi/2, rmax * 0.65), textcoords='data', fontsize=fs_title,
                 horizontalalignment='center', verticalalignment='center')
-    ax.annotate("Length: %d" % int(genome_length), xy=(2, 2), xytext=(pi/2, -rmax*0.8), textcoords='data', fontsize=12,
+    ax.annotate("Length: %d" % int(genome_length), xy=(2, 2), xytext=(pi/2, -rmax*0.8), textcoords='data', fontsize=fs_data,
                 horizontalalignment='center', verticalalignment='center')
-    ax.annotate("Active Targets: 3/4", xy=(2, 2), xytext=(pi/2, -rmax*0.95), textcoords='data', fontsize=12,
+    ax.annotate("Active Targets: 3/4", xy=(2, 2), xytext=(pi/2, -rmax*0.95), textcoords='data', fontsize=fs_data,
                 horizontalalignment='center', verticalalignment='center')
-    ax.annotate("Functional Genes: 6/6", xy=(2, 2), xytext=(3*pi/2, -rmax*0.9), textcoords='data', fontsize=12,
+    ax.annotate("Functional Genes: 6/6", xy=(2, 2), xytext=(3*pi/2, -rmax*0.9), textcoords='data', fontsize=fs_data,
                 horizontalalignment='center', verticalalignment='center')
     if time is not None:
-        ax.annotate("Time: %.2f s" % time, xy=(2, 2), xytext=(-pi/2, rmax*0.75), textcoords='data', fontsize=12,
+        ax.annotate("Time: %.2f s" % time, xy=(2, 2), xytext=(-pi/2, rmax*0.75), textcoords='data', fontsize=fs_data,
                     horizontalalignment='center', verticalalignment='center')
 
     # plot domains
@@ -49,19 +59,20 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
 
         # create domain 'patch'
         domain = genome.domains[domain_key]
-        color = domain_colours[domain.domain_type]
+        color = domain_colours[domain.domain_type][domain.functional]
+        if domain.label == 'gene_P4':
+            color = domain_colours[domain.domain_type][False]
         theta_start = (theta_init + theta_direction * 2.0 * pi * domain.domain_start / genome_length) % (2*pi)
         theta_length = (2.0 * pi * (domain.domain_end - domain.domain_start) / genome_length) % (2*pi)
         theta_mid = theta_start + theta_direction * theta_length / 2
         ax.bar(theta_start, domain_radius, width=theta_direction*theta_length, color=color, ec='k', alpha=0.75)
         ax.plot(theta_mid, domain_radius, 'o', color=color)
-        ax.plot(theta_mid, 0, 'o', color=color)
+        #ax.plot(theta_mid, 0, 'o', color=color)
 
         # write domain label
         text_rotation_degrees = ((theta_mid * 180 / pi) + 270) % 360
         plt.text(theta_mid, text_radius, "%s:\n%s" % (domain.domain_type, domain.label), fontsize=10,
                  rotation=text_rotation_degrees, horizontalalignment='center', verticalalignment='center')
-
 
     if output_path is not None:
         fig.set_size_inches(20.0, 8.0)  # alternative: 20.0, 8.0
