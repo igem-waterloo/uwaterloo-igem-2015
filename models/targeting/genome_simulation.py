@@ -1,14 +1,37 @@
+import datetime
+import matplotlib.pyplot as plt
+import os
+import random
+
+from genome_plot import genome_plot_polar
 from init_genome_camv import init_genome_camv, init_targets_all_domains
-from random import random
 from probabilistic import prob_repair
+
+
+# output management
+runs_folder = "runs" + os.sep  # store timestamped runs here
+current_time = datetime.datetime.now().strftime("%Y-%m-%d %I.%M.%S%p")
+time_folder = current_time + os.sep
+current_run_folder = runs_folder + time_folder
+# subfolders in the timestamped run directory:
+data_folder = os.path.join(current_run_folder, "data")
+plot_genome_folder = os.path.join(current_run_folder, "plot_genome")
+plot_data_folder = os.path.join(current_run_folder, "plot_data")
+# create dirs conditionally
+dir_list = [runs_folder, current_run_folder, data_folder, plot_genome_folder, plot_data_folder]
+for dirs in dir_list:
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
 
 # simulation parameters (time in seconds)
 complex_concentration = 135000000000
-dt = 0.1
+dt = 1.0
 t0 = 0.0
-t1 = 3600.0 # * 18.0
+t1 = 3600.0  # 18.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
+plot_period = 6  # in turns
+plot_count = 0
 
 # initialize genome
 pseudo_targets = init_targets_all_domains(complex_concentration)
@@ -22,7 +45,7 @@ probability_to_repair = prob_repair(dt)
 
 # for logging data
 data_log = ""
-data_file = "simulation_data"
+data_file = os.path.join(data_folder, "simulation_data")
 
 
 for turn in xrange(total_turns):
@@ -51,7 +74,7 @@ for turn in xrange(total_turns):
             target = targets_from_domain[key_target]
             if target.repaired:  # i.e. not cut
                 probability_to_cut = target.cut_probability
-                if random() < probability_to_cut:
+                if random.random() < probability_to_cut:
                     success_cut = True
                 if success_cut:
                     target.cut()
@@ -59,7 +82,7 @@ for turn in xrange(total_turns):
                     turn_log += target.label + " cut at " + str(target.cut_position) + "\n"
 
             else:
-                if random() < probability_to_repair:
+                if random.random() < probability_to_repair:
                     success_repair = True
                 if success_repair:
                     extra = ""
@@ -72,7 +95,6 @@ for turn in xrange(total_turns):
                         extra = "The sequence was changed from " + old_sequence + " to " + target.sequence
                     turn_log += target.label + " repaired at " + str(target.repair_position) + " with an indel of " + str(net_indel_size) + "\n" + extra + "\n"
 
-
     # save turn data (maybe only if stuff happened?)
     # \n's count number of events in turn (starts with one)
     if turn_log.count('\n') > 1:
@@ -80,12 +102,16 @@ for turn in xrange(total_turns):
         print turn_log
 
     # update plots if actively showing plots
-    # do...
+    if turn % plot_period == 0:
+        plot_path = os.path.join(plot_genome_folder, "genome_%05d" % plot_count)
+        genome_plot_polar(genome_camv, 'CaMV', time=time_sim/60, output_path=plot_path, flag_show=False)
+        plt.close()
+        plot_count += 1
 
     # increment timer
     time_sim += dt
 
 # print data_log
-f = open(data_file,'w')
+f = open(data_file, 'w')
 f.write(data_log)
 f.close()
