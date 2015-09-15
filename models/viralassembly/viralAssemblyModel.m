@@ -15,7 +15,7 @@ function viralAssemblyModel ()
 	tic
 	[t, out] = ode15s(@mathva, [0,Tend], initial);
 	toc
-
+    
 	%% Plot!
 	% This plots concentration of virions over time
 	figure(1);
