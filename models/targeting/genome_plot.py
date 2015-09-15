@@ -1,6 +1,4 @@
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import numpy as np
 from math import pi
 
 
@@ -87,6 +85,9 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
             phi_start = (theta_init + theta_direction * 2.0 * pi * target.current_start / genome_length) % (2*pi)
             phi_length = (2.0 * pi * len(target.sequence) / genome_length) % (2*pi)
             phi_mid = phi_start + phi_direction * phi_length / 2
+            target_rotation_degrees = ((phi_mid * 180 / pi) + 270) % 360
+            plt.text(phi_mid, target_radius, "Cuts: %d" % target.total_cuts, fontsize=10,
+                     rotation=target_rotation_degrees, horizontalalignment='center', verticalalignment='center')
             if target.repaired:
                 color_target = target_colours['repaired']
                 ax.bar(phi_start, domain_radius, width=phi_direction*phi_length, color=color_target, ec='k', alpha=0.75)
@@ -101,12 +102,12 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
                 ax.bar(eta_start, domain_radius, width=0, color=color_target, ec='k', alpha=0.75)
                 ax.bar(eta_start + phi_direction*phi_length*(1+2*open_buffer), domain_radius, width=0,
                        color=color_target, ec='k', alpha=0.75)
-            if target.targetable:
+            if target.targetable:  # TODO FIND WAY TO ANNOTATE
                 active_targets += 1
-                ax.plot(phi_mid, target_radius, '+', color='k', markersize=12, markeredgewidth=2)
+                #ax.plot(phi_mid, target_radius, '+', color='k', markersize=12, markeredgewidth=2)
             else:
-                ax.plot(phi_mid, target_radius, '_', color='k', markersize=12, markeredgewidth=2)
-
+                #ax.plot(phi_mid, target_radius, '_', color='k', markersize=12, markeredgewidth=2)
+                continue
 
     # plot genome metadata
     fs_title = 18
@@ -120,7 +121,7 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
     ax.annotate("Functional Genes: %d/%d" % (active_genes, total_genes), xy=(2, 2), xytext=(3*pi/2, -rmax*0.9), textcoords='data', fontsize=fs_data,
                 horizontalalignment='center', verticalalignment='center')
     if time is not None:
-        ax.annotate("Time: %.2f s" % time, xy=(2, 2), xytext=(-pi/2, rmax*0.75), textcoords='data', fontsize=fs_data,
+        ax.annotate("Time: %.2f min" % time, xy=(2, 2), xytext=(-pi/2, rmax*0.75), textcoords='data', fontsize=fs_data,
                     horizontalalignment='center', verticalalignment='center')
 
     if output_path is not None:
