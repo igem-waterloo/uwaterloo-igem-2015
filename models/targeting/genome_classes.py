@@ -301,12 +301,13 @@ class Genome(object):
                 self.domains[domain_label].remove_target(target)
             # else it is just broken
             else:
+                continue
                 # find new pam, set new location, set new sequence
-                new_start = self.find_pam(target.current_start, target.sense)
-                self.domains[domain_label].targets[target.label].current_start = new_start
-                self.domains[domain_label].targets[target.label].sequence = self.current_genome[new_start:new_start+20]
+                # new_start = self.find_pam(target.current_start, target.sense)
+                # self.domains[domain_label].targets[target.label].current_start = new_start
+                # self.domains[domain_label].targets[target.label].sequence = self.current_genome[new_start:new_start+20]
 
-    def large_deletion(self, target1, target2):
+    def large_deletion(self, target1, target2, dt):
         """Delete section between two open targets
         """
         assert not (target1.repaired or target2.repaired)
@@ -325,3 +326,21 @@ class Genome(object):
             # then delete end
             new_genome = self.current_genome[0:middle]
             self.make_new_genome(middle, -(self.length - middle), new_genome)
+        if target1.sense == target2.sense:
+            if location <= target1.current_start <= location + middle:
+                target1.sequence = target1.sequence[3:]
+                target1.sequence = target2.sequence[0:3] + target1.sequence
+                target2.domain.remove_target(target2)
+                target1.cut_position = None
+                target1.repaired = True
+                print len(target1.sequence)
+                target1.compute_and_assign_cut_probability(dt)
+            else:
+                target2.sequence = target2.sequence[3:]
+                target2.sequence = target1.sequence[0:3] + target2.sequence
+                target1.domain.remove_target(target1)
+                target2.cut_position = None
+                target2.repaired = True
+                print len(target2.sequence)
+                target2.compute_and_assign_cut_probability(dt)
+

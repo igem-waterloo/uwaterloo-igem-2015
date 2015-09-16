@@ -27,7 +27,7 @@ for dirs in dir_list:
 complex_concentration = 135000000000
 dt = 1.0
 t0 = 0.0
-t1 = 3600.0  # 18.0
+t1 = 300.0 # 3600.0  # 18.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
 plot_period = 6  # in turns
@@ -49,7 +49,7 @@ data_log = ""
 data_file = os.path.join(data_folder, "simulation_data")
 
 # optional plotting
-make_plot = False
+flag_plot = True
 
 
 for turn in xrange(total_turns):
@@ -59,6 +59,7 @@ for turn in xrange(total_turns):
 
     # get current targets
     targets_from_genome = genome_camv.get_targets_from_genome()
+    open_targets = genome_camv.get_open_targets_from_genome()
 
     # deletion module
     if len(open_targets) > 1:
@@ -69,12 +70,13 @@ for turn in xrange(total_turns):
             double_cut_success = True
         if double_cut_success:
             targets = random.sample(open_targets, 2)
-            # target1, target2 = targets_from_genome[targets[0][0]][targets[0][1]], targets_from_genome[targets[1][0]]targets[1][1]
-            print target1, target2
+            target1 = targets_from_genome[targets[0][0]][targets[0][1]]
+            target2 = targets_from_genome[targets[1][0]][targets[1][1]]
             first = min(target1.current_start, target2.current_start)
             second = max(target1.current_start, target2.current_start)
-            genome_camv.large_deletion(target1, target2)
-            turn_log += "Large deletion spanning from", first, "to", second + "\n"
+            genome_camv.large_deletion(target1, target2, dt)
+            turn_log += "Large deletion spanning from " + str(first) + " to " + str(second) + "\n"
+            targets_from_genome = genome_camv.get_targets_from_genome()
 
     # cut and repair module
     for key_domain in targets_from_genome.keys():
@@ -114,7 +116,7 @@ for turn in xrange(total_turns):
         print turn_log
 
     # update plots if actively showing plots
-    if turn % plot_period == 0 and make_plot:
+    if turn % plot_period == 0 and flag_plot:
         plot_path = os.path.join(plot_genome_folder, "genome_%05d" % plot_count)
         genome_plot_polar(genome_camv, 'CaMV', time=time_sim/60, output_path=plot_path, flag_show=False)
         plt.close()
