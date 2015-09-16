@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import random
 
+import make_video
 from genome_plot import genome_plot_polar
 from init_genome_camv import init_genome_camv, init_targets_all_domains
 from probabilistic import prob_repair
@@ -27,10 +28,10 @@ for dirs in dir_list:
 complex_concentration = 135000000000
 dt = 1.0
 t0 = 0.0
-t1 = 300.0 # 3600.0  # 18.0
+t1 = 3600.0  # 3600.0  # 18.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
-plot_period = 6  # in turns
+plot_period = 30  # in turns
 plot_count = 0
 
 # initialize genome
@@ -42,7 +43,7 @@ genome_camv.initialize_target_cut_probabilities(dt)
 target_dict = genome_camv.get_targets_from_genome()
 open_targets = genome_camv.get_open_targets_from_genome()
 probability_to_repair = prob_repair(dt)
-double_cut_probability = 0.5#1.55*10.0**(-5)
+double_cut_probability = 1.55*10.0**(-5)  # see Tessa
 
 # for logging data
 data_log = ""
@@ -50,7 +51,6 @@ data_file = os.path.join(data_folder, "simulation_data")
 
 # optional plotting
 flag_plot = True
-
 
 for turn in xrange(total_turns):
 
@@ -64,7 +64,6 @@ for turn in xrange(total_turns):
     # deletion module
     if len(open_targets) > 1:
         # time_with_double_cut += dt
-        print open_targets
         double_cut_success = False
         if random.random() < double_cut_probability:
             double_cut_success = True
@@ -129,3 +128,9 @@ for turn in xrange(total_turns):
 f = open(data_file, 'w')
 f.write(data_log)
 f.close()
+
+# create video of results
+if flag_plot:
+    FPS = 15
+    video_path = os.path.join(current_run_folder, "genome_%dmin_%dfps.mp4" % (int(t1/60.0), FPS))
+    make_video.make_video_ffmpeg(plot_genome_folder, video_path, fps=FPS)

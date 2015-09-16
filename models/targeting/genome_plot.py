@@ -6,13 +6,14 @@ from math import pi
 #                  'ncr': '#9999FF',
 #                  'promoter': '#FF9999'}
 
-
+# '#FFE082' sandy
+# '#A1887F' light brown
 # '#ba68c8' medium pastel purple
 
 domain_colours = {'orf': {True: '#81c784',  # pastel green '#80cbc4'
                           False: '#e57373'},  # pastel light red
-                  'ncr': {True: '#9999FF',  # light grey
-                          False: '#9999FF'},  # light grey
+                  'ncr': {True: '#A1887F',  # light brown
+                          False: '#A1887F'},  # light brown
                   'promoter': {True: '#ce93d8',  # pastel light purple
                                False: '#ce93d8'}  # pastel light purple
                   }
