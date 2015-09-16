@@ -66,6 +66,7 @@ def prob_cut(grna, target, concentration, dt):
           the case without mismatches and the case with n mismatches because the case without mismatches
           is individually important and better fit by a particular level curve
     """
+    print len(grna), len(target)
     assert len(grna) == len(target)
     prob_factor_time = 1 - math.exp(-dt/average_cut_time) 
     mismatch_decay_subset = [mismatch_decay_values[idx] for idx in xrange(len(grna)) if grna[idx] != target[idx]]
