@@ -43,12 +43,13 @@ def copy_and_rename_plots(plot_lattice_dir, output_dir):
     return
 
 
-def make_video_ffmpeg(plot_lattice_dir, output_path, fps=15, ffmpeg_dir=None):
+def make_video_ffmpeg(plot_genome_dir, output_path, fps=15, rename_flag=False, ffmpeg_dir=None):
     """Makes a video using ffmpeg - also copies the lattice plot dir, changes filenames, and deletes the copy
     Args:
-        plot_lattice_dir: source directory
+        plot_genome_dir: source directory
         output_path: path and filename of the output video
         fps: frames per second of the output video
+        rename_flag: [default: False] rename to format that ffmpeg likes
         ffmpeg_dir: [default: None] location of the ffmpeg directory (root where bin containing ffmpeg.exe is)
     Returns:
         None
@@ -56,14 +57,15 @@ def make_video_ffmpeg(plot_lattice_dir, output_path, fps=15, ffmpeg_dir=None):
         - assumes ffmpeg has been extracted on your system and added to the path
         - if it's not added to path, point to it (the directory containing ffmpeg bin) using ffmpeg_dir arg
         - assumes less than 10000 images are being joined (for ffmpeg simplicity)
-        - I REMOVED THE COPY AND TEMP DIR BEHAVIOUR, FILES DONT NEED TO BE RENAMED
     """
-    # make temp dir
-    #temp_plot_dir = os.path.join(plot_lattice_dir, os.pardir, "temp")
-    #copy_and_rename_plots(plot_lattice_dir, temp_plot_dir)
+    source_dir = plot_genome_dir
+    if rename_flag:  # make temp dir
+        temp_plot_dir = os.path.join(plot_genome_dir, os.pardir, "temp")
+        copy_and_rename_plots(plot_genome_dir, temp_plot_dir)
+        source_dir = temp_plot_dir
 
     # make video
-    command_line = ["ffmpeg", "-framerate", "%d" % fps, "-i", os.path.join(plot_lattice_dir, "lattice_at_time_%05d.png"),
+    command_line = ["ffmpeg", "-framerate", "%d" % fps, "-i", os.path.join(source_dir, "genome_%05d.png"),
                     "-c:v", "libx264", "-r", "%d" % fps, "-pix_fmt", "yuv420p", "%s" % output_path]
     if ffmpeg_dir is not None:
         app_path = os.path.join(ffmpeg_dir, "bin", "ffmpeg.exe")
@@ -74,6 +76,7 @@ def make_video_ffmpeg(plot_lattice_dir, output_path, fps=15, ffmpeg_dir=None):
     print out, err, sp.returncode
 
     # delete temp dir
-    #shutil.rmtree(temp_plot_dir)
+    if rename_flag:
+        shutil.rmtree(temp_plot_dir)
 
     return
