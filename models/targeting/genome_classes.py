@@ -63,7 +63,10 @@ class Target(object):
         return self.shift
 
     def compute_and_assign_cut_probability(self, dt):
-        self.cut_probability = prob_cut(self.grna, self.sequence, self.complex_concentration, dt)
+        grna = self.grna
+        if self.sense == -1:
+            grna = self.convert_sense(grna)
+        self.cut_probability = prob_cut(grna, self.sequence, self.complex_concentration, dt)
         return self.cut_probability
 
     def cut(self):
@@ -95,6 +98,9 @@ class Target(object):
         self.repaired = True
         self.shift += net_indel_size
 
+        # check domain functionality
+        self.domain.update_functionality()
+
 
 class Domain(object):
     # Each Domain may contain targets and belongs to a Genome
@@ -110,6 +116,8 @@ class Domain(object):
             # assert promoter is not None
             # for now to test
             if self.promoter is not None:
+                assert type(promoter) is Domain
+                assert promoter.domain_type == 'promoter'
                 self.promoter = promoter  # promoter is a domain too
         self.sequence = None  # to be implemented
         self.functional = True  # bool
@@ -129,7 +137,7 @@ class Domain(object):
 
     def update_functionality(self):
         if self.domain_type == "orf":
-            if (not self.promoter.is_functional()) or (sum(target.get_shift() for target in self.targets.values()) % 3 != 0):
+            if (not self.promoter.functional) or (sum(target.get_shift() for target in self.targets.values()) % 3 != 0):
                 self.functional = False
             else:
                 self.functional = True
@@ -198,7 +206,6 @@ class Genome(object):
                 location -= shift  # shift location to the left
             else:  # if nearest PAM is on right
                 location += shift  # shift location to the right
-        print shift
         return location
 
     def get_targets_from_genome(self):
@@ -333,14 +340,15 @@ class Genome(object):
                 target2.domain.remove_target(target2)
                 target1.cut_position = None
                 target1.repaired = True
-                print len(target1.sequence)
                 target1.compute_and_assign_cut_probability(dt)
+                # check domain functionality
+                target1.domain.update_functionality()
             else:
                 target2.sequence = target2.sequence[3:]
                 target2.sequence = target1.sequence[0:3] + target2.sequence
                 target1.domain.remove_target(target1)
                 target2.cut_position = None
                 target2.repaired = True
-                print len(target2.sequence)
                 target2.compute_and_assign_cut_probability(dt)
-
+                # check domain functionality
+                target2.domain.update_functionality()
