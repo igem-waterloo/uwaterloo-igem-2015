@@ -21,8 +21,8 @@ def init_genome_camv(pseudo_targets):
 
     # gene coordinates from http://www.ncbi.nlm.nih.gov/nuccore/9626938
     # initialize camv genome 
-    ncr_small = Domain("ncr_small", 5674, 5775, "ncr", genome_camv)
-    genome_camv.add_domain(ncr_small)
+    #ncr_small = Domain("ncr_small", 5674, 5775, "ncr", genome_camv)  # removing for now, overlaps 19s
+    #genome_camv.add_domain(ncr_small)
     ncr_large = Domain("ncr_large", 7436, 8024, "ncr", genome_camv)
     genome_camv.add_domain(ncr_large)
     promoter_35S = Domain("promoter_35S", 7092, 7435, "promoter", genome_camv)

@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import os
 import random
 
+import make_video
 from genome_plot import genome_plot_polar
 from init_genome_camv import init_genome_camv, init_targets_all_domains
-from make_video import make_video_ffmpeg
 from probabilistic import prob_repair
 
 
@@ -133,4 +133,4 @@ f.close()
 if flag_plot:
     FPS = 15
     video_path = os.path.join(current_run_folder, "genome_%dmin_%dfps.mp4" % (int(t1/60.0), FPS))
-    make_video_ffmpeg(plot_genome_folder, video_path, fps=FPS, ffmpeg_dir="C:\\Games\\Development\\ffmpeg")
+    make_video.make_video_ffmpeg(plot_genome_folder, video_path, fps=FPS)
