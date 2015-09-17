@@ -7,6 +7,8 @@ from math import pi
 # '#FFE082' sandy
 # '#A1887F' light brown
 # '#ba68c8' medium pastel purple
+# '#779ECB' dark pastel blue
+# '#AEC6CF' pastel blue
 
 domain_colours = {'orf': {True: '#81c784',  # pastel green '#80cbc4'
                           False: '#e57373'},  # pastel light red
@@ -19,11 +21,11 @@ target_colours = {'repaired': '#fdfd96',  # pastel yellow
                   'open': 'white',  # just white
                   'inactive': '#fdfd96'}  # pastel yellow
 
-state_colours = {'gene': {'active': 'green',
-                          'deactivated': 'red'},
-                 'target': {'cut': 'blue',
-                            'targetable': 'green',
-                            'untargetable': 'red'}}
+state_colours = {'gene': {'active': '#81c784',
+                          'deactivated': '#e57373'},
+                 'target': {'cut': '#AEC6CF',
+                            'targetable': '#81c784',
+                            'untargetable': '#e57373'}}
 
 
 def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_show=True):
@@ -138,7 +140,7 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
     return fig
 
 
-def plot_states(states, labels_to_plot, datatype='gene'):
+def plot_states(states, labels_to_plot, datatype):
     """Plots timeseries of statedata as horizontal coloured bars
     Args:
         states: dictionary of label: state vector
@@ -175,17 +177,6 @@ def plot_states(states, labels_to_plot, datatype='gene'):
     ax.set_ylim(y0 - 0.3*dy, (length_labels)*dy)
     plt.show()
     return
-
-"""
-d = {'a': ['active', 'active', 'active', 'deactivated', 'active', 'active', 'active', 'active', 'active', 'deactivated'],
-     'b': ['active', 'deactivated', 'deactivated', 'deactivated', 'active', 'active', 'active', 'active', 'active', 'deactivated'],
-     'c': ['active', 'active', 'active', 'deactivated', 'active', 'active', 'active', 'active', 'active', 'deactivated'],
-     'time': range(10)}
-
-plot_states(d,['a','b','c'])
-plot_states(d,['a','b'])
-plot_states(d,['a'])
-"""
 
 
 if __name__ == '__main__':
