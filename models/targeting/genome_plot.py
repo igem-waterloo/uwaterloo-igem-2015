@@ -1,26 +1,32 @@
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from math import pi
 
 
-#domain_colours = {'orf': '#66FF66',
-#                  'untracked': '#9999FF',
-#                  'promoter': '#FF9999'}
-
+# old colours
 # '#FFE082' sandy
 # '#A1887F' light brown
 # '#ba68c8' medium pastel purple
+# '#779ECB' dark pastel blue
+# '#AEC6CF' pastel blue
 
 domain_colours = {'orf': {True: '#81c784',  # pastel green '#80cbc4'
                           False: '#e57373'},  # pastel light red
                   'untracked': {True: '#A1887F',  # light brown
                                 False: '#A1887F'},  # light brown
                   'promoter': {True: '#ce93d8',  # pastel light purple
-                               False: '#ce93d8'}  # pastel light purple
-                  }
+                               False: '#ce93d8'}}  # pastel light purple
 
 target_colours = {'repaired': '#fdfd96',  # pastel yellow
                   'open': 'white',  # just white
                   'inactive': '#fdfd96'}  # pastel yellow
+
+state_colours = {'gene': {'active': '#81c784',
+                          'deactivated': '#e57373'},
+                 'target': {'cut': '#AEC6CF',
+                            'targetable': '#81c784',
+                            'untargetable': '#e57373'}}
+
 
 def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_show=True):
     # initialize plot
@@ -56,8 +62,6 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
         # create domain 'patch'
         domain = genome.domains[domain_key]
         color = domain_colours[domain.domain_type][domain.functional]
-        #if domain.label == 'gene_P5':
-        #    color = domain_colours[domain.domain_type][False]
         if domain.domain_type == 'orf':
             total_genes += 1
             if domain.functional:
@@ -134,6 +138,45 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
         plt.show()
 
     return fig
+
+
+def plot_states(states, labels_to_plot, datatype):
+    """Plots timeseries of statedata as horizontal coloured bars
+    Args:
+        states: dictionary of label: state vector
+        labels_to_plot: ordered list that's a subset of the keys from states
+        datatype: either "gene" or "target"
+    """
+    assert datatype in ['gene', 'target']
+    colour_dict = state_colours[datatype]
+    data_labels = states.keys()
+    time = states['time']
+    length_data = len(time)
+    length_labels = len(labels_to_plot)
+
+    fig = plt.figure()
+    ax = plt.gca()
+    x0 = time[0]
+    y0 = 0.0
+    dx = time[1] - time[0]
+    dy = dx
+    x = x0
+    y = y0
+    for i, label in enumerate(labels_to_plot):
+        y = y0 + dy*i
+        state_data = states[label]
+        for j, elem in enumerate(state_data):
+            x = x0 + dx*j
+            ax.add_patch(mpatches.Rectangle((x - dx*0.5, y), width=dx, height=dy*0.5, color=colour_dict[elem], ec='k'))
+    ax.set_xlabel('time')
+    ax.set_ylabel(datatype)
+    ax.set_xticks(time)
+    ax.set_yticks([y0 + (i+0.25)*dy for i in xrange(length_labels)])
+    ax.set_yticklabels(labels_to_plot)
+    ax.set_xlim(x0 - 0.5*dx, (length_data - 1)*dx*1.1)
+    ax.set_ylim(y0 - 0.3*dy, (length_labels)*dy)
+    plt.show()
+    return
 
 
 if __name__ == '__main__':
