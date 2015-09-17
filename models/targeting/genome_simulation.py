@@ -5,6 +5,7 @@ import random
 
 import make_video
 from genome_plot import genome_plot_polar
+from genome_csv import results_to_csv
 from init_genome_camv import init_genome_camv, init_targets_all_domains
 from probabilistic import prob_repair
 
@@ -52,6 +53,26 @@ data_file = os.path.join(data_folder, "simulation_data")
 # optional plotting
 flag_plot = True
 
+# variables for csv writing
+genome_events = [0]*total_turns
+target_events = [0]*total_turns
+genome_header = ["time"] + genome_camv.domains.keys()
+target_header = ["time"]
+for key in genome_camv.domains.keys():
+    target_header += genome_camv.get_targets_from_genome()[key].keys()
+
+def target_state(target_dict):
+    if {} == target_dict:
+        return None
+
+    for key,value in target_dict.iteritems():
+        if not value.repaired:
+            return "cut"
+        elif value.targetable:
+            return "targetable"
+        else:
+            return "untargetable"
+
 for turn in xrange(total_turns):
 
     # clear turn log and set to turn
@@ -60,6 +81,12 @@ for turn in xrange(total_turns):
     # get current targets
     targets_from_genome = genome_camv.get_targets_from_genome()
     open_targets = genome_camv.get_open_targets_from_genome()
+
+
+    # place data in rows for csv to write later
+    genome_events[turn] = [str(turn*dt)] + map(lambda x: "active" if x.functional else "deactivated", genome_camv.domains.values())
+    target_events[turn] = [str(turn*dt)] + map(target_state, targets_from_genome.values())
+    target_events[turn] = [y for y in target_events[turn] if y is not None] # clean up and remove Nones foudn target_state()
 
     # deletion module
     if len(open_targets) > 1:
@@ -123,6 +150,10 @@ for turn in xrange(total_turns):
 
     # increment timer
     time_sim += dt
+
+# write data to csvs
+results_to_csv(data_folder, "states_gene.csv", genome_header, genome_events)
+results_to_csv(data_folder, "states_target.csv", target_header, target_events)
 
 # print data_log
 f = open(data_file, 'w')
