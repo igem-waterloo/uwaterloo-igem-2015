@@ -28,3 +28,42 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
         f.close()
     print "csv writing complete"
     return
+
+def csv_load(fullpath):
+    """Read in csv and return dictionary of parsed data
+    Args:
+        fullpath: path to csv to be read
+    Returns:
+        parsed_dict: dictionary containing parsed data
+    """
+    assert fullpath[-4:] == '.csv'
+    with open(fullpath, 'rb') as f:
+        reader = csv.reader(f)
+        csv_data = []
+        for i, row in enumerate(reader):
+            if i == 0:
+                csv_header = row
+            else:
+                csv_data.append(row)
+    return csv_header, csv_data
+
+def csv_to_dict(fullpath):
+    """Loads csv data into memory, then converts the data into dictionary format
+    Args:
+        fullpath: full path to file (e.g. root/some_dir/some_file.csv)
+    Returns:
+        csv in dictionary format where stats reference dictionary: {statname: {label: val_1 ... val_n} }
+    Example dictionary:
+        {'gene1': ["active",...,"deactivated"]
+             ...
+        }
+    """
+    csv_header, csv_data = csv_load(fullpath)
+    column_index_dict = {key: csv_header.index(key) for key in csv_header}  # select columns for referencing data
+    csv_dict = {}
+    for key in csv_header:
+        csv_dict[key] = [0]*len(csv_data) # initialize list
+        for i, row in enumerate(csv_data):
+            csv_dict[key][i] = row[column_index_dict[key]]
+    csv_dict['header'] = csv_header
+    return csv_dict
