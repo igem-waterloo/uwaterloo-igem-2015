@@ -44,7 +44,7 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
     ax.bar(0, domain_radius, width=2*pi, color='lightgray', ec='k', alpha=0.50)
 
     # prepare data
-    genome_length = float(genome.length)
+    genome_length = float(genome.current_length)
     total_targets = 0
     active_targets = 0
     total_genes = 0
