@@ -7,15 +7,6 @@ from probabilistic import prob_cut, nt_rand, indel
 #   - deletion of a promoter
 #   - deletion of a significant portion of the gene
 
-# TODO
-# - function for cut probability: foo_cut_prob(self.grna, self.target, dt, complex_concentration)
-# - function for cut location: foo_cut_posn()
-# - function for indel type (L/R del, insert) foo_indel(), foo_nt_rand(insert) etc
-# - if repair is big deletion, what do we fill in at the end of the target? cant be random, must come from sequence data
-# - code for deletions
-# - see specific TODOs / 'to be implemented' throughout the code
-# - properly update target.current_start and domain genome repair method
-
 
 class Target(object):
 
@@ -106,9 +97,9 @@ class Domain(object):
     # Each Domain may contain targets and belongs to a Genome
 
     def __init__(self, label, domain_start, domain_end, domain_type, genome, promoter=None):
-        assert domain_type in ["orf", "promoter", "ncr"]
+        assert domain_type in ["orf", "promoter", "untracked"]  # note untracked isn't affected by cas9
         self.label = label  # string
-        self.domain_type = domain_type  # 'orf' or 'promoter' or 'ncr'
+        self.domain_type = domain_type  # 'orf' or 'promoter' or 'untracked'
         self.domain_start = domain_start  # int
         self.domain_end = domain_end  # int
         self.promoter = promoter
@@ -143,7 +134,7 @@ class Domain(object):
                 self.functional = True
         elif self.domain_type == "promoter":  # TODO  how to define functional promoter
             self.functional = True
-        else:  # TODO how to define functional NCR
+        else:  # untracked domains always functional
             self.functional = True
 
     def target_location(self, target_label):
@@ -162,7 +153,7 @@ class Genome(object):
         self.initial_genome = sequence  # string
         self.current_genome = sequence  # string
         self.repaired = True  # bool
-        self.domains = {}  # dict of all domains (ORFs, promoters, NCRs)
+        self.domains = {}  # dict of all domains (ORFs, promoters, untracked secctions)
     
     def add_domain(self, domain):
         assert type(domain) is Domain
@@ -172,7 +163,7 @@ class Genome(object):
         assert type(domain) is Domain
         del self.domains[domain.label]
 
-    def repair_target(self, target):  # TODO pass target instead, clean this method
+    def repair_target(self, target):
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
         if target.sense == 1:
             del_left, del_right, insert = indel()  # e.g. 0, 0, 2
