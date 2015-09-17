@@ -25,7 +25,7 @@ for dirs in dir_list:
         os.makedirs(dirs)
 
 # simulation parameters (time in seconds)
-complex_concentration = 135000000000
+complex_concentration = 22.101 # nM
 dt = 1.0
 t0 = 0.0
 t1 = 3600.0  # 3600.0  # 18.0
