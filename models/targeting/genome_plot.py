@@ -138,7 +138,7 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
 
 if __name__ == '__main__':
     from init_genome_camv import init_genome_camv, init_targets_all_domains
-    complex_concentration = 135000000000
+    complex_concentration = 22.101 # nM
     dt = 0.1
     pseudo_targets = init_targets_all_domains(complex_concentration)
     genome_camv = init_genome_camv(pseudo_targets)
