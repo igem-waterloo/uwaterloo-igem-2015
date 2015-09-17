@@ -111,18 +111,3 @@ def init_targets_all_domains(complex_concentration):
              'complex_concentration': complex_concentration,
              'sense': 1,
              'domain_label': "gene_P6"},]
-
-
-def init_targets_all_domains2(complex_concentration):
-    return [{'label': "target_P1_1",
-             'target_sequence': "cattcacgatgccacaggta",
-             'target_start_idx': 635,
-             'complex_concentration': complex_concentration,
-             'sense': 1,
-             'domain_label': "gene_P1"},
-             {'label': "target_P3_1",
-             'target_sequence': "aggacaatcattgatgagct",
-             'target_start_idx': 1992,
-             'complex_concentration': complex_concentration,
-             'sense': -1,
-             'domain_label': "gene_P3"}]

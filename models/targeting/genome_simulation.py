@@ -5,7 +5,7 @@ import random
 
 import make_video
 from genome_plot import genome_plot_polar
-from init_genome_camv import init_genome_camv, init_targets_all_domains2
+from init_genome_camv import init_genome_camv, init_targets_all_domains
 from probabilistic import prob_repair
 
 
@@ -35,7 +35,7 @@ plot_period = 30  # in turns
 plot_count = 0
 
 # initialize genome
-pseudo_targets = init_targets_all_domains2(complex_concentration)
+pseudo_targets = init_targets_all_domains(complex_concentration)
 genome_camv = init_genome_camv(pseudo_targets)
 genome_camv.initialize_target_cut_probabilities(dt)
 
@@ -65,7 +65,7 @@ for turn in xrange(total_turns):
     if len(open_targets) > 1:
         # time_with_double_cut += dt
         double_cut_success = False
-        if random.random() < 0.5:       #double_cut_probability:
+        if random.random() < double_cut_probability:
             double_cut_success = True
         if double_cut_success:
             targets = random.sample(open_targets, 2)
