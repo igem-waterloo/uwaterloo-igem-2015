@@ -4,8 +4,8 @@ import os
 import random
 
 import make_video
-from genome_plot import genome_plot_polar
-from genome_csv import results_to_csv
+from genome_csv import results_to_csv, csv_to_dict
+from genome_plot import genome_plot_polar, plot_states
 from init_genome_camv import init_genome_camv, init_targets_all_domains
 from probabilistic import prob_repair
 
@@ -26,10 +26,10 @@ for dirs in dir_list:
         os.makedirs(dirs)
 
 # simulation parameters (time in seconds)
-complex_concentration = 22.101 # nM
+complex_concentration = 22.101  # nM
 dt = 1.0
 t0 = 0.0
-t1 = 3600.0  # 3600.0  # 18.0
+t1 = 0.1*3600.0  # 18.0 * 3600.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
 plot_period = 30  # in turns
@@ -48,7 +48,7 @@ double_cut_probability = 1.55*10.0**(-5)  # see Tessa
 
 # for logging data
 data_log = ""
-data_file = os.path.join(data_folder, "simulation_data")
+data_file = os.path.join(data_folder, "simulation_data.txt")
 
 # optional plotting
 flag_plot = True
@@ -82,11 +82,10 @@ for turn in xrange(total_turns):
     targets_from_genome = genome_camv.get_targets_from_genome()
     open_targets = genome_camv.get_open_targets_from_genome()
 
-
     # place data in rows for csv to write later
     genome_events[turn] = [str(turn*dt)] + map(lambda x: "active" if x.functional else "deactivated", genome_camv.domains.values())
     target_events[turn] = [str(turn*dt)] + map(target_state, targets_from_genome.values())
-    target_events[turn] = [y for y in target_events[turn] if y is not None] # clean up and remove Nones foudn target_state()
+    target_events[turn] = [y for y in target_events[turn] if y is not None]  # clean up and remove Nones found target_state()
 
     # deletion module
     if len(open_targets) > 1:
@@ -143,8 +142,8 @@ for turn in xrange(total_turns):
 
     # update plots if actively showing plots
     if turn % plot_period == 0 and flag_plot:
-        plot_path = os.path.join(plot_genome_folder, "genome_%05d" % plot_count)
-        genome_plot_polar(genome_camv, 'CaMV', time=time_sim/60, output_path=plot_path, flag_show=False)
+        plot_path = os.path.join(plot_genome_folder, "genome_%05d.png" % plot_count)
+        genome_plot_polar(genome_camv, 'CaMV', time=time_sim/60.0, output_path=plot_path, flag_show=False)
         plt.close()
         plot_count += 1
 
@@ -152,16 +151,26 @@ for turn in xrange(total_turns):
     time_sim += dt
 
 # write data to csvs
-results_to_csv(data_folder, "states_gene.csv", genome_header, genome_events)
-results_to_csv(data_folder, "states_target.csv", target_header, target_events)
+csv_states_gene = "states_gene.csv"
+csv_states_target = "states_target.csv"
+results_to_csv(data_folder, csv_states_gene, genome_header, genome_events)
+results_to_csv(data_folder, csv_states_target, target_header, target_events)
 
 # print data_log
 f = open(data_file, 'w')
 f.write(data_log)
 f.close()
 
-# create video of results
+# create data plots
 if flag_plot:
-    FPS = 15
-    video_path = os.path.join(current_run_folder, "genome_%dmin_%dfps.mp4" % (int(t1/60.0), FPS))
-    make_video.make_video_ffmpeg(plot_genome_folder, video_path, fps=FPS)
+    states_gene = csv_to_dict(os.path.join(data_folder, csv_states_gene))
+    states_target = csv_to_dict(os.path.join(data_folder, csv_states_target))
+    domains_to_plot = list(set([elem["domain_label"] for elem in pseudo_targets]))
+    plot_states(states_gene, "gene", labels_to_plot=domains_to_plot, output_path=os.path.join(plot_data_folder, "states_gene.png"), flag_show=False)
+    plot_states(states_target, "target", output_path=os.path.join(plot_data_folder, "states_target.png"), flag_show=False)
+
+# create video of genome plots
+if flag_plot:
+    fps = 15
+    video_path = os.path.join(current_run_folder, "genome_%dmin_%dfps.mp4" % (int(t1/60.0), fps))
+    make_video.make_video_ffmpeg(plot_genome_folder, video_path, fps=fps)
