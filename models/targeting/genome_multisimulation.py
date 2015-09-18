@@ -2,6 +2,7 @@ import datetime
 import os
 
 from genome_csv import multirun_gene_state_compile_to_dict, multirun_gene_state_compile_to_csv
+from genome_plot import plot_state_multirun
 from genome_simulation import genome_simulate
 
 
@@ -28,11 +29,12 @@ def genome_multisimulate(n):
     # compile n simulations
     state_totals_gene = multirun_gene_state_compile_to_dict(current_run_folder)
     multirun_gene_state_compile_to_csv(current_run_folder, "state_totals_gene.csv")
-    # plot fn called here
+    plot_state_multirun(state_totals_gene, "gene", labels_to_plot=["gene_P6"],
+                        output_path=os.path.join(current_run_folder, "states_gene_totals.png"), flag_show=False)
 
     return
 
 
 if __name__ == '__main__':
-    n = 10
+    n = 100
     genome_multisimulate(n)

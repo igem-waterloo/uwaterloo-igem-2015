@@ -15,21 +15,15 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
     # csv prep
     path_csv = os.path.join(output_directory, csv_name)
     writer_csv = csv.writer(open(path_csv, 'a'), lineterminator='\n')
-
     # if file empty, write header
     if os.stat(path_csv).st_size == 0:
-        #print "%s is empty, adding header" % path_csv
         writer_csv.writerow(csv_header)
-    #else:
-    #    print "%s already exists" % path_csv
-
     # append all data to csv
     for csv_row in data:
         writer_csv.writerow(csv_row)
     # close csv
     with open(path_csv, 'a') as f:
         f.close()
-    #print "csv writing complete"
     return
 
 
@@ -85,14 +79,16 @@ def multirun_gene_state_compile_to_dict(multirun_directory):
     gene_data = csv_to_dict(os.path.join(folder_list[0], "states_gene.csv"))  # initialize gene_data with data from data_1
     # map active -> 1, deactivated -> 0
     for key, value in gene_data.iteritems():
-        if key != 'header':
+        if (key != 'header' and key != 'time'):
             gene_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
     for i, run in enumerate(folder_list[1:]):  # skip the first one since we've already loaded it
         run_data = csv_to_dict(os.path.join(run,"states_gene.csv"))  # get data_i
         for key, value in run_data.iteritems():
-            run_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
+            if (key != 'header' and key != 'time'):
+                run_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
         for key, value in gene_data.iteritems():
-            gene_data[key] = [x + y for x, y in zip(value, run_data[key])]
+            if (key != 'header' and key != 'time'):
+                gene_data[key] = [x + y for x, y in zip(value, run_data[key])]
     return gene_data
 
 
@@ -104,11 +100,6 @@ def multirun_gene_state_compile_to_csv(multirun_directory, output_name):
         dictionary containing parsed information
     """
     state_totals_gene = multirun_gene_state_compile_to_dict(multirun_directory)
-    print state_totals_gene.keys()
-    print state_totals_gene['header']
-    print state_totals_gene['time']
-    print [state_totals_gene[key] for key in state_totals_gene['header']]
-    print [state_totals_gene[key][0] for key in state_totals_gene['header']]
     state_totals_gene_data = [[state_totals_gene[key][i] for key in state_totals_gene['header']] for i in xrange(len(state_totals_gene['time']))]
     results_to_csv(multirun_directory, output_name, state_totals_gene['header'], state_totals_gene_data)
     return
@@ -172,19 +163,15 @@ def map_target_events(time, targets, header):
     header_map = {}
     target_states = {}
     result = [0]*len(header)
-
     for i, val in enumerate(header):
         header_map[val] = i
-
     for gene, gene_targets in targets.iteritems():
         mapped_data = target_state(gene_targets)
         if (mapped_data is None):
             continue
         for target, state in mapped_data.iteritems():
             target_states[target] = state
-
     target_states["time"] = time
-
     for target, state in target_states.iteritems():
         result[header_map[target]] = state
     return result
