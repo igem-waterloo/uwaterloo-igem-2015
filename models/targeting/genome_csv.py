@@ -1,6 +1,8 @@
 import csv
 import os
 
+import genome_classes
+
 
 def results_to_csv(output_directory, csv_name, csv_header, data):
     """Write data to csv
@@ -110,3 +112,79 @@ def multirun_gene_state_compile_to_csv(multirun_directory, output_name):
     state_totals_gene_data = [[state_totals_gene[key][i] for key in state_totals_gene['header']] for i in xrange(len(state_totals_gene['time']))]
     results_to_csv(multirun_directory, output_name, state_totals_gene['header'], state_totals_gene_data)
     return
+
+
+def map_genome_events(time, domains, header):
+    """Map a genome's properties to its state
+    Args:
+        time: time of the current state
+        domains: dictionary of the genome. keys are gene names, values are the genome objects
+        header: csv header to make sure we have the values in the right order
+    Returns:
+        list to be written to the csv row
+    """
+    header_map = {}
+    gene_states = {}
+    result = [0]*len(header)
+    for i, val in enumerate(header):
+        header_map[val] = i
+    for gene, gene_obj in domains.iteritems():
+        if gene_obj.functional:
+            gene_states[gene] = "active"
+        else:
+            gene_states[gene] = "deactivated"
+    gene_states["time"] = time
+
+    for gene, state in gene_states.iteritems():
+        result[header_map[gene]] = state
+    return result
+
+
+def target_state(target_dict):
+    """Converting properties to target states
+    Args:
+        target_dict: dictionary containing target names as keys and target objects as values
+    Returns:
+        dictionary mapping target name to its state
+    """
+    if {} == target_dict:
+        return None
+
+    result = {}
+    for key, value in target_dict.iteritems():
+        if not value.repaired:
+            result[key] = "cut"
+        elif value.targetable:
+            result[key] = "targetable"
+        else:
+            result[key] = "untargetable"
+    return result
+
+def map_target_events(time, targets, header):
+    """Map a genome's properties to its state
+    Args:
+        time: time of the current state
+        targets: dictionary of the targets. keys are gene names, values are dictionaries of target names and objects
+        header: csv header to make sure we have the values in the right order
+    Returns:
+        list to be written to the csv row
+    """
+    header_map = {}
+    target_states = {}
+    result = [0]*len(header)
+
+    for i, val in enumerate(header):
+        header_map[val] = i
+
+    for gene, gene_targets in targets.iteritems():
+        mapped_data = target_state(gene_targets)
+        if (mapped_data is None):
+            continue
+        for target, state in mapped_data.iteritems():
+            target_states[target] = state
+
+    target_states["time"] = time
+
+    for target, state in target_states.iteritems():
+        result[header_map[target]] = state
+    return result

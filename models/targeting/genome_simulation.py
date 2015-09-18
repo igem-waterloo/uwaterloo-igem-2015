@@ -4,7 +4,7 @@ import os
 import random
 
 import make_video
-from genome_csv import results_to_csv, csv_to_dict
+from genome_csv import results_to_csv, csv_to_dict, map_genome_events, map_target_events
 from genome_plot import genome_plot_polar, plot_states
 from init_genome_camv import init_genome_camv, init_targets_all_domains, init_targets_multi_P6
 from probabilistic import prob_repair
@@ -93,9 +93,8 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
         open_targets = genome_camv.get_open_targets_from_genome()
 
         # place data in rows for csv to write later
-        genome_events[turn] = [str(turn*dt)] + map(lambda x: "active" if x.functional else "deactivated", genome_camv.domains.values())
-        target_events[turn] = [str(turn*dt)] + map(target_state, targets_from_genome.values())
-        target_events[turn] = [y for y in target_events[turn] if y is not None]  # clean up and remove Nones found target_state()
+        genome_events[turn] = map_genome_events(str(turn*dt), genome_camv.domains, genome_header)
+        target_events[turn] = map_target_events(str(turn*dt), targets_from_genome, target_header)
 
         # deletion module
         if len(open_targets) > 1:
