@@ -29,7 +29,7 @@ for dirs in dir_list:
 complex_concentration = 22.101  # nM
 dt = 1.0
 t0 = 0.0
-t1 = 0.1*3600.0  # 18.0 * 3600.0
+t1 = 3600.0  # 18.0 * 3600.0
 total_turns = int((t1 - t0) / dt)
 time_sim = t0
 plot_period = 30  # in turns
@@ -64,8 +64,7 @@ for key in genome_camv.domains.keys():
 def target_state(target_dict):
     if {} == target_dict:
         return None
-
-    for key,value in target_dict.iteritems():
+    for key, value in target_dict.iteritems():
         if not value.repaired:
             return "cut"
         elif value.targetable:
