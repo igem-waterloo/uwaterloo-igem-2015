@@ -17,7 +17,8 @@ def genome_multisimulate(n):
     for i in xrange(n):
         data_output_path = current_run_folder + data_folders_basename + str(i)
         genome_simulate(flag_plot=False, flag_multirun=True, batch_data_path=data_output_path)
-        print "Run %d complete" % i
+        if i % (n/10) == 0:
+            print "Run %d/%d complete" % (i, n)  # plot progress every 10% or so
 
 
 if __name__ == '__main__':
