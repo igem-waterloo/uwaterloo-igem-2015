@@ -15,21 +15,15 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
     # csv prep
     path_csv = os.path.join(output_directory, csv_name)
     writer_csv = csv.writer(open(path_csv, 'a'), lineterminator='\n')
-
     # if file empty, write header
     if os.stat(path_csv).st_size == 0:
-        #print "%s is empty, adding header" % path_csv
         writer_csv.writerow(csv_header)
-    #else:
-    #    print "%s already exists" % path_csv
-
     # append all data to csv
     for csv_row in data:
         writer_csv.writerow(csv_row)
     # close csv
     with open(path_csv, 'a') as f:
         f.close()
-    #print "csv writing complete"
     return
 
 
@@ -172,19 +166,15 @@ def map_target_events(time, targets, header):
     header_map = {}
     target_states = {}
     result = [0]*len(header)
-
     for i, val in enumerate(header):
         header_map[val] = i
-
     for gene, gene_targets in targets.iteritems():
         mapped_data = target_state(gene_targets)
         if (mapped_data is None):
             continue
         for target, state in mapped_data.iteritems():
             target_states[target] = state
-
     target_states["time"] = time
-
     for target, state in target_states.iteritems():
         result[header_map[target]] = state
     return result
