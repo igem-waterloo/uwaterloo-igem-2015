@@ -29,6 +29,7 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
     print "csv writing complete"
     return
 
+
 def csv_load(fullpath):
     """Read in csv and return dictionary of parsed data
     Args:
@@ -47,6 +48,7 @@ def csv_load(fullpath):
                 csv_data.append(row)
     return csv_header, csv_data
 
+
 def csv_to_dict(fullpath):
     """Loads csv data into memory, then converts the data into dictionary format
     Args:
@@ -62,8 +64,8 @@ def csv_to_dict(fullpath):
     column_index_dict = {key: csv_header.index(key) for key in csv_header}  # select columns for referencing data
     csv_dict = {}
     for key in csv_header:
-        csv_dict[key] = [0]*len(csv_data) # initialize list
+        csv_dict[key] = [0]*len(csv_data)  # initialize list
         for i, row in enumerate(csv_data):
             csv_dict[key][i] = row[column_index_dict[key]]
-    csv_dict['header'] = csv_header
+    csv_dict['header'] = csv_header  # include header to preserve order
     return csv_dict
