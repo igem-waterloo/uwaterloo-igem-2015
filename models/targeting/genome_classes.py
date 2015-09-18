@@ -171,8 +171,6 @@ class Genome(object):
             del_right, del_left, insert = indel()  # e.g. 0, 0, 2
         insert_nt = nt_rand(insert)  # fill in random sequence
         net_indel_size = insert - del_left - del_right
-        print del_left, del_right, insert
-        print insert_nt
         left_genome = self.current_genome[0: target.cut_position - del_left]  # genome to left of sequence
         right_genome = self.current_genome[target.cut_position + del_right:]  # to right of sequence
 
