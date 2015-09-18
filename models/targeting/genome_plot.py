@@ -192,6 +192,45 @@ def plot_states(states, datatype, labels_to_plot=None, output_path=None, flag_sh
     return
 
 
+def plot_state_multirun(states, datatype, labels_to_plot=None, output_path=None, flag_show=True):
+    """Plots timeseries of gene or target state (average) condition
+    Args:
+        states: dictionary of label: state vector
+        datatype: either "gene" or "target"
+        labels_to_plot: [default:None] ordered list that's a subset of the keys from states; plot all if None
+    """
+    assert datatype in ['gene', 'target']
+    data_labels = states.keys()
+    time = [float(t) for t in states['time']]
+    if labels_to_plot is None:
+        labels_to_plot = data_labels
+        labels_to_plot.remove('time')
+        labels_to_plot.remove('header')
+        labels_to_plot.sort()
+    length_data = len(time)
+    length_labels = len(labels_to_plot)
+    # plot
+    fig = plt.figure()
+    ax = plt.gca()
+    for i, label in enumerate(labels_to_plot):
+        state_data = states[label]
+        plt.plot(time, state_data)
+    ax.set_xlabel('time')
+    ax.set_ylabel(datatype + ' fraction active')
+    """
+    ax.set_xticks([time[i] for i in xrange(0, len(time), len(time) / 20)])  # downsample x-axis ticks
+    ax.set_xlim(x0 - 0.5*dx, (length_data - 1)*dx*1.05)
+    """
+    # output plot
+    if output_path is not None:
+        fig.set_size_inches(20.0, 8.0)  # alternative: 20.0, 8.0
+        fig.tight_layout()
+        plt.savefig(output_path)
+    if flag_show:
+        plt.show()
+    return
+
+
 if __name__ == '__main__':
     from init_genome_camv import init_genome_camv, init_targets_all_domains
     complex_concentration = 22.101  # nM
