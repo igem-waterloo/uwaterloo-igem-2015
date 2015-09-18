@@ -8,6 +8,7 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
         data: a list of lists. Each element is a row
     Returns:
         None
+    NOTE - suppressing output unconditionally for speedhax
     """
     # csv prep
     path_csv = os.path.join(output_directory, csv_name)
@@ -15,10 +16,10 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
 
     # if file empty, write header
     if os.stat(path_csv).st_size == 0:
-        print "%s is empty, adding header" % path_csv
+        #print "%s is empty, adding header" % path_csv
         writer_csv.writerow(csv_header)
-    else:
-        print "%s already exists" % path_csv
+    #else:
+    #    print "%s already exists" % path_csv
 
     # append all data to csv
     for csv_row in data:
@@ -26,7 +27,7 @@ def results_to_csv(output_directory, csv_name, csv_header, data):
     # close csv
     with open(path_csv, 'a') as f:
         f.close()
-    print "csv writing complete"
+    #print "csv writing complete"
     return
 
 
