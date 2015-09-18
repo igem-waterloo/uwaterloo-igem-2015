@@ -72,7 +72,7 @@ def csv_to_dict(fullpath):
     return csv_dict
 
 
-def multirun_csv_to_dict(multirun_directory):
+def multirun_gene_state_compile_to_dict(multirun_directory):
     """Compiles multirun info into dictionary for plotting purposes
     Args:
         multirun_directory: timestamped directory that contains data
@@ -80,18 +80,33 @@ def multirun_csv_to_dict(multirun_directory):
         dictionary containing parsed information
     """
     folder_list = [x[0] for x in os.walk(multirun_directory)][1:]  # get directories in multirun_directory, exclude the directory itself
-    gene_data = csv_to_dict(os.path.join(folder_list[0],"states_gene.csv"))  # initialize gene_data with data from data_1
-
+    gene_data = csv_to_dict(os.path.join(folder_list[0], "states_gene.csv"))  # initialize gene_data with data from data_1
     # map active -> 1, deactivated -> 0
     for key, value in gene_data.iteritems():
-        gene_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
-
+        if key != 'header':
+            gene_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
     for i, run in enumerate(folder_list[1:]):  # skip the first one since we've already loaded it
         run_data = csv_to_dict(os.path.join(run,"states_gene.csv"))  # get data_i
         for key, value in run_data.iteritems():
             run_data[key] = map(lambda x: 1 if ("active" == x) else 0, value)
-
         for key, value in gene_data.iteritems():
             gene_data[key] = [x + y for x, y in zip(value, run_data[key])]
-
     return gene_data
+
+
+def multirun_gene_state_compile_to_csv(multirun_directory, output_name):
+    """Compiles multirun info into dictionary for plotting purposes
+    Args:
+        multirun_directory: timestamped directory that contains data
+    Returns:
+        dictionary containing parsed information
+    """
+    state_totals_gene = multirun_gene_state_compile_to_dict(multirun_directory)
+    print state_totals_gene.keys()
+    print state_totals_gene['header']
+    print state_totals_gene['time']
+    print [state_totals_gene[key] for key in state_totals_gene['header']]
+    print [state_totals_gene[key][0] for key in state_totals_gene['header']]
+    state_totals_gene_data = [[state_totals_gene[key][i] for key in state_totals_gene['header']] for i in xrange(len(state_totals_gene['time']))]
+    results_to_csv(multirun_directory, output_name, state_totals_gene['header'], state_totals_gene_data)
+    return

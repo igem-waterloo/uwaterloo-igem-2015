@@ -43,14 +43,14 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
     complex_concentration = 22.101  # nM
     dt = 1.0
     t0 = 0.0
-    t1 = 3600.0  # 18.0 * 3600.0
+    t1 = 0.1*3600.0  # 18.0 * 3600.0
     total_turns = int((t1 - t0) / dt)
     time_sim = t0
     plot_period = 30  # in turns
     plot_count = 0
 
     # initialize genome
-    pseudo_targets = init_targets_multi_P6(complex_concentration)
+    pseudo_targets = init_targets_all_domains(complex_concentration)
     genome_camv = init_genome_camv(pseudo_targets)
     genome_camv.initialize_target_cut_probabilities(dt)
 
