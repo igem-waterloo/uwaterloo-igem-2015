@@ -88,21 +88,21 @@ def init_targets_single_P6(complex_concentration):
 
 
 def init_targets_multi_P6(complex_concentration):
-    return [{'label': "target_P6_start",
+    return [{'label': "target_P6_1",
              'target_sequence': "gctaacggctcttcgcaaca",
-             'target_start_idx': 5863,
+             'target_start_idx': 5862,
              'complex_concentration': complex_concentration,
              'sense': 1,
              'domain_label': "gene_P6"},
-             {'label': "target_P6_middle",
+             {'label': "target_P6_2",
              'target_sequence': "gttagagaggcttacgcagc",
-             'target_start_idx': 6649,
+             'target_start_idx': 6648,
              'complex_concentration': complex_concentration,
              'sense': 1,
              'domain_label': "gene_P6"},
-             {'label': "target_P6_end",
+             {'label': "target_P6_3",
              'target_sequence': "tcagaagtactattccagta",
-             'target_start_idx': 6803,
+             'target_start_idx': 6802,
              'complex_concentration': complex_concentration,
              'sense': 1,
              'domain_label': "gene_P6"}]
