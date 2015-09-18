@@ -86,6 +86,7 @@ def init_targets_single_P6(complex_concentration):
              'direction': 1,
              'domain_label': "gene_P6"}]
 
+
 def init_targets_all_domains(complex_concentration):
     return [{'label': "target_P1_1",
              'target_sequence': "cattcacgatgccacaggta",
