@@ -6,7 +6,7 @@ import random
 import make_video
 from genome_csv import results_to_csv, csv_to_dict
 from genome_plot import genome_plot_polar, plot_states
-from init_genome_camv import init_genome_camv, init_targets_all_domains
+from init_genome_camv import init_genome_camv, init_targets_all_domains, init_targets_multi_P6
 from probabilistic import prob_repair
 
 
@@ -50,7 +50,7 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
     plot_count = 0
 
     # initialize genome
-    pseudo_targets = init_targets_all_domains(complex_concentration)
+    pseudo_targets = init_targets_multi_P6(complex_concentration)
     genome_camv = init_genome_camv(pseudo_targets)
     genome_camv.initialize_target_cut_probabilities(dt)
 
