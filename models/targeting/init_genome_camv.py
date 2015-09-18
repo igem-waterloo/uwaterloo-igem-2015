@@ -21,10 +21,12 @@ def init_genome_camv(pseudo_targets):
 
     # gene coordinates from http://www.ncbi.nlm.nih.gov/nuccore/9626938
     # initialize camv genome 
-    #ncr_small = Domain("ncr_small", 5674, 5775, "ncr", genome_camv)  # removing for now, overlaps 19s
-    #genome_camv.add_domain(ncr_small)
-    ncr_large = Domain("ncr_large", 7436, 8024, "ncr", genome_camv)
-    genome_camv.add_domain(ncr_large)
+    #untracked_small = Domain("untracked_small", 5674, 5775, "untracked", genome_camv)  # removing for now, overlaps 19s
+    #genome_camv.add_domain(untracked_small)
+    #untracked_large = Domain("untracked_large", 7436, 8024, "untracked", genome_camv)
+    #genome_camv.add_domain(untracked_large)
+    untracked_large = Domain("untracked_large", 7436, 363, "untracked", genome_camv)
+    genome_camv.add_domain(untracked_large)
     promoter_35S = Domain("promoter_35S", 7092, 7435, "promoter", genome_camv)
     genome_camv.add_domain(promoter_35S)
     promoter_19S = Domain("promoter_19S", 5380, 5773, "promoter", genome_camv)
@@ -84,6 +86,28 @@ def init_targets_single_P6(complex_concentration):
              'direction': 1,
              'domain_label': "gene_P6"}]
 
+
+def init_targets_multi_P6(complex_concentration):
+    return [{'label': "target_P6_1",
+             'target_sequence': "gctaacggctcttcgcaaca",
+             'target_start_idx': 5862,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"},
+             {'label': "target_P6_2",
+             'target_sequence': "gttagagaggcttacgcagc",
+             'target_start_idx': 6648,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"},
+             {'label': "target_P6_3",
+             'target_sequence': "tcagaagtactattccagta",
+             'target_start_idx': 6802,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"}]
+
+
 def init_targets_all_domains(complex_concentration):
     return [{'label': "target_P1_1",
              'target_sequence': "cattcacgatgccacaggta",
@@ -108,4 +132,4 @@ def init_targets_all_domains(complex_concentration):
              'target_start_idx': 6201,
              'complex_concentration': complex_concentration,
              'sense': 1,
-             'domain_label': "gene_P6"},]
+             'domain_label': "gene_P6"}]

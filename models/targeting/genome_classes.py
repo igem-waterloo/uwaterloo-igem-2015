@@ -7,15 +7,6 @@ from probabilistic import prob_cut, nt_rand, indel
 #   - deletion of a promoter
 #   - deletion of a significant portion of the gene
 
-# TODO
-# - function for cut probability: foo_cut_prob(self.grna, self.target, dt, complex_concentration)
-# - function for cut location: foo_cut_posn()
-# - function for indel type (L/R del, insert) foo_indel(), foo_nt_rand(insert) etc
-# - if repair is big deletion, what do we fill in at the end of the target? cant be random, must come from sequence data
-# - code for deletions
-# - see specific TODOs / 'to be implemented' throughout the code
-# - properly update target.current_start and domain genome repair method
-
 
 class Target(object):
 
@@ -106,9 +97,9 @@ class Domain(object):
     # Each Domain may contain targets and belongs to a Genome
 
     def __init__(self, label, domain_start, domain_end, domain_type, genome, promoter=None):
-        assert domain_type in ["orf", "promoter", "ncr"]
+        assert domain_type in ["orf", "promoter", "untracked"]  # note untracked isn't affected by cas9
         self.label = label  # string
-        self.domain_type = domain_type  # 'orf' or 'promoter' or 'ncr'
+        self.domain_type = domain_type  # 'orf' or 'promoter' or 'untracked'
         self.domain_start = domain_start  # int
         self.domain_end = domain_end  # int
         self.promoter = promoter
@@ -143,14 +134,14 @@ class Domain(object):
                 self.functional = True
         elif self.domain_type == "promoter":  # TODO  how to define functional promoter
             self.functional = True
-        else:  # TODO how to define functional NCR
+        else:  # untracked domains always functional
             self.functional = True
 
     def target_location(self, target_label):
         target = self.targets[target_label]
         return target.current_start
 
-    def set_location(self, label, location):
+    def set_location(self, target_label, location):
         self.targets[target_label].current_start = location
 
 
@@ -158,11 +149,11 @@ class Genome(object):
     # Each Genome has >=1 Domains
 
     def __init__(self, sequence):
-        self.length = len(sequence)  # int
+        self.current_length = len(sequence)  # int
         self.initial_genome = sequence  # string
         self.current_genome = sequence  # string
         self.repaired = True  # bool
-        self.domains = {}  # dict of all domains (ORFs, promoters, NCRs)
+        self.domains = {}  # dict of all domains (ORFs, promoters, untracked sections)
     
     def add_domain(self, domain):
         assert type(domain) is Domain
@@ -172,7 +163,7 @@ class Genome(object):
         assert type(domain) is Domain
         del self.domains[domain.label]
 
-    def repair_target(self, target):  # TODO pass target instead, clean this method
+    def repair_target(self, target):
         # sample from indel distribution to get left/right deletion sizes and insertion nucleotides
         if target.sense == 1:
             del_left, del_right, insert = indel()  # e.g. 0, 0, 2
@@ -303,7 +294,7 @@ class Genome(object):
             self.remove_domain(domain)
         # set new genome
         self.current_genome = new_genome
-        self.length = len(new_genome)
+        self.current_length = len(new_genome)
         # self.repaired = True
         # delete or fix all broken targets
         for target in broken_targets:
@@ -323,12 +314,11 @@ class Genome(object):
         """Delete section between two open targets
         """
         assert not (target1.repaired or target2.repaired)
-        # make sure cut_positions of targets are up to date
-        target1.set_cut_position()
-        target2.set_cut_position()
+        target1.set_cut_position()  # make sure cut_positions of targets are up to date
+        target2.set_cut_position()  # make sure cut_positions of targets are up to date
         location = min(target1.cut_position, target2.cut_position)
         middle = abs(target1.cut_position - target2.cut_position)
-        if middle < self.length / 2: # if middle is smaller, should delete
+        if middle < self.current_length / 2:  # if middle is smaller, should delete
             new_genome = self.current_genome[0:location] + self.current_genome[location+middle:]
             self.make_new_genome(location, -middle, new_genome)
         else: # otherwise, should keep (delete beginning and end)
@@ -337,23 +327,25 @@ class Genome(object):
             self.make_new_genome(0, -location, new_genome)
             # then delete end
             new_genome = self.current_genome[0:middle]
-            self.make_new_genome(middle, -(self.length - middle), new_genome)
+            self.make_new_genome(middle, -(self.current_length - middle), new_genome)
+
+        # keep the target on from the dleted portion if they have the same sense
         if target1.sense == target2.sense:
             if location <= target1.current_start <= location + middle:
-                target1.sequence = target1.sequence[3:]
-                target1.sequence = target2.sequence[0:3] + target1.sequence
-                target2.domain.remove_target(target2)
-                target1.cut_position = None
-                target1.repaired = True
-                target1.compute_and_assign_cut_probability(dt)
-                # check domain functionality
-                target1.domain.update_functionality()
+                target_keep = target1
+                target_discard = target2
             else:
-                target2.sequence = target2.sequence[3:]
-                target2.sequence = target1.sequence[0:3] + target2.sequence
-                target1.domain.remove_target(target1)
-                target2.cut_position = None
-                target2.repaired = True
-                target2.compute_and_assign_cut_probability(dt)
-                # check domain functionality
-                target2.domain.update_functionality()
+                target_keep = target2
+                target_discard = target1
+            target_keep.sequence = target_keep.sequence[3:]
+            target_keep.sequence = target_discard.sequence[0:3] + target_keep.sequence
+            target_discard.domain.remove_target(target_discard)
+            target_keep.cut_position = None
+            target_keep.repaired = True
+            target_keep.compute_and_assign_cut_probability(dt)
+            # check domain functionality
+            target_keep.domain.update_functionality()
+        # targets have opposite sense and so they're both likely to be broken
+        else:
+            target1.domain.remove_target(target1)
+            target2.domain.remove_target(target2)
