@@ -43,7 +43,7 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
     complex_concentration = 22.101  # nM
     dt = 1.0
     t0 = 0.0
-    t1 = 3600.0  # 18.0 * 3600.0
+    t1 = 2.0 * 18.0 * 3600.0
     total_turns = int((t1 - t0) / dt)
     time_sim = t0
     plot_period = 30  # in turns
@@ -116,9 +116,9 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
         for key_domain in targets_from_genome.keys():
             domain = genome_camv.domains[key_domain]
             targets_from_domain = domain.targets
-            success_cut = False
-            success_repair = False
             for key_target in targets_from_domain.keys():
+                success_cut = False
+                success_repair = False
                 target = targets_from_domain[key_target]
                 if target.repaired:  # i.e. not cut
                     probability_to_cut = target.cut_probability
@@ -189,4 +189,4 @@ def genome_simulate(flag_plot=True, flag_multirun=False, batch_data_path=None):
 
 
 if __name__ == '__main__':
-    genome_simulate()
+    genome_simulate(False)
