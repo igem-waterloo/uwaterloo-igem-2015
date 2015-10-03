@@ -1,65 +1,126 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
+<div class="container main-container">
+    <h1> Part Documentation</h1>
 
-  <h1> Part Documentation</h1>
+    <section id="biobricks" title="BioBricks">
+        <h2>BioBricks</h2>
 
-  <p>Each team will make new parts during iGEM and will submit them to the Registry of Standard Biological Parts. The iGEM software provides an easy way to present the parts your team has created. The <code>&lt;groupparts&gt;</code> tag (see below) will generate a table with all of the parts that your team adds to your team sandbox.</p>
-<p>Remember that the goal of proper part documentation is to describe and define a part, so that it can be used without needing to refer to the primary literature. Registry users in future years should be able to read your documentation and be able to use the part successfully. Also, you should provide proper references to acknowledge previous authors and to provide for users who wish to know more.</p>
+        <h3>SgRNA targeting LacI promoter - <a href="http://parts.igem.org/Part:BBa_K1645998">BBa_K1645998</a></h3>
+        <p>
+            This construct contains a small guide RNA (sgRNA) used in the CRISPR-cas9 system, targeting the LacI promoter (<a href="http://parts.igem.org/Part:BBa_R0010">BBa_R0010</a>). The parts include the 20 nucleotide long target sequence that is complementary to the region within the LacI (<a href="http://parts.igem.org/Part:BBa_R0010">BBa_R0010</a>) promoter, the scaffold region responsible for the secondary structure of the sgRNA and the terminator. In order to express the sgRNA and for it to be transcribed, a constitutive promoter should be cloned upstream of the sgRNA. The suggested constitutive promoter for this part is the U6 promoter.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/b/ba/Waterloo_Biobrick-_98.png">
+        </figure>
+        <p>
+            This part was cloned without the promoter to avoid a biobrick illegal site existing on the U6 promoter. In order to construct this part we designed primers containing the standard iGEM prefix and suffix and used PCR to amplify the RFP-sgRNA out from a linear construct we synthesized using Integrated DNA Technologies (IDT). We then digested the amplified RFP-sgRNA containing the prefix and suffix using XbaI and PstI followed by a column purification. Similarly pSB1C3 was digested using XbaI and PstI, and the backbone was isolated through gel extraction. The column purified RFP-SgRNA and gel extracted PSB1C3 backbone were then ligated to create the final construct.
+        </p>
+        <p>
+            Our experiment was conducted in BL21. The characterization data using this part from our experiments demonstrates that when using this SgRNA, RFP, which uses the LacI promoter is being suppressed. We were able to detect drop in RFP levels using this sgNA coupled with <em>S.pyrogenes</em> dCas9. This suggests that our CRISPR cas9 system works.
+        </p>
 
+        <h3>Dual Colour Plasmid (RFP and GFP) in pSB1C3 - <a href="http://parts.igem.org/Part:BBa_K1645999">BBa_K1645999</a></h3>
+        <p>
+            This part is the composite part of GFP full cassette taken from registry part <a href="http://parts.igem.org/Part:BBa_I20260"> BBa_I20260</a> and RFP full cassette taken from registry part <a href="http://parts.igem.org/Part:BBa_J04450"> BBa_J04450</a>. The GFP is under the <a href="http://parts.igem.org/Part:BBa_J23101"> J23101</a> promoter, which is a constitutive promoter. In addition, the RFP is under the lacI (<a href="http://parts.igem.org/Part:BBa_R0010">R0010</a>) promoter which is constitutive in DH5-alpha due to the absence of lacI expression. If lacI repressor is presented in the cell the RFP expression is inhibited and IPTG is needed for the expression of RFP. For our purposes, this part was used to see the colour swaps using different sgRNA targeting promoter region of each of the colours.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/1/1a/Waterloo_Biobrick_99.png">
+        </figure>
+        <p>
+            In order to construct this part we took Dual Colour Target, a previously constructed dual colour plasmid containing both RFP and GFP and swapped out the backbone. The backbone swap was conducted by first digesting the two fluorescent proteins in Dual Colour Target out of the pSB3K3 backbone using XbaI and PstI followed by a gel extraction. The standard biobrick backbone pSB1C3 was also digested out using XbaI and PstI and similarly isolated via gel extraction. The gel extracted GFP and RFP cassette was then ligated with the gel extracted pSB1C3 backbone completing the part construction.
+        </p>
+        <p>
+            In order to characterize the Dual Colour Plasmid in psb1C3 we used Imaging Flow Cytometry to see the expression of both Red fluorescent and Green fluorescent proteins. The constructed part was then transformed in DH5-alpha and the colonies were inoculated and grown in LB overnight. The resulting culture was fixed and diluted 10 times in 10% formalin buffer and then placed in the Imaging Flow Cytometry machine where it was excited by a laser set at 488 nm for optimum range reading. In order to control for signal leakage between channels a compensation was created using both <a href="http://parts.igem.org/Part:BBa_I20260"> BBa_I20260</a> and <a href="http://parts.igem./Part:BBa_K1645999"> BBa_K1645999</a> as single colour controls. The results from the Imaging Flow Cytometry readings show that the Dual Colour Plasmid, <a href="http://parts.igem.org/Part:BBa_K1645999"> BBa_K1645999</a> expresses both RFP and GFP in DH5-alpha. This part was successfully cloned and sequence confirmed.
+        </p>
+    </section>
 
-  <div class="highlightBox">
-    <h4>Note</h4>
-    <p>Note that parts must be documented on the <a href="http://parts.igem.org/Main_Page"> Registry</a>. This page serves to <i>showcase</i> the parts you have made. Future teams and other users and are much more likely to find parts by looking in the Registry than by looking at your team wiki.</p>
-  </div>
+    <section id="other" title="Other Parts">
+        <h2>Other Parts</h2>
 
+        <h3>Dual Colour Target in pSB3K3</h3>
+        <p>
+            This plasmid was constructed for the purpose of the sgRNA swap experiment component of our project. The backbone for this plasmid is <b>pSB3K3</b> with p15A origin. The pSB3K3 backbone was chosen instead of the classic pSB1C3 backbone in order to avoid plasmid incompatibility during the part of our experiment where we co-transformed this plasmid with dCas9. We used iGEM registry parts, <a href="http://parts.igem.org/Part:BBa_I20260">BBa_I20260</a> and <a href="http://parts.igem.org/Part:BBa_J04450">BBa_J04450</a> and classical restriction cloning to construct this part. The part <a href="http://parts.igem.org/Part:BBa_J04450"> BBa_J04450</a> was cut with XbaI and PstI and was cloned into <a href="http://parts.igem.org/Part:BBa_I20260"> BBa_I20260</a> between SpeI and PstI and M scar was generated between the two parts once XbaI and SpeI came together. The promoter regions of each of the fluorescent proteins was designed to be targeted by CRISPR cas9 system. This part was cloned successfully and the sequence was confirmed.
+        </p>
 
+        <h3>SgRNA-Mod-RFP</h3>
+        <p>
+            This part contains the modified sgRNA containing SphI and BamHI restriction site for the purpose of easier exchange of sgRNA. The SphI site is between the promoter and the target sequence and the BamHI is between the target and the sgRNA scaffold region. There is a single base pair change on the scaffold. The sgRNA is under U6 promoter. The modified sgRNA was synthesized by Integrated DNA. Polymerase chain reaction (PCR) was used to amplify the sgRNA using primers flanked by standard biobrick prefix and suffix. Then the amplified part was cloned into Dual Colour Target between SpeI and PstI sites. This part successfully cloned and sequence confirmed.
+        </p>
 
-  <h4>Adding parts to the registry</h4>
-  <p>You can add parts to the Registry at our <a href="http://parts.igem.org/Add_a_Part_to_the_Registry">Add a Part to the Registry</a> link.</p>
-  <p>We encourage teams to start completing documentation for their parts on the Registry as soon as you have it available. The sooner you put up your parts, the better you will remember all the details about your parts. Remember, you don't need to send us the DNA sample before you create an entry for a part on the Registry. (However, you <b>do</b> need to send us the DNA sample before the Jamboree. If you don't send us a DNA sample of a part, that part will not be eligible for awards and medal criteria.)</p>
+        <h3>SgRNA-Ctrl-RFP</h3>
+        <p>
+            This part contains the sgRNA targeting the lacI promoter upstream of the Red Fluorescent protein along with the RFP and GFP full cassette. This was used in our project as a control to check for the proper dCas9 functionality, then was compared to the SgRNA-Mod_RFP part. This sgRNA was synthesized by Integrated DNA Technology and primers were designed to amplify the sgRNA part flanking with prefix and suffix. Then the amplified part was digested and got cloned into the Dual Colour Target between SpeI and PstI. This part was successfully cloned and sequenced.
+        </p>
 
+        <h3>SgRNA-Ctrl-GFP</h3>
+        <p>
+            This part contains the sgRNA cassette that targets the promoter and ribosome binding site upstream of the GFP from the Dual Colour Target. The sgRNA was synthesized by Integrated DNA Technologies (IDT) and was amplified using primers that contained flanking standard biobrick prefix and suffix. Then the part was cloned between SpeI and PstI at the Dual Colour Target plasmid. This part was cloned and sequence confirmed.
+        </p>
 
-  <h4>What information do I need to start putting my parts on the Registry?</h4>
-  <p>The information needed to initially create a part on the Registry is:</p>
-  <ul>
-    <li>Part Name</li>
-    <li>Part type</li>
-    <li>Creator</li>
-    <li>Sequence</li>
-    <li>Short Description (60 characters on what the DNA does)</li>
-    <li>Long Description (Longer description of what the DNA does)</li>
-    <li>Design considerations</li>
-  </ul>
+        <h3>Modified dCas9</h3>
+        <p>
+            The purpose of this part is to have a mutated version of S. pyogenes dCas9 that can function with NGAG pam site. Three mutations were introduced to the dCas9 we obtained from addgene. O’Connell 2014 .The three single base pair mutations were made in the dCas9 using two different primers using Quick Change protocol
+            <cite ref="Oconnell2014"></cite>. One primer contains two mutations, changing arginine to glutamine at site 1335 and changing threonine to arginine at site 1337. A separate primer was used to induce a single mutation in order to change aspartic acid to the glutamic acid at site 1135. The Quick Change protocol was used to make these three mutations. Firstly Quick change was performed to induce two mutations and after the positive sequencing results came back, second round of mutagenesis was performed to put in place the third mutation.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/4/44/Dcas9_1.jpeg">
+        </figure>
 
-  <p>We encourage you to put up <em>much more</em> information as you gather it over the summer. If you have images, plots, characterization data and other information, please also put it up on the part page.</p>
+        <h3>sgRNA-NGAG</h3>
+        <p>
+            The sgRNA cassette was synthesized by Integrated DNA Technologies (IDT). This cassette includes U6 promoter, target section which recognises the NGAG pam site at targets the <a href="http://parts.igem.org/Part:BBa_J23101"> J23101</a> promoter upstream of the GFP coding sequence. The part was amplified using primers flanking with standard biobrick prefix and suffix and then restriction digest was used to clone the sgRNA cassette into <a href="http://parts.igem.org/Part:BBa_I20260"> BBa_I20260</a> in pSB3k3 within SpeI and PstI sites.
+        </p>
 
+        <h3>SgRNA-GFP-Control Biobrick</h3>
+        <p>
+            The purpose of this part is to guide the dcas9 protein to the <a href="http://parts.igem.org/Part:BBa_J23101"> J23101</a> promoter and <a href=" http://parts.igem.org/Part:BBa_B0032"> B0032</a> ribosome binding site to block RNA polymerase and prevent transcription of the gene downstream from these two parts. Our targeted gene is <a href="http://parts.igem.org/Part:BBa_I20260"> BBa_I20260</a>.
+        </p>
+        <p>
+            This biobrick contains small guide RNA (SgRNA) part to be used along with the CRISPR-Cas9 system. Once this part is placed in front of an appropriate promoter, it guides the cas9 or dcas9 protein toward a desired target. This part contains the Target sequence, SgRNA scaffold, and transcriptional terminator part BBa-B0010. The Target sequence is 20 nucleotides long and has been designed using the Benchling CRISPR tool. The PAM sequence is agg, and the “on target score” calculated by Benchling is 47.6. This sequence is located in between the <a href="http://parts.igem.org/Part:BBa_J23101"> J23101</a> promoter and <a href=" http://parts.igem.org/Part:BBa_B0032"> B0032</a> ribosome binding site. In our situation, <a href="http://parts.igem.org/Part:BBa_J23101">J23101</a> and <a href=" http://parts.igem.org/Part:BBa_B0032"> B0032</a> are upstream of <a href="http://parts.igem.org/Part:BBa_E0040">E0040</a> green fluorescent protein (GFP). More specifically, the target sequence is complementary to the last five base pairs of the promoter and the first six nucleotides of the ribosome binding site. This SgRNA part, along with the U6 promoter, was synthesized by Integrated DNA Technologies (IDT). The synthesized part contains the U6 promoter upstream of the GFP SgRNA. This promoter was originally in place in our synthesized part and for use in our project. However, for the purpose of biobricking, primers were designed to exclude the U6 promoter to avoid an illegal EcoRI site within that promoter. The target sequence, sgRNA scaffold, and the terminator were amplified with primers 138 and 140 from the appendix. The forward primer contains the standard biobrick prefix and the reverse primer contains the suffix. Then the amplified DNA was cut using a restriction digest with XbaI and PstI, and was cloned into pSB1C3.
+        </p>
+    </section>
 
+    <section id="characterized" title="Characterized Parts">
+        <h2> Characterized Parts </h2>
+        <p>
+            The xylose inducible promoter is one of the parts our team characterized this year. The reason we want to characterize this promoter is because it has been mutated via site directed mutagenesis in order to remove illegal sites. Now that the promoter has been mutated, it must be tested to see if it is expressed efficiently in the presence of xylose. The parts we are characterizing are <a href=" http://parts.igem.org/Part:BBa_K1323014">BBa_K1323014</a> and <a href=" http://parts.igem.org/Part:BBa_K1323002">BBa_K1323002</a>.
+        </p>
+        <p>
+            To characterize this variant of the xylose inducible promoter, it was cloned in front of GFP so a simple fluorescence assay could be performed. The new mutated xylose promoter should be activated in the presence of media containing 2% xylose, assuming its function is no different than the original
+            <cite ref="Forsyth2002"></cite>. The positive control was a plasmid containing the constitutive <a href="http://parts.igem.org/Part:BBa_J23101">J23101</a> promoter in front of GFP. The negative control in this assay was using a plasmid including GFP with no promoter. All plasmids were transformed into the DH5alpha Escherichia coli strain.
+        </p>
+        <p>
+            Strains with the plasmids were grown to an OD600=0.2 and then were diluted into media and put into a plate reader. Measurements of OD600 and GFP expression were taken at intervals of 10 minutes until the positive control expressed the GFP promoter.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/9/9e/Waterloo_xyloseOD6001.png" style="width:45%;">
+            <img src="http://2015.igem.org/wiki/images/6/62/Waterloo_xyloseGFP.png" style="width:45%;">
+            <figcaption>
+                Left: Graph showing the OD600 of all strains used. OD600 measures cell growth. This graph indicates that all strains have grown over 200 minutes. Right: GFP expression in different strains. It is clear that induction with xylose does not express the promoter.
+            </figcaption>
+        </figure>
+        <p>
+            The OD600 graph shows that all of the strains grew in the 96-well plate. The GFP fluorescence intensity graph shows that the <a href="http://parts.igem.org/Part:BBa_J23101">J23101</a> promoter effectively expressed the GFP protein while the strain with no promoter did not have GFP expression. When the xylose inducible promoter was in just LB media, it did not express GFP. When xylose was added, the promoter also did not express GFP. This means that the mutation made to remove the illegal site also affected the promoter. The mutated promoter does not work, even when it is induced with 2% xylose.
+        </p>
+    </section>
 
+    <section id="parts_table" title="Parts Table">
+        <h2>Part Table </h2>
+        <div id="partswrapper">
+            </html>
+            <groupparts>iGEM015_Waterloo</groupparts>
+            <html>
+            <link rel="stylesheet" type="text/css" href="/Template:Waterloo/CSS/parts?action=raw&ctype=text/css">
+            <script src="/Template:Waterloo/JS/parts?action=raw&ctype=text/javascript"></script>
+        </div>
+    </section>
 
-
-
-  <h4>Inspiration</h4>
-  <p>We have a created  a <a href="http://parts.igem.org/Well_Documented_Parts">collection of well documented parts</a> that can help you get started.</p>
-
-  <p> You can also take a look at how other teams have documented their parts in their wiki:</p>
-  <ul>
-    <li><a href="http://2014.igem.org/Team:MIT/Parts"> 2014 MIT </a></li>
-    <li><a href="http://2014.igem.org/Team:Heidelberg/Parts"> 2014 Heidelberg</a></li>
-    <li><a href="http://2014.igem.org/Team:Tokyo_Tech/Parts">2014 Tokyo Tech</a></li>
-  </ul>
-
-
-
-  <h4>Part Table </h4>
-  </html>
-  <groupparts>iGEM015 Example</groupparts>
-  <html>
-
-
-
-</div>
+    <section id="references" title="References">
+        <h2> References </h2>
+        <ol id="reflist">
+        </ol>
+    </section>
 </div>
 </html>
 {{Waterloo_Footer}}
