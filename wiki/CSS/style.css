@@ -17,6 +17,37 @@ a, a:link, a:visited {
     color: #23b593;
 }
 
+/*---General Colour Classes----------------------------------------------------------------------*/
+.orangetext {
+  color: #fbb67a;
+}
+.bluetext {
+  color: #79bcc7;
+}
+.greentext {
+  color: #92cc78;
+}
+.charcoaltext {
+  color: #373b40;
+}
+.tealtext {
+  color: #23b593;
+}
+.whitetext {
+    color: #fff;
+}
+.no-border {
+    border: 0px;
+}
+.no-margin {
+    margin: 0;
+}
+.no-padding {
+    padding: 0;
+}
+h1 {
+    border: 0px;
+}
 
 /*---Changes to Default Wiki----------------------------------------------------------------------*/
 #globalWrapper, #content, #bodyContent {
@@ -54,6 +85,51 @@ div#top_menu_inside {
     padding-right: 0;
 }
 
+
+/*---Changes to Default Bootstrap----------------------------------------------------------------------*/
+div.jumbotron {
+  background-color: #373b40;
+  color: #fff;
+}
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+/* Setting max width of container to 970 px */
+@media (min-width: 1200px) {
+  div.container {
+    width: 970px;
+  }
+}
+.main-container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.main-container .panel-default .panel-heading {
+  background-color: #373b40;
+  color: #fff;
+}
+.main-container .panel-default .panel-heading a:hover {
+  color: #23b593;
+}
+@media (max-width: 768px) {
+  #bodyContent .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #fff;
+  }
+  #bodyContent .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  #bodyContent .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #23b593;
+  }
+}
+.main-container .table {
+  font-size: 0.8em;
+    margin: auto;
+}
+/*Change the styling of table headers */
+.main-container th {
+    text-align: center !important;
+}
+
 /*---Div Properties-------------------------------------------------------------------------------*/
 /* Creates a container that will wrap all of the content inside your wiki pages. */
 #mainContainer {
@@ -78,36 +154,6 @@ div#top_menu_inside {
 #contentContainer a:hover {
     color: #59bf92;
 }
-
-/*Change the styling of tables */
-#contentContainer table {
-    border: 1px solid #565656;
-    border-collapse: collapse;
-    width: 90%;
-    margin: auto;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    margin-right: 10px;
-    margin-left: 10px;
-}
-
-/*Change the styling of table cells*/
-#contentContainer  td {
-    padding: 10px;
-    border: 1px solid #565656;
-    border-collapse: collapse;
-    vertical-align: text-top;
-}
-
-/*Change the styling of table headers */
-#contentContainer th {
-    background-color: #E8E8E9;
-    padding: 10px;
-    border: 1px solid #565656;
-    border-collapse: collapse;
-    vertical-align: text-top;
-}
-
 
 /*Clear class for all the pages, adds spacing too*/
 .clear{
@@ -148,6 +194,28 @@ img {
     margin: auto;
     padding: 0.2em;
     display: inline-block;
+}
+figcaption {
+    font-size: 0.9em;
+    font-style: italic;
+}
+figcaption.model-caption {
+  color: #92cc78;
+  font-style: normal;
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+
+/*---Requirements Page----------------------------------------------------------------------------*/
+#medals-container {
+    margin: 0px;
+}
+h1.medals, h2.medals {
+    border-bottom: 0px;
+}
+h1.medals {
+    text-align: center;
+    color: #23b593 !important;
 }
 
 /*---Header & Footer------------------------------------------------------------------------------*/
@@ -231,6 +299,7 @@ nav.hide-lower {
 ul.inner-page-links {
   width: 100% !important;
   display: inline-block;
+  margin-left: 0;
 }
 ul.inner-page-links a.scroll-link {
     padding: 0.5em 1em !important;
@@ -293,6 +362,32 @@ footer p.footer-links a:hover {
     }
 }
 
+/*---Toggle Button for collapsible groups-------------*/
+.toggle-arrow {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    /* image replacement properties */
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+    background: rgba(35, 181, 147, 0.8) url("/wiki/images/b/bd/Waterloo_cd-top-arrow.png") no-repeat scroll center; 50%
+    -moz-transform: scaleY(1);
+    -o-transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+    transform: scaleY(1);
+}
+.collapsed .toggle-arrow {
+    -moz-transform: scaleY(-1);
+    -o-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    transform: scaleY(-1);
+    filter: FlipV;
+    -ms-filter: "FlipV";
+}
+
+/* disappear on small screen sizes */
+
 /*---Scroll to Top button ---------------------------*/
 .cd-top {
     display: inline-block;
@@ -354,17 +449,16 @@ footer p.footer-links a:hover {
 }
 
 /*---Splash images & team page --------------------------------------------------------------------*/
-.cover {
+.cover, .small-cover {
     position: relative;
     height: 20em;
     background: rgba(0, 0, 0, 0.5);
-    width: 100%
+    width: 100%;
     color: #fff;
     margin: auto;
     text-align: center;
     line-height: 20em;
 }
-
 .cover::after {
     content : "";
     display: block;
@@ -377,7 +471,6 @@ footer p.footer-links a:hover {
     z-index: -1;
     opacity: 0.8;
 }
-
 .cover#lab::after {
     background-image: url('/wiki/images/c/c9/Waterloo_lab_cover.JPG');
 }
@@ -392,6 +485,65 @@ footer p.footer-links a:hover {
 }
 .cover#leads::after {
     background-image: url('/wiki/images/1/1e/Waterloo_cover_leads.jpg');
+}
+
+.jumbotron.landing-links {
+    width: 100%;
+    background-color: inherit;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.jumbotron.landing-links div.container {
+    width: 100%;
+}
+.small-cover {
+    display: inline-block;
+    float: left;
+    color: #ccc;
+    font-weight: 500;
+    text-align: center;
+    line-height: 200px;
+    height: 200px;
+    text-shadow: 0 0 10px #000;
+}
+.small-cover a {
+    display: block;
+    color: #ccc;
+}
+.small-cover a:hover {
+    color: #23b593;
+}
+.small-cover#desc {
+    background: #555 url('/wiki/images/2/20/Waterloo_cover_desc.png') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#medal {
+    background: #555 url('/wiki/images/b/b5/Waterloo_cover_trophy.png') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#team {
+    background: #555 url('/wiki/images/8/84/Waterloo_cover_team.png') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#att {
+    background: #555 url('/wiki/images/7/72/Waterloo_cover_att.jpg') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#collab {
+    background: #555 url('/wiki/images/4/45/Waterloo_cover_collab.jpg') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#lab {
+    background: #555 url('/wiki/images/5/5e/Waterloo_smallcover_lab.jpg') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#math {
+    background: #555 url('/wiki/images/c/c9/Waterloo_smallcover_math.jpg') no-repeat center center;
+    background-size: cover;
+}
+.small-cover#policy {
+    background: #555 url('/wiki/images/a/a7/Waterloo_smallcover_policy.jpg') no-repeat center center;
+    background-size: cover;
 }
 
 a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
@@ -436,6 +588,9 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
 
+figure {
+    position: relative;
+}
 .img-att {
     position: absolute;
     bottom: 10px;
@@ -453,11 +608,12 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
 }
 .img-att .img-att-bubble {
     position: absolute;
-    top: -105px;
-    left: -310px;
+    right: 10px;
+    bottom: 10px;
+    width: 200px;
     display: none;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
     color: #000;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-style: normal;
@@ -465,13 +621,19 @@ a.cover-text, a.cover-text:hover, a.cover-text:visited, a.cover-text:active {
     text-align: left;
     padding: 1em;
     font-size: 14px;
+
+    -webkit-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+       -moz-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+        -ms-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 5px 0 rgba(66,66,66,1);
+            box-shadow: 0 0 5px 0 rgba(66,66,66,1);
 }
 .img-att .img-att-bubble li {
     list-style: none;
     line-height: normal;
     margin: 5px 0;
 }
-.img-att:hover .img-att-bubble {
+.img-att:hover .img-att-bubble, .img-att-bubble:hover {
     display: block;
 }
 
@@ -517,4 +679,38 @@ q, blockquote {
     font-family: inherit;
     padding: 0 0 0 120px;
     border-left: none !important;
+}
+blockquote p {
+    text-indent: 3.5em;
+    margin-top: -4em;
+}
+blockquote p.source {
+    text-indent: 3.5em;
+    margin-top: 0px;
+    font-size: 0.8em;
+}
+
+
+
+/*---Description links----------------------------------------------------------------------------*/
+.desc-links a {
+    padding: 0 1.5em;
+}
+
+
+/*---Human practices page--------------------------------------------------------------------------*/
+.jumbotron.hp-landing {
+    background-color: inherit;
+    color: #000;
+}
+.jumbotron.hp-landing dl {
+    text-align: center;
+}
+.jumbotron.hp-landing dt img {
+    border-radius: 50%;
+    -webkit-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+       -moz-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+        -ms-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+         -o-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
+            box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
