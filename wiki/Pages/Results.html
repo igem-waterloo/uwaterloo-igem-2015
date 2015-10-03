@@ -1,38 +1,30 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
+<div class="container main-container">
 
     <h1> Project Results</h1>
+<p>One of the major results that Waterloo iGEM had accomplished over the summer 2015 is showing that adding restriction sites and a single mutation in the scaffold region of the sgRNA did not affect the functionality of the  sgRNA in CRISPR dCas9 system. The assay used for this experiment is amnis Imaging Flow Cytometry. </p>
+<p>
+In addition, we accomplished to mutate dCas9 at three sites 1135, 1335, and 1337 to alter its PAM site from native NGG to NGAG using the Quick Change protocol. The mutations were confirmed using sequencing. Preliminary experiments were done using sgRNA targeting the J23101 promoter upstream of the GFP using NGAG PAM site. Further result analysis is needed to confirm the functionality of the mutated dCas9. </p>
+<p> We were finally able to show that Cas9 was expressed from protoplasts using anti-Cas9 antibodies and dot blots. Additionally, we were able to agroinfiltrate our tentative pCAMBIA + Cas9 + sgRNA vector into <i> Arabidopsis </i>.
 
-    <div class="prevHighlightBox">
-        <p>Here you can describe the results of your project and your future plans. </p>
+<h2>Modeling Results</h2>
+<p>The modelling results are discussed in more detail on the <a href="http://2015.igem.org/Team:Waterloo/Modeling">Modeling overview</a> page. In summary, we were able to examine the <strong>CRISPR Plant Defense</strong>aspect of our project using a multi-scale model that showed the effect of CRISPR/Cas9 on viral replication and spread.</p>
 
-        <h5>What should this page contain?</h5>
-        <ul>
-            <li> Clearly and objectively describe the results of your work.</li>
-            <li> Future plans for the project </li>
-            <li> Considerations for replicating the experiments </li>
-        </ul>
+The intracellular viral replication cycle was simulated in order to determine the steady state virion concentration. This virion concentration was impacted by plant defenses such as RNA silencing and our CRISPR system. The number of virions present in one cell is illustrated in the figures below. In descending graphs, RNAi effectiveness is increased by a factor of 10. Likewise, shifting to the right increases the CRISPR genome modification rate by a factor of 10.
+<img src="/wiki/images/7/72/Waterloo_Modeling_CaMV_TimeSeries_a.jpeg" alt="Time series plot" style="width:865px;"/>
+<img src="/wiki/images/a/a9/Waterloo_Modeling_CaMV_TimeSeries_b.jpeg" alt="Time series plot" style="width:865px;"/>
+<img src="/wiki/images/7/73/Waterloo_Modeling_CaMV_TimeSeries_c.jpeg" alt="Time series plot" style="width:865px;"/>
 
-        <h4> Project Achievements </h4>
+<p>A more detailed analysis of the two-fold impact of both RNAi and CRISPR genome modification on virion concentration is shown in heat maps.</p>
 
-        <p>You can also include a list of bullet points (and links) of the successes and failures you have had over your summer. It is a quick reference page for the judges to see what you achieved during your summer.</p>
-        <ul>
-            <li>A list of linked bullet points of the successful results during your project</li>
-            <li>A list of linked bullet points of the unsuccessful results during your project. This is about being scientifically honest. If you worked on an area for a long time with no success, tell us so we know where you put your effort.</li>
-        </ul>
+<img src="/wiki/images/6/67/Waterloo_Modeling_CaMV_Heatmap1.jpeg" alt="Heat map" style="width:865px;"/>
+<img src="/wiki/images/0/0f/Waterloo_Modeling_CaMV_Heatmap2.jpeg" alt="Heat map" style="width:865px;"/>
 
-        <h4>Inspiration</h4>
-        <p>See how other teams presented their results.</p>
-        <ul>
-            <li><a href="http://2014.igem.org/Team:TU_Darmstadt/Results/Pathway">2014 TU Darmstadt </a></li>
-            <li><a href="http://2014.igem.org/Team:Imperial/Results">2014 Imperial </a></li>
-            <li><a href="http://2014.igem.org/Team:Paris_Bettencourt/Results">2014 Paris Bettencourt </a></li>
-        </ul>
-    </div>
+<p>Both the time series data and heat maps highlight how the CRISPR genome modification has a gre
+ater effect on the virion concentration than the plant defenses alone. These results were then carried forward into an agent-based model on the level of plant leaves, discussed in detail on the <a href="http://2015.igem.org/Team:Waterloo/Modeling/Intercellular_Spread">Intracellular Spread</a> page.</p>
 
-</div>
+
 </div>
 </html>
 {{Waterloo_Footer}}
