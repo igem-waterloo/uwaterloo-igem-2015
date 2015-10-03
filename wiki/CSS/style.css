@@ -714,3 +714,16 @@ blockquote p.source {
          -o-box-shadow: 0 0 20px 0 rgba(66,66,66,1);
             box-shadow: 0 0 20px 0 rgba(66,66,66,1);
 }
+
+
+/*---Example page----------------------------------------------------------------------------------*/
+table.split-col {
+    margin: auto;
+    width: 95%;
+}
+table.split-col td {
+    width: 50%;
+}
+pre code {
+    color: #c7254e;
+}

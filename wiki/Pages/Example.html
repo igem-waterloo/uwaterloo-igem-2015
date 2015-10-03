@@ -9,12 +9,70 @@
 
     <section id="headers" title="Headers">
         <h2>Headers</h2>
-        <h1>Title Header</h1>
-        <h2>Section Header</h2>
-        <h3>Subsection Header</h3>
-        <h4>Normal Header</h4>
-        <h5>Small Header</h5>
-        <h6>Extra Small Header</h6>
+        <table class="split-col">
+            <tbody>
+                <tr>
+                    <td>
+                        Title Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h1&gt;Title Header&lt;/h1&gt;
+                        </code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Section Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h2&gt;Section Header&lt;/h2&gt;
+                        </code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Subsection Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h3&gt;Subsection Header&lt;/h3&gt;
+                        </code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Normal Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h4&gt;Normal Header&lt;/h4&gt;
+                        </code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Small Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h5&gt;Small Header&lt;/h5&gt;
+                        </code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Extra Small Header
+                    </td>
+                    <td>
+                        <code>
+                            &lt;h6&gt;Extra Small Header&lt;/h6&gt;
+                        </code>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
@@ -31,6 +89,27 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <pre><code>
+&lt;div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"&gt;
+    &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab" id="headingOne"&gt;
+            &lt;h4 class="panel-title"&gt;
+            &lt;a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"&gt;
+            Collapsible Group Item #1 (open by default)
+            &lt;span class="hidden-xs toggle-arrow pull-right"&gt;Panel Toggle&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"&gt;
+            &lt;div class="panel-body"&gt;
+                Text 1
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+        </code></pre>
+        <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingTwo">
                     <h4 class="panel-title">
@@ -47,6 +126,25 @@
                 </div>
             </div>
         </div>
+        <pre><code>
+&lt;div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true"&gt;
+    &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab" id="headingTwo"&gt;
+            &lt;h4 class="panel-title"&gt;
+            &lt;a class="collasped" role="button" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"&gt;
+            Collapsible Group Item #2 (closed on default)
+            &lt;span class="hidden-xs toggle-arrow pull-right"&gt;Panel Toggle&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo"&gt;
+            &lt;div class="panel-body"&gt;
+                Text 2
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+        </code></pre>
     </section>
 
     <section id="text" title="Text">
