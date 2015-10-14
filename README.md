@@ -8,5 +8,7 @@ headed by Tessa Alexanian ([@alexanian](http://github.com/alexanian)) and Matt S
 * **models** is where the math subteams keep their models and simulations  
 * **tools** contains code and data related to other aspects of the project  
 * **training** is a messy sandbox of code written during our training sessions  
+* **visualization** is a set of scripts and data for the plots at were included in
+  our 2015 wiki, poster & presentation
 * **wiki** is JS/CSS for our [wiki](http://2015.igem.org/Team:Waterloo), draft content is on
   [the repo's wiki](http://github.com/igem-waterloo/uwaterloo-igem-2015/wiki)
