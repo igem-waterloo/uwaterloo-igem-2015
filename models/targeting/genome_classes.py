@@ -176,8 +176,11 @@ class Genome(object):
 
         new_genome = left_genome + insert_nt + right_genome
         # target.current_start = self.find_pam(target.current_start, target.sense)
-        target.sequence = self.current_genome[target.current_start: target.current_start + 20]
         self.make_new_genome(len(left_genome), net_indel_size, new_genome)
+        if target.sense == 1:
+            target.sequence = self.current_genome[target.current_start - net_indel_size: target.current_start + 20 - net_indel_size]
+        else:
+            target.sequence = self.current_genome[target.current_start: target.current_start + 20]
         return net_indel_size
 
     def find_pam(self, location, sense):

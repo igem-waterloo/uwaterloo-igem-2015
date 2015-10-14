@@ -1,0 +1,33 @@
+pre {
+    display: none;
+}
+
+table {
+    font-family: inherit;
+    font-size: inherit;
+    border: inherit;
+}
+
+#groupparts {
+    width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#groupparts th {
+    width: auto !important;
+}
+
+table.pgrouptable {
+    background-color: inherit !important;
+}
+
+table.pgrouptable td {
+    background-color: inherit !important;
+    border: 0px;
+}
+
+table.pgrouptable thead th {
+    background-color: inherit !important;
+    border: 0px;
+}

@@ -1,0 +1,309 @@
+{{Waterloo}}
+<html>
+<div class="container main-container">
+
+    <h1>Plant Defense</h1>
+
+    <section id="intro" title="Introduction &amp; Motivation">
+        <h2>Introduction &amp; Motivation</h2>
+        <p>
+            The <em>in vivo</em> proof of concept implementation of CRISPR-Cas9 as an anti-viral in plants requires integration of the coding sequence for Cas9 along with its corresponding sgRNA(s) into a plant genome. We've chosen to design sgRNAs that will guide Cas9 to three highly-conserved coding sequences of the Cauliflower Mosaic Virus (CaMV) genome where it will induce double-stranded breaks. As the virus attempts to reproduce its own DNA and express virulence proteins in the plant cell nucleus, it is hoped the consitutively expressed Cas9 endonuclease will have a severe impact on the number of viable viral genomes and provide a meaningful level of immunity.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/d/dd/Waterloo_titlething.png" alt="Overall Plan">
+        </figure>
+
+
+        <div class="panel-group" id="bio background" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="target-sites">
+                    <h3 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#bio background" href="#collapseCycle" aria-expanded="false" aria-controls="collapseCycle">
+                            Choice of Viral Target Sites
+                            <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                        </a>
+                    </h3>
+                </div>
+                <div id="collapseCycle" class="panel-collapse collapse" role="tabpanel" aria-labelledby="lifeCycle">
+                    <div class="panel-body">
+                        <p>
+                            When Cas9 is used to target plant chromosomal DNA for genome engineering, the double stranded breaks it makes are most often repaired by error-prone non-homologous end joining (NHEJ)
+                            <cite ref="Belhaj2013"></cite>. As Cas9 cuts the viral genome, plant NHEJ repair mechanisms will also inadvertently act to repair the viral chromosome. If only one evolutionarily nonconserved site on the viral genome is targeted, even after a Cas9-guided double stranded break it is possible that the viral genome will be quickly repaired without any major detriment to its life cycle. To increase the probability that the virus will be rendered inert, multiple sgRNAs targeting highly conserved sequences throughout the viral genome will need to be expressed simultaneously. In addition, targeting the CaMV genes most important for reproduction and export may help decrease the number of stable virus mini-chromosomes in the nucleus, reduce synthesis of new viral DNA, and stop export into the cytoplasm. A recent study by Seeger &amp; Sohn <cite ref="Seeger2014"></cite> targeted Hepatitis B virus in a human cell line. They found that most gRNA targets were able to reduce the number of HBV-positive cells five-fold or more, but mechanism of immunity not entirely clear. For most gRNA designs, the Cas9 breaks induces short insertions and deletions, likely caused by error-prone Non-Homologous End Joining of the cleaved ends, and the number of indels correlated with the reduction in virulence. One design, however, left 55% of cells wild-type while achieving similar reductions. The dynamics of repair and deletion after double-stranded cleavage by Cas9 is a major focus of the mathematical modelling this year. However, we didn't have time to finish those models before ordering our gRNA constructs, so we decided to design targets for several possible situations.
+                        </p>
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/8/85/Waterloo_Viral_bioinformatics.jpeg">
+                        </figure>
+
+                        <h3>I. Targeting P1, P3, P5, P6 </h3>
+                        <p>
+                            We chose to target these genes because they have well-established functions related to the dynamics of CaMV inside the plant cell. P2 is not targeted because it is related to interactions with the aphid vector and P4 has a number of isomorphisms that make it somewhat impractical for targeting. You can see more about the functions of each of these genes on the <a href=http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Biology>Cauliflower Mosaic Virus wiki page</a>.
+                        </p>
+
+                        <h3>II. Multiple targets on P6</h3>
+                        <p>
+                            P6 trans-activates the 35s mRNA and is responsible for many of the viral defences against the plant cell, making it the obvious choice if only a single gene is targeted. By placing a number of targets on P6, we hope we might disrupt its activity more immediately and induce large deletions when multiple cuts occur at one.
+                        </p>
+
+                        <h3>III. Target non-coding locations around promoter</h3>
+                        <p>
+                            This design lets us examine whether large deletions may be created by flanking a region with Cas9 sites and whether double-stranded breaks alone are descrutive. If CRISPR immunity is mainly conferred by frameshift mutations or small deletions caused by NHEJ, we wouldn't expect this design to offer much reduction in virulence. However, if CRISPR immunity is mainly conferred by degradation of cleaved DNA or large deletions between neighbouring cut sites, we would still expect a significant reduction in virulence. If we see a significant reduction in virulence with this design, we'll have to examine the DNA structure to see if there are large deletions.
+                        </p>
+
+                        <h3>IV. Reduce mRNA transciption using dCas9</h3>
+                        <p>
+                            Perhaps NHEJ is insufficiently error-prone to eliminate the viruses at the pace we need or that non-destructive mutations introduced by NHEJ will change the DNA sequence enough to prevent prevent Cas9 from recognizing the site for a second attempt. In these cases, suppression of the 35S or 19S promoter using dCas9 might do more to prevent virulence that cleavage using Cas9.
+                        </p>
+
+                        <h3>gRNA Selection Criteria</h3>
+                        <p>
+                            To select the gRNA targets, we ran the CaMV genomic sequence through the Benchling CRISPR design tool, identifying 682 possible targets in the CaMV with NGG pam sites. To narrow down the list of targets, we considered four factors: genome position, conservation, off-targeting and efficiency.
+                        </p>
+
+                        <h3>Genome Position</h3>
+                        <p>
+                            The goal with many of the designs is to target a specific gene or genes and induce frameshift mutations. Previous research <cite ref="Doench2014"></cite> suggests that any frameshifts within the first 50% of a gene should be deleterious enough to prevent it from producing a functional protein. For design I we used a 40% cutoff after looking at the functional regions of the CaMV transcripts. The targets for Designs II-IV were subset by location (correct protein for II and IV, non-coding for III) but didn't have to all be near the beginning of the gene.
+                        </p>
+
+                        <h3>Conservation</h3>
+                        <p>
+                            We want to target areas of the genome that are functionally important and assumed this would correspond well to areas that are conserved (i.e. unchanging) between CaMV and closely-related viruses. Targeting conserved areas should also make our gRNA targets more robust, since those areas are unlikely to contain many mutations or isomorphisms among different strains of CaMV.
+                        </p>
+
+                        <h3>Off-Targeting</h3>
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/8/85/Waterloo_offtargetsites.jpg">
+                        </figure>
+                        <p>
+                            Since we want to provide extra protection for <i>Arabidopsis</i> plants against invading viruses, a major design priority was to avoid cutting apart the <i>Arabidopsis</i> genome by accident. All the gRNA candidates were given off-target scores according to the algorithm employed by the MIT CRISPR design tool (though as implemented by Benchling). Screenings by Hsu <em>et al.</em> <cite ref="Hsu2013"></cite> showed that each position in the gRNA contributes differently to binding efficiency and this is accounted for in the off-target score. Many regions of the <em>Arabidopsis</em> genome are non-coding, so we also ran a BLAST result of all the off-target matches identified by Benchling. For example, we considered an off-target match in a tDNA insertion site or a putative protein to be less important than one related to a known mRNA or protein.
+                        </p>
+
+                        <h3>Efficiency</h3>
+                        <p>
+                            Benchling, the tool used to find candidate gRNA targets, also includes an efficiency score for how well the gRNA is expected to knock out the target. This score comes from Doench <em>et al.</em> <cite ref="Doench2014"></cite>. Doench described the algorithm as follows on the Addgene blog: We examined sequence features that enhance on-target activity of sgRNAs by creating all possible sgRNAs for a panel of genes and assessing, by flow cytometry, which sequences led to complete protein knockout. By examining the nucleotide features of the most-active sgRNAs from a set of 1,841 sgRNAs, we derived scoring rules.
+                        </p>
+
+                        <h3>Non-overlapping</h3>
+                        <p>
+                            In several designs we were interested in using multiple gRNAs to target the same area (for example, for design II we chose four targets within P6). However, we didn't want to have any overlaps in our target sequence, since that would make our system less robust in the face of random mutations in a particular CaMV genome and would potentially cause interference between (d)Cas9 proteins vying to bind the same region. For this reason, only the single best gRNA in a region with many PAM sites could be chosen.
+                        </p>
+
+                        <h3>Protocol</h3>
+                        <p>
+                            The specific steps we followed to generate our gRNA sequences were as follows:
+                        </p>
+                        <ol>
+                            <li>
+                                Downloaded all genome sequences in the Caulimovirus genus from NCBI (includes CaMV). These sequences are in the file caulimovirus_sequence.fasta.
+                            </li>
+                            <li>
+                                That FASTA was uploaded to Guidance v2 with default parameters to generate a multiple sequence alignment.
+                            </li>
+                            <li>
+                                Masked multiple sequence alignment based on base pairs that had at least 0.93% identity across all Caulimovirus. Note that we also tested alignments in the entire Caulimoviridae family, but the sequence homology was so low that there were very few continuous
+                                conserved regions.
+                            </li>
+                            <li>
+                                Copied the masked sequence for CaMV to Benchling, which removed all gaps (represented as dashes) automatically. The masked sequence can been seen at this <a href="https://benchling.com/s/If62yXXo/edit">read-only link</a>.
+                            </li>
+                            <li>
+                                We then created a CRISPR design on both the masked genome sequence from Guidance and unmasked CaMV genome, which was imported into Benchling using its NCBI Accession Number (NC_001497). The CRISPR design was run using the following parameters:
+                                <ul>
+                                    <li>
+                                        Start: 0, End: 8024 (entire genome)
+                                    </li>
+                                    <li>
+                                        PAM: NGG
+                                    </li>
+                                    <li>
+                                        Guide length: 20 nt
+                                    </li>
+                                    <li>
+                                        Design type: single guide
+                                    </li>
+                                    <li>
+                                        Genome for off-targets: TAIR10 (A. thaliania)
+                                    </li>
+                                    <li>
+                                        Genome region to exclude for off-targets: none
+                                    </li>
+                            </li>
+                            <li>
+                                Benchling identified
+                                <strong>682</strong> targets in the unmasked genome and *275 in the masked genome. These targets were exported to Excel using Benchling's export tool. Some gRNAs identified in the masked genome contained 'N' nucleotides (i.e. were flanked by a PAM site but were partially masked) so there were only 235 true gRNA candidates in the masked genome. Note that Benchling has updated their algorithms since our design was carried out so that such partly-masked candidates are not assigned scores.
+                            </li>
+                        </ol>
+
+                        <p>
+                            The gRNA found in the masked genome are in one sheet and the gRNA in the unmasked genome in another. Each off-target score in the Benchling interface is a link, which brings up the matches found:
+                        </p>
+
+                        <p>
+                            <em>Benchling screenshot showing matches that lead to an off-target score.</em>
+                        </p>
+                        <p>
+                            For every gene accession number provided, we used NCBI Nucleotide to see which off-targets were most important since, as we mentioned before, off-targets in e.g. tDNA insertion sites are less concerning than off-targets in genes. We didn't want to go
+                            through this searching for all 682 gRNA, so we subset them based on the criteria of Designs I-IV before looking up the off-target scores:
+                        </p>
+                        <ol>
+                            <li>
+                                <strong>Design I</strong>: To induce early frameshift mutations, the masked candidate gRNA targets were subset to start coordinates within the first 40% of the genes, i.e. nt 364-757 (P1), nt 1830-1985 (P2), nt 3633-4440 (P5), and nt 5756-6380 (P6). No targets in this range we found for P3 in the conservation-masked genome, so gRNA targets from the unmasked sequence were selected. Five top candidates were identified for each gene based on their position and (mostly) their off-target score. One gRNA for each gene was then selected based on BLAST results.
+                            </li>
+                            <li>
+                                <strong>Design II</strong>: Four sets of 5 gRNA candidates were chosen for further inspection: the 5 P6 gRNA from Design I, gRNA near the beginning of P6 found in the unmasked genome, gRNA in the middle of P6 and gRNA near the end.
+                                One from each set was selected based on BLAST results.
+                            </li>
+                            <li>
+                                <strong>Design III</strong>: The noncoding region stretches from nt 7339-7366. Four gRNA near the beginning and five gRNA near the end of the region were found in the unmasked genome (none were found in that region in the masked genome, which is perhaps unsurprising as a non-coding region is less likely to be conserved). Two gRNA were chosen near the beginning and two near the end based on BLAST results.
+                            </li>
+                            <li>
+                                <strong>Design IV</strong>: For this design, we wanted to stop expression of the two mRNA transcripts. However, we were using the CaMV 35S promoter elsewhere in our design, so we couldn't target it directly. Instead, we looked at the first 100 nucleotides of each transcript (i.e. as close to the promoter as possible) and chose a few candidates to BLAST, eventually choosing one gRNA target for each transcript.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="chassis">
+                    <h3 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#bio background" href="#collapseChassis" aria-expanded="false" aria-controls="collapseChassis"><i>Agrobacterium</i> as the Genome-Integration Chassis<span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span></a>
+                    </h3>
+                </div>
+                <div id="collapseChassis" class="panel-collapse collapse" role="tabpanel" aria-labelledby="chassis">
+                    <div class="panel-body">
+                        <p>
+                            To have every tissue of a plant express the anti-viral CRISPR-Cas9 system one must first integrate its sequence into the genome of the plant's germ line so that every cell of the next generation becomes a CRISPR-Cas9 carrier. <i>Agrobacterium tumefaciens</i>                        is widely considered nature's genetic engineer; its life cycle involves the insertion of a portion of its own DNA into the genome of its plant host cells, including germ line cells
+                            <cite ref="Larebeke1974"></cite>. In nature, that inserted sequence codes for genes that encourage plant cell tumorigenesis, the expression of biosynthesis enzymes that produce bacterial nutrients, and genes that result in the creation of specialized amino
+                            acids called opines
+                            <cite ref="Larebeke1974"></cite>. These are collectively known as the T-DNA and are found on the tumor inducing plasmid (Ti plasmid) within <i>Agrobacterium</i> flanked by 25 base pair repeat border sequences
+                            <cite ref="Slogteren1984"></cite>. The Ti plasmid also contains a set of virulence genes which code for proteins responsible for the excision of single stranded DNA between border sequences and the transport and integration of that DNA into the plant cell
+                            genome
+                            <cite ref="Slogteren1984"></cite>. It has been frequently demonstrated that the entire set of genes between the border sequences can be replaced with up to approximately 25,000 base pairs and still be acted on for plant genome integration
+                            <cite ref="Framond1983"></cite>. Further, it's been found that the Ti plasmid's virulence genes can act in trans to integrate a sequence from another plasmid (often a shuttle vector) so long as it is flanked by border sequences
+                            <cite ref="Framond1983"></cite>. Strains of <i>Agrobacterium</i> that have had their Ti plasmids modified to contain no border sequences (and thus no sequence to be integrated) are said to be disarmed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="lifeCycle">
+                    <h3 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#bio background" href="#collapseLifeCycle" aria-expanded="false" aria-controls="collapseLifeCycle">
+            pCAMBIA as the Shuttle Vector
+            <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+             </a>
+                    </h3>
+                </div>
+                <div id="collapseLifeCycle" class="panel-collapse collapse" role="tabpanel" aria-labelledby="lifeCycle">
+                    <div class="panel-body">
+                        <p>
+                            pCAMBIA is an open-source plasmid repository specializing in plant genome integration. Their vectors are meant for use in conjunction with <i>Agrobacterium</i> that have disarmed Ti plasmids (virulence genes will act in trans to
+                            integrate genes between the border sequences of the pCAMBIA plasmid). pCAMBIA 1200 (GenBank: AF234292.1) is a shuttle vector with chloramphenicol resistance and origins of replication for both <i>Agrobacterium</i> (pVS1-REP) and
+                            the plasmid-construction friendly <i>E. coli</i> (pBR322) (figure 3). The vector contains a basta resistance gene and a multiple cloning site between its border sequences; successful transgenic seeds get screened by surviving basta
+                            herbicide, and the multiple cloning site sits within a lac Z alpha coding sequence for blue-white insertion screening on X-gal media. Once the Cas9 and sgRNA sequences are cloned into a pCAMBIA 1200 vector, it gets electroporated
+                            into a strain of <i>Agrobacterium</i> containing only disarmed Ti plasmids. Successful transformants can be screened in chloramphenicol supplemented media then grown up to and allowed to infect 4-week-old plants.
+                        </p>
+                        <p>
+                            20 base pair gRNA portions of three sgRNA sequences were substituted for three different sequences complimentary to the P6 coding sequence of the CaMV genome. Each of these sgRNAs were designed to have flanking 40 base pair Gibson Assembly ends that are
+                            complimentary to one another such that each sgRNA will anneal to the other in a Gibson reaction. A plant-codon optimized Cas9 was found through AddGene (Plasmid #52254) and primers were designed to amplify it out and add flanking
+                            Gibson Assembly ends - one end was designed to be homologous with the left side of the pCAMBIA multiple cloning sequence and the other end was designed to be homologous to the left-most Gibson Assembly end of the first sgRNA. The
+                            Gibson Assembly sequence on the right side of the third sgRNA was designed to be homologous with the right side of the pCAMBIA multiple cloning sequence.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="arabidopsis">
+                    <h3 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#bio background" href="#collapseArabidopsis" aria-expanded="false" aria-controls="collapseArabidopsis">
+                            <em>Arabidopsis</em> as our Model Organism
+                            <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                        </a>
+                    </h3>
+                </div>
+                <div id="collapseArabidopsis" class="panel-collapse collapse" role="tabpanel" aria-labelledby="arabidopsis">
+                    <div class="panel-body">
+                        <p>
+                            Although <i>Agrobacterium</i> is capable of integrating DNA into a wide range of eukaryotic species, the competence for transformation into the <i>Arabidopsis thaliana</i> genome has been demonstrated and used routinely for research
+                            since the late 70s
+                            <cite ref="Jacobs1979"></cite>. Transformation of the plant's female gametes is accomplished simply by dipping the plant into a solution of <i>Agrobacterium</i> cells containing an appropriate plasmid (pCAMBIA) with the sequences to be integrated
+                            <cite ref="Zhang2006"></cite>. Seeds from the treated plants are sown and allowed to germinate in selective medium that screens for successful transformants - mature transgenic plants can be attained within a mere 3 months
+                            <cite ref="Zhang2006"></cite>. As the prototypical plant model organism, <i>Arabidopsis</i> has a fast life cycle, is prolific, easy to grow, and has a relatively small well annotated genome sequence
+                            <cite ref="Zhang2006"></cite>. In addition, its interaction with the Cauliflower Mosaic Virus (CaMV) -- famous for the widespread use of its 35s promoter for transgenic expression in plants -- has been well characterized in the literature
+                            <cite ref="Geri1999"></cite>.
+                            <figure>
+                                <img src="/wiki/images/2/2a/Waterloo_young_arabidopsis.jpg" style="width:45%">
+                                <img src="/wiki/images/b/bd/Waterloo_medium_arabidopsis.jpg" style="width:45%">
+                            </figure>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results " title="Results">
+        <h2>Results</h2>
+        <p>
+            There are three different ways we sought to express Cas9 from <i>Arabidopsis</i> plant cells: floral dip, agroinfiltration, and protoplast transformation. For both floral dip and agroinfiltration, the Cas9 and its corresponding anti-CaMV sgRNAs
+            had to be cloned into pCAMBIA since each of those methods relied on the action of <i>Agrobacterium</i>.
+        </p>
+        <p>
+            Since we were originally attempting an ambitious assembly to put this together (six fragments, two of which were >5kb), none of these original attempts worked. Thankfully, the homologous ends that each fragment was designed to have lent themselves to
+            other forms of cloning which were not necessarily Gibson-based. PCR overlap extension, a technique suggested by the University of Ottawa iGEM team, provided us with a possible route to success. By joining together some of the smaller sgRNA
+            fragments into clusters, we sought to increase the probably of Gibson Assembly working by reducing the number of fragments. Two fragments of the less ambitious five-fragment Gibson Assembly plan were successfully joined by PCR overlap extension
+            before another Gibson reaction was attempted. The now four-fragment reaction produced colonies that produced promising PCR diagnostic results (pictured gel electrophoresis image), but inconclusive sequencing results. Since plants take time
+            to grow, after the integration of our construct into the <i>Arabidopsis</i> genome by Agrobacterium-mediated floral dip we'll need to wait approximately 1-2 months for mature CRISPR-<i>Arabidopsis</i> plants to be in a testable
+            state against the CaMV virus -- not in time to have them tested before the Jamboree. We were able to test our design in other ways, however.
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/c/c4/PCAMBIA_Gibson_Assembled.jpg ">
+        </figure>
+
+        <h3> Agroinfiltration Attempt </h3>
+        <p>
+            Agroinfiltration allowed us to induce transient expression of the potential pCAMBIA construct in <i>Arabidopsis</i> leafs. We were able to bring our agroinfiltrated plants to a plant testing facility in London Ontario and expose them to the
+            CaMV virus. Several days after exposure, we found the agroinfiltrated plant leafs were just as badly infected as he non-modified plant leafs. It was suggested to us that the double-insult of the harsh process of agroinfiltration followed shortly
+            after by viral exposure (virus is rubbed into the leaf vigorously), it's likely the leaves were simply overwhelmed by the entire process.
+        </p>
+
+        <h3> Protoplast Cas9 Expression </h3>
+        <p>
+            Protoplasts are plant cells that have had their plant cell walls stripped off of them. They will express any coding sequences downstream of plant-specific promoters that they are transfected by for 16 hours. By transfecting plasmids that have Cas9 coding
+            sequences downstream of plant specific promoters, we aimed to test whether the Cas9 would successfully express by performing a dot blot with protoplast samples and exposing to an anti-Cas9 antibody.
+        </p>
+        <p>
+            We used the original AddGene vector we purchased that encoded the plant codon optimized Cas9 under a CaMV constitutive promoter as a positive control (labelled as "pC"), a GFP-expressing vector as the negative control (labelled as "-C "), and our tentative unconfirmed pCAMBIA construct that may contain the AddGene Cas9.
+        </p>
+        <p>
+            The first image is the dot blot exposure itself, and the second image is a visible light photograph of the same blot.
+        </p>
+        <p>
+            The third image is a simple viability stain we performed to confirm protoplast health and validate our protocol.
+        </p>
+
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/2/2d/Protoplast_dotblot.jpg">
+            <img src="http://2015.igem.org/wiki/images/0/05/Protoplast_dotblot_colorimetric.jpg">
+            <img src="http://2015.igem.org/wiki/images/b/b5/Protoplast_viability_1.jpg">
+        </figure>
+        <p>
+            Although we also attempted to perform western blots on the protoplast samples, we didn't get beyond the ponceau stain stage (pictured below).
+        </p>
+        <figure>
+            <img src="http://2015.igem.org/wiki/images/8/85/Ponceau_stain_protoplasts.jpg ">
+        </figure>
+    </section>
+
+    <section id="references" title="References">
+        <h2>References</h2>
+        <ol id="reflist">
+        </ol>
+    </section>
+</div>
+</html>
+{{Waterloo_Footer}}

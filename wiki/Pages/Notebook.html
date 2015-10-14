@@ -1,32 +1,67 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
+<script src="/wiki/index.php?title=Template:Waterloo/JS/d3&action=raw&ctype=text/javascript"></script>
+<script src="/wiki/index.php?title=Template:Waterloo/JS/cal-heatmap&action=raw&ctype=text/javascript"></script>
+<script src="/wiki/index.php?title=Template:Waterloo/JS/days&action=raw&ctype=text/javascript"></script>
+<script src="/wiki/index.php?title=Template:Waterloo/JS/notes&action=raw&ctype=text/javascript"></script>
+<script>
+    var month = new Array();
+    month[0] = "Jan";
+    month[1] = "Feb";
+    month[2] = "Mar";
+    month[3] = "Apr";
+    month[4] = "May";
+    month[5] = "Jun";
+    month[6] = "Jul";
+    month[7] = "Aug";
+    month[8] = "Sep";
+    month[9] = "Oct";
+    month[10] = "Nov";
+    month[11] = "Dec";
+</script>
 
-  <h1>Notebook</h1>
+<link rel="stylesheet" href="/wiki/index.php?title=Template:Waterloo/CSS/cal-heatmap&action=raw&ctype=text/css"></link>
 
-  <p> Document the dates you worked on your project.</p>
+<div class="container main-container">
+    <h1>Notebook</h1>
+    <p>
+        This page gives a sense of the chronology of our lab work from late May 2015 onwards, based on our Experimental Task List lab tracking system, which you can read about <a href="http://igem.uwaterloo.ca/2015/07/17/5-tools-to-keep-your-igem-team-organized/">here</a>. Click on a day to see the experimental tasks completed. A similar sense of modelling chronology can be found in our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/graphs/contributors">GitHub</a> contributors page. The contributions of individual team members are documented on the <a href="http://2015.igem.org/Team:Waterloo/Team">Team page</a>.
+    </p>
 
-  <h5>What should this page have?</h5>
-  <ul>
-    <li>Chronological notes of what your team is doing.</li>
-    <li> Brief descriptions of daily important events.</li>
-    <li>Pictures of your progress. </li>
-    <li>Mention who participated in what task.</li>
-  </ul>
+    <div id="cal-heatmap"></div>
+    <p style="text-align:center;">Click on a day to view the work.</p>
+    <div>
+        <h2 id="onClick-placeholder"></h2>
+        <ul id="notes-table"></ul>
+    </div>
+
+    <script type="text/javascript">
+    	var cal = new CalHeatMap();
+    	cal.init({
+    		start: new Date(2015, 4),
+    	    data:days,
+    	    dataType: "json",
+    	    domain : "month",
+    	    subDomain : "day",
+    	    range : 5,
+    	    cellSize: 24,
+    		subDomainTextFormat: "%d",
+    		displayLegend: false,
+    		onClick: function(date, nb) {
+    		$("#onClick-placeholder").html(date.toDateString());
+    		var message = ""
+    		var key = month[date.getMonth()]+(date.getDate())
+    		if (key in notes){
+    		$.each(notes[key], function( index, value ) {
+     			message += "<li>"+value+"</li>";
+     		});}
+    		$("#notes-table").html(message
+    		);
+    	}
+    	});
+    </script>
 
 
-  <h4>Inspiration</h4>
-  <p>You can see what others teams have done to organize their notes:</p>
-
-  <ul>
-    <li><a href="http://2014.igem.org/Team:ATOMS-Turkiye/Notebook">2014 ATOMS-Turkiye</a></li>
-    <li><a href="http://2014.igem.org/Team:Tec-Monterrey/ITESM14_project.html#tab_notebook">2014 Tec Monterrey</a></li>
-    <li><a href="http://2014.igem.org/Team:Kyoto/Notebook/Magnetosome_Formation#title">2014 Kyoto</a></li>
-    <li><a href="http://2014.igem.org/Team:Cornell/notebook">2014 Cornell</a></li>
-  </ul>
-
-</div>
 </div>
 </html>
 {{Waterloo_Footer}}

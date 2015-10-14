@@ -1,26 +1,32 @@
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from math import pi
 
 
-#domain_colours = {'orf': '#66FF66',
-#                  'untracked': '#9999FF',
-#                  'promoter': '#FF9999'}
-
+# old colours
 # '#FFE082' sandy
 # '#A1887F' light brown
 # '#ba68c8' medium pastel purple
+# '#779ECB' dark pastel blue
+# '#AEC6CF' pastel blue
 
 domain_colours = {'orf': {True: '#81c784',  # pastel green '#80cbc4'
                           False: '#e57373'},  # pastel light red
                   'untracked': {True: '#A1887F',  # light brown
                                 False: '#A1887F'},  # light brown
                   'promoter': {True: '#ce93d8',  # pastel light purple
-                               False: '#ce93d8'}  # pastel light purple
-                  }
+                               False: '#ce93d8'}}  # pastel light purple
 
 target_colours = {'repaired': '#fdfd96',  # pastel yellow
                   'open': 'white',  # just white
                   'inactive': '#fdfd96'}  # pastel yellow
+
+state_colours = {'gene': {'active': '#81c784',
+                          'deactivated': '#e57373'},
+                 'target': {'cut': '#AEC6CF',
+                            'targetable': '#81c784',
+                            'untargetable': '#e57373'}}
+
 
 def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_show=True):
     # initialize plot
@@ -56,8 +62,6 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
         # create domain 'patch'
         domain = genome.domains[domain_key]
         color = domain_colours[domain.domain_type][domain.functional]
-        #if domain.label == 'gene_P5':
-        #    color = domain_colours[domain.domain_type][False]
         if domain.domain_type == 'orf':
             total_genes += 1
             if domain.functional:
@@ -136,9 +140,100 @@ def genome_plot_polar(genome, genome_label, time=None, output_path=None, flag_sh
     return fig
 
 
+def plot_states(states, datatype, labels_to_plot=None, output_path=None, flag_show=True):
+    """Plots timeseries of statedata as horizontal coloured bars
+    Args:
+        states: dictionary of label: state vector
+        datatype: either "gene" or "target"
+        labels_to_plot: [default:None] ordered list that's a subset of the keys from states; plot all if None
+    """
+    assert datatype in ['gene', 'target']
+    colour_dict = state_colours[datatype]
+    data_labels = states.keys()
+    time = [float(t) for t in states['time']]
+    if labels_to_plot is None:
+        labels_to_plot = data_labels
+        labels_to_plot.remove('time')
+        labels_to_plot.remove('header')
+        labels_to_plot.sort()
+    length_data = len(time)
+    length_labels = len(labels_to_plot)
+
+    fig = plt.figure()
+    ax = plt.gca()
+    x0 = time[0]
+    y0 = 0.0
+    dx = time[1] - time[0]
+    dy = dx
+    x = x0
+    y = y0
+    for i, label in enumerate(labels_to_plot):
+        y = y0 + dy*i
+        state_data = states[label]
+        for j, elem in enumerate(state_data):
+            x = x0 + dx*j
+            ax.add_patch(mpatches.Rectangle((x - dx*0.5, y), width=dx, height=dy*0.5, color=colour_dict[elem])) #, ec='k'))
+    ax.set_xlabel('time')
+    ax.set_ylabel(datatype)
+    ax.set_xticks([time[i] for i in xrange(0, len(time), len(time) / 20)])  # downsample x-axis ticks
+    ax.set_yticks([y0 + (i+0.25)*dy for i in xrange(length_labels)])
+    ax.set_yticklabels(labels_to_plot)
+    ax.set_xlim(x0 - 0.5*dx, (length_data - 1)*dx*1.05)
+    ax.set_ylim(y0 - 0.3*dy, (length_labels)*dy)
+
+    if output_path is not None:
+        fig.set_size_inches(20.0, 8.0)  # alternative: 20.0, 8.0
+        fig.tight_layout()
+        plt.savefig(output_path)
+
+    if flag_show:
+        plt.show()
+
+    return
+
+
+def plot_state_multirun(states, datatype, labels_to_plot=None, output_path=None, flag_show=True):
+    """Plots timeseries of gene or target state (average) condition
+    Args:
+        states: dictionary of label: state vector
+        datatype: either "gene" or "target"
+        labels_to_plot: [default:None] ordered list that's a subset of the keys from states; plot all if None
+    """
+    assert datatype in ['gene', 'target']
+    data_labels = states.keys()
+    time = [float(t) for t in states['time']]
+    if labels_to_plot is None:
+        labels_to_plot = data_labels
+        labels_to_plot.remove('time')
+        labels_to_plot.remove('header')
+        labels_to_plot.sort()
+    length_data = len(time)
+    length_labels = len(labels_to_plot)
+    # plot
+    fig = plt.figure()
+    ax = plt.gca()
+    for i, label in enumerate(labels_to_plot):
+        state_data = states[label]
+        plt.plot(time, state_data)
+    ax.set_xlabel('time')
+    ax.set_ylabel(datatype + ' fraction active')
+    """
+    ax.set_xticks([time[i] for i in xrange(0, len(time), len(time) / 20)])  # downsample x-axis ticks
+    ax.set_xlim(x0 - 0.5*dx, (length_data - 1)*dx*1.05)
+    """
+    # output plot
+    if output_path is not None:
+        fig.set_size_inches(20.0, 8.0)  # alternative: 20.0, 8.0
+        fig.tight_layout()
+        plt.savefig(output_path)
+    if flag_show:
+        plt.show()
+    return
+
+
 if __name__ == '__main__':
     from init_genome_camv import init_genome_camv, init_targets_all_domains
-    complex_concentration = 22.101 # nM
+    complex_concentration = 22.101  # nM
     dt = 0.1
     pseudo_targets = init_targets_all_domains(complex_concentration)
     genome_camv = init_genome_camv(pseudo_targets)

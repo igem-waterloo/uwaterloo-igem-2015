@@ -1,27 +1,89 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
+<div class="container main-container">
 
   <h1> Modeling</h1>
 
-
-  <div class="highlightBox">
-    <h4>Note</h4>
-    <p>In order to be considered for the <a href="http://2015.igem.org/Judging/Awards#SpecialPrizes">Best Model award</a>, you must fill out this page.</p>
-  </div>
-
-
-  <p>Mathematical models and computer simulations provide a great way to describe the function and operation of BioBrick Parts and Devices. Synthetic Biology is an engineering discipline, and part of engineering is simulation and modeling to determine the behavior of your design before you build it. Designing and simulating can be iterated many times in a computer before moving to the lab. This award is for teams who build a model of their system and use it to inform system design or simulate expected behavior in conjunction with experiments in the wetlab.</p>
-
-  <p>Here are a few examples from previous teams:</p>
-  <ul>
-    <li><a href="http://2014.igem.org/Team:ETH_Zurich/modeling/overview">ETH Zurich 2014</a></li>
-    <li><a href="http://2014.igem.org/Team:Waterloo/Math_Book">Waterloo 2014</a></li>
-  </ul>
-
-
+    <section id="overview" title="Modelling Overview">
+        <p>Mathematical modeling is a core part of Waterloo iGEM: we have nearly as many team members typing furiously away in our dry lab as we do wrangling transformations in our wet lab. This year, we created models in Python, MATLAB and NetLogo that examine the feasibility of our design and provide tools for assessing future designs. The code for each model is available on our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/tree/master/models">GitHub</a> and details on the formulation of each model may be found in the pages linked below.</p>
+    </section>
+    <section id="cas9_dynamics" title="Cas9 Frameshift Dynamics">
+        <h2>Cas9 Frameshift Dynamics</h2><div class="row">
+<div class="col-sm-8">
+We modelled the accumulation of mutations in a target genome and eventual deactivation of target genes after cutting by CRISPR/Cas9 and repair by Non-Homologous End Joining (NHEJ). A stochastic and probabilistic model of the effect of CRISPR/Cas9 on a single genome allowed us to investigate the accumulation of indels in a genome with multiple targets over time. Our Python model provides a tool for other teams looking to investigate multiplexed Cas9 targeting for deactivation of target genomes.
 </div>
+<div class="col-sm-4">
+<img src="http://2015.igem.org/wiki/images/1/15/Waterloo_camv_cut.png" class="img-responsive"/>
+</div>
+</div>
+<figure>
+<img src="wiki/images/c/c9/Waterloo_case2w1000.pngclass="img-responsive"/>
+<figcaption>Image of agent-based model of spread of viral infection among plant cells sorted into several leaves.</figcaption>
+</figure>
+    </section>
+    </section>
+  <h2>PAM Structural Bioinformatics</h2>
+        <p> A key limitation of the current use of S. pyogenes Cas9 for gene editing is the inability to target sequences which are not adjacent to a NGG PAM sequence. To overcome this issue, we developed a pipeline to probe Cas9 mutants with altered PAM specificity using simulation tools in PyRosetta and Python. A detailed description of the analysis and software used in this work can be found on the <a href="http://2015.igem.org/Team:Waterloo/Modeling/PAM_Flexibility">Modeling Engineered Cas9 PAM Flexibility</a>. </p>
+<div class="row">
+<div class="col-sm-6">
+        <figure>
+            <img src="/wiki/images/0/0d/Waterloo_VQR_mutated_residues.png" alt="Cas9 with a mutated residues indicated" class="img-responsive""/>
+            <figcaption>A PyMOL generated image of the three mutations found in the VQR spCas9 variant.</figcaption>
+        </figure>
+</div>
+<div class="col-sm-6">
+        <figure>
+            <img src="/wiki/images/b/bd/Waterloo_wt_original_64_BC_BD_variance.png" alt="The docking scorings of wildtype spCas9 in PyRosetta to the 64 PAM variants" class="img-responsive""/>
+            <figcaption>The docking scorings of wildtype spCas9 in PyRosetta to the 64 PAM variants.</figcaption>
+        </figure>
+</div>
+</div>
+        <p> The simulation managed to successfully predict the PAM specificity of wild type spCAs9. However, validation against known Cas9 mutants was less successful, predicting a mix of correct and incorrect, though biochemically similar, PAM sequences.</p>
+    </section>
+    </section>
+    <section id="antiviral" title="Plant Defense">
+        <h2>CRISPR Plant Defense</h2>
+        <p> To model antiviral application, we looked at the antiviral effects of CRISPR/Cas9 targeting on three scales: CaMV genomes, plant cells and plant leaves. A background primer on Cauliflower Mosaic Virus (CaMV) genetics, replication and spread can be found on the <a href="http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Biology">CaMV Biology page</a>.</p>
+    <div class="row">
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/5/5f/Waterloo_mathCAS_graphic.svg" class="img-responsive" alt="Stylized viral genome" style="width:200px;"/>
+                <figcaption class="model-caption">CaMV Genomes</figcaption>
+            </figure>
+        </div>
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/9/98/Waterloo_mathVA_graphic.svg" class="img-responsive" alt="Stylized plant cell" style="width:200px;"/>
+                <figcaption class="model-caption">Plant Cells</figcaption>
+            </figure>
+        </div>
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/d/da/Waterloo_mathVS_graphic.svg" class="img-responsive" alt="Stylized plant leaves" style="width:200px;"/>
+                <figcaption class="model-caption">Plant Leaves</figcaption>
+            </figure>
+        </div>
+    </div>
+
+<p>On the <strong>scale of individual genomes</strong>, we used our <a href="http://2015.igem.org/Team:Waterloo/Modeling/Cas9_Dynamics">dynamics model of CRISPR/Cas9</a> to model viral genomes becoming non-functional over time as frameshift mutations were introduced. The results of running 1000 simulations using our <a href="">sgRNA target design</a> to deactivate the CaMV P6 gene predict the following pattern of P6 functionality over time.
+
+        <figure>
+            <img src="/wiki/images/0/0f/Waterloo_P6_exponential_fit.png" alt="P6 concentration over time with exponential fit" class="img-responsive""/>
+            <figcaption>Percent of functional P6 genomes observed over 1000 simulations with three targets are shown in black, while an exponential decay fit done with the R nls package is shown in green.</figcaption>
+        </figure>
+
+<p>The exponential decay fit shown in the graph above was then passed to a model on the scale of <strong>plant cells</strong>. We modelled <a href="http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Replication">CaMV Replication</a> in a single infected cell using ordinary differential equations. The ODE replication model allowed us to see the effect that the CRISPR/Cas9 decay of P6 would have on <strong>virion production</strong>. We also examined the interaction bewteen intracellular plant defenses (RNA interference) and the CRISPR/Cas9 defense and conducted a sensitivity analysis on our parameters.</p>
+
+        <figure>
+            <img src="/wiki/images/a/a9/Waterloo_Modeling_CaMV_TimeSeries_b.jpeg" alt="Viral load over time with different rate of P6-deactivation" class="img-responsive""/>
+            <figcaption>Time series data showing the evolution of viral load with different CRISPR/Cas9 effectiveness. Left: No effects from CRISPR/Cas9. Middle: Low rate of CRISPR/Cas9 modification. Right: High rate of CRISPR/Cas9 modification.</figcaption>
+        </figure>
+
+<p>The ODE model was then scaled up to the level of <strong>plant leaves</strong>. We modeled the spread of infection between plant cells using an agent-based framework, which is described in detail on the <a href="http://2015.igem.org/Team:Waterloo/Modeling/Intercellular_Spread">Intercellular Viral Spread</a> page. The agent-based model allowed us to explore the effect of intercellular defense signalling (which leads plant cells to resist to infection and become suseptible to apoptosis).</p>
+    </section>
+
+<p>Overall, our multi-scale model of CRISPR Plant Defense allowed us to investigate the extent to which we could slow CaMV spread using CRISPR/Cas9 and its interaction with host defense systems such as RNA interference and intercellular defense signalling.</p>
+
 </div>
 </html>
 {{Waterloo_Footer}}

@@ -7,3 +7,4 @@
 sgRNA_design/output.csv
 _site/*
 models/targeting/runs/*
+models/targeting/runsmulti/*

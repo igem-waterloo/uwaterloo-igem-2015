@@ -1,29 +1,86 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
+<div class="container main-container">
 
     <h1>Design</h1>
 
-    <div class="prevHighlightBox">
-        <p>
-            By talking about your design work on this page, there is one medal criterion that you can attempt to meet, and one award that you can apply for. If your team is going for a gold medal by building a functional prototype, you should tell us what you did on this page. If you are going for the <a href="http://2015.igem.org/Judging/Awards#SpecialPrizes">Applied Design award</a>, you should also complete this page and tell us what you did.
-        </p>
+    <section id="sgRNA" title="sgRNA Modification" class="sgRNAmod">
+        <h2>Simple sgRNA Exchange</h2>
 
-        <div class="highlightBox">
-        <h4>Note</h4>
-        <p>In order to be considered for the <a href="http://2015.igem.org/Judging/Awards#SpecialPrizes">Best Applied Design award</a> and/or the <a href="http://2015.igem.org/Judging/Awards#Medals">functional prototype gold medal criterion</a>, you must fill out this page.</p>
+        <p>The ability re-purpose sgRNAs to guide Cas9 to new target sites currently requires re-cloning the entire 500 base pair sgRNA sequence . By inserting restriction enzyme sites flanking the 20 base pair guide sequence of sgRNA, researchers will have the ability to more easily swap in new targets for Cas9. By taking advantage of the existence  of a single "G" nucleotide at the bottom of the first stem-loop that doesn't follow complementarity with the opposing nucleotide in the sgRNA scaffold, we were able to insert a restriction enzyme site without also introducing that site downstream in the original DNA sequence. We then placed another restriction site after the U6 promoter but before the gRNA to complete the swap. Our experiments showed that this modified version of the sgRNA was still capable of working to silence gene expression with a dCas9 in similar level as the none modified.</p>
+
+
+    <section id="cas9" title="Cas9 PAM Flexibility" class="cas9mod">
+        <h2>Cas9 PAM Flexibility</h2>
+        <p>
+Being able to target DNA at different protospacer adjacent motif (PAM) site will allow scientists to target a larger portion of the genome. "Dead" Cas9 (dCas9) allows for easier analysis of products because the DNA still remains intact. Kleinstiver et al proposed an EQR variant of Cas9 with three amino acid substitutions. This new proposed version of Cas9 targeted an NGAG PAM sequence. Our design was to make these three amino acid substitutions in dCas9 and try to target an NGAG PAM site in GFP.
+        </p>
+        <p>
+<p>Kleinstiver et al. recently demonstrated modified spCas9 with altered PAM specificity <cite ref="Kleinstiver2015"></cite>.
+Their results motivated us to explore computational methods of assessing spCas9 mutants for altered PAM specificity profiles. We created an analysis pipeline using python that makes use of PyRosetta, a well known molecular dynamics toolkit. Our suite of scripts is described in our <a href="http://2015.igem.org/Team:Waterloo/Modeling">Modeling</a> and <a href="http://2015.igem.org/Team:Waterloo/Software">Software</a> pages.
+</p>
+<div class="row">
+    <div class="col-sm-4">
+    <figure>
+    <img src="http://2015.igem.org/wiki/images/d/da/Waterloo_wt_residues.png" alt="Wild Type spCas residues" class="img-responsive">
+    <figcaption>A PyMOL generated image of the wild type residues near the PAM binding site of spCas9.</figcaption>
+    </figure>
+    </div>
+    <div class="col-sm-4">
+    <figure>
+    <img src="/wiki/images/8/8c/Eqr_mutated_residues.png" alt="EQR Mutated Residues" class="img-responsive">
+    <figcaption>A PyMOL generated image of the three mutations found in the EQR spCas9 variant</figcaption>
+    </figure>
+    </div>
+    <div class="col-sm-4">
+    <figure>
+    <img src="/wiki/images/0/0d/Waterloo_VQR_mutated_residues.png" alt="VQR Mutated Residues" class="img-responsive">
+    <figcaption>A PyMOL generated image of the three mutations found in the VQR spCas9 variant</figcaption>
+    </figure>
+    </div>
+</div>
+        </p>
+    </section>
+
+    <section id="plants" title="CRISPR Plant Defense" class="plantmod">
+        <h2>CRISPR Plant Defense</h2>
+        <p>
+          By integrating an expression cassette that included Cas9 and three sgRNAs that target the CaMV genome in an important coding sequence into the shuttle vector pCAMBIA, we'll be able to integrate that cassette into the <i> Arabidopsis</i> genome using nature's genetic engineer, <i>Agrobacterium</i>.
+        </p>
+        <p>
+
+    </section>
+        <p> To model our antiviral application, we looked at the antiviral effects of CRISPR/Cas9 targeting on three scales: CaMV genomes, plant cells and plant leaves. Details of our modeling approach, and how it influenced our design, are provided in our <a href="http://2015.igem.org/Team:Waterloo/Modeling">Modeling</a> pages.</p>
+    <div class="row">
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/5/5f/Waterloo_mathCAS_graphic.svg" class="img-responsive" alt="Stylized viral genome" style="width:200px;"/>
+                <figcaption class="model-caption">CaMV Genomes</figcaption>
+            </figure>
         </div>
-
-        <p>
-            This is a prize for the team that has developed a synthetic biology product to solve a real world problem in the most elegant way. The students will have considered how well the product addresses the problem versus other potential solutions, how the product integrates or disrupts other products and processes, and how its lifecycle can more broadly impact our lives and environments in positive and negative ways.
-        </p>
-        <p>
-            If you are working on art and design as your main project, please join the art and design track. If you are integrating art and design into the core of your main project, please apply for the award by completing this page.
-        </p>
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/9/98/Waterloo_mathVA_graphic.svg" class="img-responsive" alt="Stylized plant cell" style="width:200px;"/>
+                <figcaption class="model-caption">Plant Cells</figcaption>
+            </figure>
+        </div>
+         <div class="col-sm-4">
+            <figure>
+                <img src="/wiki/images/d/da/Waterloo_mathVS_graphic.svg" class="img-responsive" alt="Stylized plant leaves" style="width:200px;"/>
+                <figcaption class="model-caption">Plant Leaves</figcaption>
+            </figure>
+        </div>
     </div>
 
-</div>
+        </p>
+    </section>
+
+    <section id="references" title="References">
+        <h2>References</h2>
+        <ol id="reflist">
+        </ol>
+    </section>
+
 </div>
 </html>
 {{Waterloo_Footer}}

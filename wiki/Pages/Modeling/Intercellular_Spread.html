@@ -1,0 +1,161 @@
+{{Waterloo}}
+<html>
+<div class="container main-container">
+    <h1>Viral Spread Model</h1>
+
+    <section id="motivation" title="Motivation">
+ <div class="row">
+    <div class="col-sm-8">
+    <p>Viral spread has been modeled extensively on very <a href = "http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Replication">small scales</a> and on large (population) scales, but, surprisingly, the middle ground of intercellular spread is relatively unexplored <cite ref="Rodrigo2014"></cite><cite ref="Tromas2014"></cite>. First, we had to make a model on this scale. Then, we used this model to investigate whether our defense system would protect individual <em>Arabidopsis</em> plants. </p>
+
+<p>  This is an agent-based approach. Briefly, each plant cell is treated an agent that may become infected by CaMV or resistant to infection due to plant defense signalling. Infected cells run an instance of our ODE model for viral replication; they may also pass infection to their neighbors. The spread through the stems and leaves of the plant can be tracked with and without the CRISPR/Cas9 system.</p>
+    </div>
+    <div class="col-sm-4">
+        <figure>
+            <img src="/wiki/images/d/da/Waterloo_mathVS_graphic.svg" alt="Stylized plant leaves" style="width:200px;"/>
+            <figcaption class="model-caption">Plant Leaves</figcaption>
+        </figure>
+    </div>
+    </div>
+	<p>This leads to our second goal which is to integrate the intracellular replication and intercellular spread models to fully understand impact of CRISPR/Cas9. Altogether, we are attempting to demonstrate the feasibility of our anti-viral system and use our findings to direct the project design.</p>
+        <p>As a reaction to the presence of the virus, the plant cells will destroy infected cells through apoptosis as well as signal to the rest of the plant to begin production of defensive chemicals in preparation for attack. This signaling causes systemic required resistance, a broad, long-term increased resistant to future infections.<cite ref="Ryals1994"></cite>.</p>
+
+        <ul>
+            <li>Explain and link this to the parameters in the model once the parameters are finalized</li>
+            <li>Explain reasons for the parameters</li>
+        </ul>
+    </section>
+
+    <section id="formation" title="Model Formation">
+        <h2>Model Formation</h2>
+
+        <h3>Biology of Viral Infection Spread</h3>
+<p> For information on this, please see the Intercellular Spread section of the CaMV biology page <a href = "http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Biology">here</a>. </p>
+
+        <h3>Agent-Based Model Design</h3>
+  <p>To trace the spread of the virus through the leaf, we used an agent-based model. Each cell produces and spreads the virus</p>
+        <ul>
+            <li></li>
+            <li>Explain reasons for the parameters</li>
+        </ul>
+       <h3>Plant Structure</h3>
+        <ul>
+            <li>Cells are groups into leaves. Cells are only connected by plasmodesmata to other cells in the same leaf.</li>
+            <li>Each leaf also has one phloem (stem) that links to the central vasculature of the plant. These phloem cannot produce either viral particles or resistance molecules themselves; they only act as conduits to pass them along.</li>
+        </ul>
+
+
+       <h4>Model Assumptions</h4>
+         <ul>
+                   <li>Viral Spread Chance - each time step, infected cells have a small probability of passing a virion to a neighboring cell. It is unbiological to have each cell's infection spread at every timestep, as this leads rapidly to 100% infection, contrary to observations <cite ref="Tromas2014"></cite>. Unfortunately, no number for this infection probability could be found in literature, so a reasonable approximation of this value was implemented in order to emulate normal viral spread.</li>
+                   <li>Cas9 is already at a steady state at time of infection</li>
+         </ul>
+        <h4>Plant Structure</h4>
+        <ul>
+            <li>Plasmodesmata</li>
+            <li>Phloems and Vascular System</li>
+        </ul>
+
+        <h4>Virus</h4>
+        <ul>
+            <li><b>Initial Infection Sites</b> is a user-selected integer representing the number of lesions on a plant leaf for the application of the virus</li>
+            <li><b>Founder Population</b> represents the number of viruses in each of the lesions, or the multiplicity of infection, which should be between 2 and 13 <cite ref="Gutierrez2010"></cite></li>
+            <li><b>Viral Spread Rates</b> the virus spreads at a rate of about 3 cells per day, but it takes longer for the cell to begin actively producing and exporting virions<cite ref="Khelifa2010"></cite></li>
+            <li><b>Viral Spread Chance</b></li>
+            <li><b>Viral Assembly</b></li>
+            <li><b>Modify Virus</b> "On" runs the simulation with Cas9, "Off" is without</li>
+
+        </ul>
+
+        <h4>Plant Response</h4>
+        <ul>
+			<li><b>SAR</b> or Systemic Acquired Response, is a form of acquired immunity. The plant produces signalling molecules and enables cells to become resistant or lyse themselves</li>
+            <li><b>Resistance Threshold</b> is the level of SA signalling molecule required for a cell to become resistant to the pathogen</li>
+            <li><b>Lysis Threshold</b> is the level of SA signalling molecule required for a cell to undergo apoptosis to protect the rest of the organism</li>
+            <li><b>Signalling Molecule</b> is generated by resistant or susceptible cells neighbouring infected or resistant cells at a rate of one per minute, after those neighbours have been infected/resistant for 8hrs. The model has been simplified to have both HR and SAR spread through the plant using one signalling chemical instead of the complex interactions between several different signalling molecules separately .</li>
+        </ul>
+
+        <h3>Agent-Based Modelling Software</h3>
+
+       <div class="row vertical-align">
+          <div class="col-sm-8">
+             <p>We identified several requirements for the software used in our agent-based model:</p>
+            <ul>
+                <li>Ability to create different kinds of agents (cells, vasculature, and others).</li>
+                <li>Control over connections between agents (e.g. plasmodesmata betweeen cells)</li>
+                <li>Support for complex rules (e.g. ODE simulations) within each agent</li>
+                <li>Arbitrary number of model states</li>
+                <li>Tracking of time since infection</li>
+                <li>Ease of use</li>
+            </ul>
+          </div>
+          <div class= "col-sm-4">
+                <figure>
+                    <a href="https://ccl.northwestern.edu/netlogo/"><img src="http://2015.igem.org/wiki/images/1/16/Waterloo_Math_ViralSpread_NetlogoIcon.png" style="width:200px;"/></a>
+
+                    <figcaption>NetLogo, the chosen agent-based modelling software</figcaption>
+                    <div class="img-att">i
+                        <ul class="img-att-bubble">
+                            <li>Photo &copy; <a href="https://ccl.northwestern.edu/netlogo/">Uri Wilensky</a></li>
+                            <li><a href= "http://www.macupdate.com/images/icons256/21469.png">Original Photo</a></li>
+                        </ul>
+                    </div>
+                </figure>
+          </div>
+        </div>
+      <p>Three different software packages (<a href="https://cs.gmu.edu/~eclab/projects/mason/">MASON</a>, <a href=""https://pypi.python.org/pypi/Mesa/">MESA</a> and <a href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>) were considered in depth. <a href=""https://pypi.python.org/pypi/Mesa/">MESA</a> is a Python-based simulation package and was not used due to its poor documentation and the level of familiarity with Python required to create the model. <a href="https://cs.gmu.edu/~eclab/projects/mason/">MASON</a>, a Java-based simulation package, has excellent, easily-found documentation but no GUI and fewer built-in functions. Although fewer built-in functions could be an advantage (adding more flexibility and customization to the simulation), time constraints and unfamiliarity with Java pushed us to use <a href="https://ccl.northwestern.edu/netlogo/">NetLogo</a> instead of MASON. NetLogo was easy to learn, well-documented and had a built in GUI. These were essential for rapid prototyping -- while some other choices would have been better able to handle large simulations, they would have had much longer development time for small changes, ultimately impeding our efforts to make a quality model. </p>
+
+
+    </section>
+
+    <section id="results" title="Results">
+        <h2>Results</h2>
+    </section>
+
+<h3>Normal -- no intervention</h3>
+<p>
+We were quite successful in making a reasonable representation of the normal process of viral spread. A typical model run proceeds as follows:</p>
+<ul>
+<li>The virus quickly spreads to most of the initially infected lead, with only a small amount of resistance developing.</li>
+<li>Once it has spread to this entire leaf, it spreads into the plant’s vascular system and the main stem.</li>
+<li>Soon, all of the vascular structure is carrying the virus. But the infection runs its own course in each leaf.</li>
+<li>In some cases, resistance builds up and seals off the point of initial infection. In others, the infection spreads into the leaf, but a sizable fraction of it becomes resistant.</li>
+<li>Apoptosis occurs near the boundaries between infected and resistant regions, often cutting off these regions from the rest of the plant. </li>
+</ul>
+
+<p>In a few cases, the plant is lucky & the initial infection was small, so the infection did not spread beyond the first leaf. However, most simulation runs result in over half the plant being infected.</p>
+
+
+<h3>CRISPR/Cas9 – our intervention</h3>
+<p>
+When we introduce our CRISPR/Cas9 mechanism, and hold all other parameters constant, we see that the infection is stopped remarkably quickly. It rarely spreads into the vasculature.
+The level of resistance is correspondingly lower, since the plant detects less of a threat.</p>
+
+<p>This effective prevention of viral spread is maintained even with moderate increases in other viral parameters and/or decrease in resistance.</p>
+
+
+    <section id="discussion" title="Discussion">
+
+  <h2>Discussion</h2>
+<p>As with many projects in mathematical biology, one of the biggest challenges is finding accurate parameter values. Our slider-based approach was a creative solution that enables us to investigate the balance of different factors in viral spread and resistance, but it was quite arbitrary. Our results remain fundamentally qualitative – we can tell our intervention helps, but we can’t say by how much.</p>
+
+<p>There are two main ways this could be improved. One is simply to more systematically explore this parameter space. Computationally, this would take a long time, since there are many variables with very large feasible ranges, but it is conceptually simple. However, there is a risk that this would not be particularly illuminating.</p>
+
+<p>A better solution is to push for inventive experiments that can better determine these parameters. Tromas and colleagues make excellent use of flow cytometry to get this kind of data </cite><cite ref="Tromas2014"></cite>. This allows them to determine the infectivity of cells as a function of time. While this doesn’t quite give the probability per time of <em>attempted</em> spread events, it’s a very promising line of inquiry.</p>
+
+<p>A different direction in which this model could be improved is having a more detailed and faithful plant architecture. There are many types of cells in plant leaves, for example, as well as multiple interconnectin plant defense mechanisms. There are also orders of magnitude more cells than we rendered. These changes would be needed to make our model more accurate; they would also entail running it on different software.</p>
+
+
+
+
+    </section>
+
+    <section id="references" title="References">
+        <h2>References</h2>
+        <ol id="reflist">
+        </ol>
+    </section>
+
+</div>
+</html>
+{{Waterloo_Footer}}

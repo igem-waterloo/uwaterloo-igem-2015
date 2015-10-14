@@ -1,0 +1,210 @@
+{{Waterloo}}
+<html>
+<div class="container main-container">
+
+    <h1>Modeling Genomic Effects of CRISPR/Cas9</h1>
+    <section id="motivation" title="Motivation">
+    <div class="row">
+    <div class="col-sm-8">
+        <p>CRISPR/Cas9 has been extensively studied for its applications in eukaryotic genome editing and gene expression control. Last year, the <a href="http://2014.igem.org/Team:Waterloo/Math_Book/CRISPRi">Waterloo iGEM team</a> created an ODE model of dCas9 binding and control of gene expression. This year, however, the modelling team chose to investigate the effects of CRISPR/Cas9 on an genomic rather than molecular level. Specifically, we wanted to model the <strong>accumulation of mutations</strong> in a target genome and <strong>eventual deactivation</strong> of target genes after cutting by CRISPR/Cas9 and repair by Non-Homologous End Joining (NHEJ).</p>
+    </div>
+    <div class="col-sm-4">
+        <figure>
+            <img src="/wiki/images/5/5f/Waterloo_mathCAS_graphic.svg" alt="Stylized genome" style="width:200px;"/>
+            <figcaption class="model-caption">Genomes</figcaption>
+        </figure>
+    </div>
+    </div>
+
+    </section>
+
+    <section id="formation" title="Model Formation">
+        <h2>Model Formation</h2>
+
+        <p>When bound to a single guide RNA (sgRNA), the <em>S. pyogenes</em> Cas9 nuclease diffuses through the cell in three dimensions, searching for the sequence 'NGG' in the target genome <cite ref="Sternberg2014"></cite>. When it finds an 'NGG', known as a <em>PAM site</em>, Cas9 binds and undergoes a conformational change that allows it to unwind the DNA helix and compare the sequence of its sgRNA with the DNA. If the sgRNA matches well, Cas9 cleaves the DNA, producing a double-stranded break (DSB) 3-4 bp upstream of the PAM site <cite ref="Hsu2013"></cite><cite ref="Addgene_CRISPR2015"></cite>.</p>
+
+        <p>In the absence of a template, DSBs are repaired by Non-Homologous End Joining (NHEJ), which is an error-prone process that sometimes creates indels at the site of repair <cite ref="Betermier2014"></cite>. This effect has recently been exploited to target double-stranded viruses such as HBV <cite ref="Dong2015"></cite><cite ref="Seeger2014"></cite>. Though there have been extensive efforts to characterize the factors that contribute to effective targeting and deactivation by CRISPR/Cas9 and NHEJ, they have not, to the best of our knowledge, been synthesized into a single model.</p>
+
+        <p>The aim of the model is thus to capture the cutting events initiated by Cas9 and predict the outcomes of these events. We model each genome as containing multiple <em>domains</em> of interest, such as promoters or ORFs, and track whether these domains have been deactivated by CRISPR/Cas9 activity. There may be more than one sgRNA <em>target</em> in each domain and many domains can be targeted at once.</p>
+
+        <figure>
+        <p></p>
+        <div class="col-sm-6"><img src="http://2015.igem.org/wiki/images/b/b3/Waterloo_camv_uncut.png" class="img-responsive" /></div>
+
+<div class="col-sm-6"><img src="http://2015.igem.org/wiki/images/1/15/Waterloo_camv_cut.png" class="img-responsive" /></div>
+
+        <figcaption>Genomes contain domains, such as promoters or ORFs, which we endeavour to deactivate by directing Cas9 to a target or targets within them.</figcaption>
+        </figure>
+
+        <p>If Cas9 successfully cuts at a target site, the double-stranded break may be resolved in three ways. The most common resolution is for NHEJ to successfully repair the DSB without creating any indels <cite ref="Betermier2014"></cite><cite ref="Crispresso"></cite></p>However, NHEJ repair is error-prone and will often induce indels at the target site. Finally, since multiple sgRNA targets are considered, it is possible that large deletions will occur between two targets that are simultaneously cut.
+
+        <figure>
+        <p></p>
+        <div class="col-sm-6"><img src="http://2015.igem.org/wiki/images/8/8d/Waterloo_genome_del_t1.png" class="img-responsive" /></div>
+
+<div class="col-sm-6"><img src="http://2015.igem.org/wiki/images/1/1e/Waterloo_genome_del_t2.png" class="img-responsive" /></div>
+        <figcaption>Possible events after double-stranded breaks caused by CRISPR-Cas9: repair, indels or a large deletion between sites.</figcaption>
+        </figure>
+
+       <p>At each timestep, the model considered the state (cut or uncut) and sequence of all targets and computes the probability of the following events at each target: CRISPR/Cas9 cutting, NHEJ repair or large deletion. The remainder of the model formation section discusses how we determined the probability of each event.</p>
+
+       <h3>Probability of Double-Stranded Cuts made by CRISPR/Cas9</h3>
+<p>The probability of a target being cut in a given time step was modelled as dependent on Cas9 concentration and sgRNA mismatches. The average time for a cut was also considered using the reported from 2-minute half-life Hemphill et al. <cite ref="Hemphill2015"></cite>.</p>
+
+<p>Since Cas9 binds to PAM sites according to an approximately first order <cite ref="Qi2013"></cite> three dimensional diffusion <cite ref="Sterberg2014"></cite> we expect increasing concentration of Cas9 protein to lead to a higher probability of cutting. Concentration was incorporated into our model using a multiple regression on data from Kusku et al.(2014) <cite ref="Kusku2014"></cite>, which related the proportion bound as a function of concentration and number of mismatches between the target and the sgRNA.</p>
+
+<p>The effect of mismatches in the sgRNA (important for the residual targeting after indels have been introduced by NHEJ) was further considered using the relationship found by Hsu et al. <cite ref="Hsu2013"></cite>. These effects were assumed to be independent, which likely overestimates mismatch effects and underestimated CRISPR/Cas9 efficacy.</p>
+
+       <h3>Error-Prone Repair by Non-Homologous End Joining</h3>
+<p>Open breaks in the DNA were repaired according to an exponential decay, following the model of Reynolds et al. <cite ref="Reynolds2012"></cite>, which found that DSBs remained with a half-life of 8 minutes. Insertion and deletion sizes were chosen based on a distributions of indels observed by deep-sequencing of repaired targets (see data in <cite ref="Crispresso"></cite>). When there is a net insertion, we selected from a uniform distribution of [ACGT] to add new nucleotides.</p>
+       <h3>Large Deletions</h3>
+<p>The probability of large deletions was estimated using a study on large deletions, which measured the percentage of large deletions observed at 3 days and 10 days at several targets <cite ref="Ousterout2015"></cite>. We chose not to account for the effect of the distance between targets for large deletions, though it could be incorporated in future studies <cite ref="Canver2014"></cite>.</p>
+
+       <h3>No Interaction Between Genomes</h3>
+
+       <p>We expect there to be multiple viral genomes in our plant defense example and it is possible that simultaneous cuts on different genomes could result two genomes being joined together. However, we chose to disregard this possibility and averaged results from multiple stochastic simulations could be averaged to get an overall picture of gene deactivation by Cas9.</p>
+    </section>
+
+    <section id="model" title="Model Implementation">
+    <h2>Software Implementation</h2>
+<h3>Genome Classes</h3>
+<p>The code uses three classes to model the genome. Genomes have domains which have targets. Targets handle probabilities, domains track functionality and genome modifies everything.</p>
+    <pre>class Target():
+    is associated with a domain
+
+class Domain():
+    has targets
+    is associated with a genome
+
+class Genome():
+    has domains</pre>
+<h3>Genome Simulation</h3>
+<p>The simulation calls these classes to check if events have occurred and the details of each event. At the end it compiles the data logs into CSVs, plots and visualizations.</p>
+<pre>for dt in time_steps:
+    call genome_classes to check if there was a cut, repair  or large deletion
+    if event:
+        add to log
+generate CSVs, plots and visualizations</pre>
+<p>To see all the code for the simulation, check out our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/tree/master/models/targeting">GitHub Page</a></p>
+    </section>
+
+    <section id="results" title="Results">
+        <h2>Results</h2>
+
+        <h3>Model Validation</h3>
+<p>The model matched experimental results well and helped to shed light on the details of indels due to NHEJ. The clips bellow show three different examples of gene deactivation ranging from few cuts, many deactivations to high cuts, few deactivations.</p>
+<div class="jumbotron hp-landing">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <video style="width:100%" controls>
+                            <source src="/wiki/images/b/b4/Waterloo_genome_360min_15fps_stoch1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="/wiki/images/f/fb/Waterloo_states_gene_stoch1.png" alt="" />
+                            <figcaption>Gene States</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="/wiki/images/6/69/Waterloo_states_target_stoch1.png" alt="" />
+                            <figcaption>Target States</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+<br><br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <video style="width:100%" controls>
+                            <source src="http://2015.igem.org/wiki/images/f/f0/Waterloo_genome_360min_30fps_stoch2.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/f/f6/Waterloo_states_gene_stoch2.png" alt="" />
+                            <figcaption>Gene States</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/thumb/a/ab/Waterloo_states_target_stoch2.png/1200px-Waterloo_states_target_stoch2.png" alt="" />
+                            <figcaption>Target States</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+<br><br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <video style="width:100%" controls>
+                            <source src="http://2015.igem.org/wiki/images/9/92/Waterloo_genome_360min_15fps_stoch3.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/thumb/6/69/Waterloo_states_gene_stoch3.png/1200px-Waterloo_states_gene_stoch3.png" alt="" />
+                            <figcaption>Gene States</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-6" style="text-align:center">
+                        <figure>
+                            <img src="http://2015.igem.org/wiki/images/thumb/a/a8/Waterloo_states_target_stoch3.png/1200px-Waterloo_states_target_stoch3.png" alt="" />
+                            <figcaption>Target States</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div><br><br>
+
+        <h3>Importance of Large Deletions</h3>
+<p>Our interest in modeling large deletions was to investigate whether they would be a viable method for deactivating viral targets. The infrequency of large deletions according to experimental results and inputed in our model showed that they are not a reliable method of deactivating genes.</p>
+
+        <h3>Effect of Cas9 Concentration</h3>
+<p>Through experimentation with the model we found that varying the Cas9 concentration had a surprisingly small efect on the strength of the system. This is likely because the standard concentration is already nearly saturated and increasing this value does not significantly increase binding.</p>
+
+        <h3>Predicting CRISPR Plant Defense</h3>
+        <p>This model was applied to the CRISPR Plant Defense aspect of our project, investigating whether the P6 protein of Cauliflower Mosaic Virus (CaMV) could be deactivated by frameshift mutations. The P6 protein was chosen as a focus of the investigation because it suppresses natural plant RNAi defenses <cite ref="Haas2008"></cite><cite ref="Love2012"></cite> and trans-activates translation of other CaMV proteins <cite ref="Futterer1991"></cite><cite ref="Kobayashi1998"></cite>. Details on P6 and the CaMV genome can be found on <a href="http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Biology">CaMV Biology page</a>.</p>
+
+<p>The model was run with three targets in the P6 gene of the simulated CaMV genome described. The particular sgRNA target locations in P6 are those described as <strong>Design II</strong> on the related <a href="http://2015.igem.org/Team:Waterloo/Lab/Plants#target-sites">wet lab page</a>. We tracked the percent of simulated genomes with functional P6 across 1000 runs fo the model, giving a general prediction of how long it will take before the P6 of a particular CaMV genome is rendered non-functional by our Plant Defense system.</p>
+
+        <figure>
+            <img src="/wiki/images/0/0f/Waterloo_P6_exponential_fit.png" alt="P6 concentration over time with exponential fit" class="img-responsive"/>
+            <figcaption>Percent of functional P6 genomes observed over 1000 simulations with three targets are shown in black, while an exponential decay fit done with the R nls package is shown in green.</figcaption>
+        </figure>
+
+<p>Based on the fit to our 1000-simulation average, we considered our CRISPR Plant Defense system to render the P6 gene of CaMV non-functional according to an exponential decay with a decay constant of 6.36x10<super>3</super> min<super>-1</super>. </p>
+
+<h3>Future Research</h3>
+<p>An interesting pattern we noticed when determining how to measure gene activation was that recording the sum of the target shifts as opposed to the individual shifts lead to reactivation after a few hours. This is likely due to some active targets being re-shifted and actually fixing the gene. The first figure shows gene activation measured by the sum of target shifts and the second figure shows gene activation measured by individual shifts (where any non multiple 3 shift causes deactivation.)</p>
+
+<center>
+            <img src="http://2015.igem.org/wiki/images/1/18/Waterloo_Situation_1.png" height="50%" width="50%"><br>
+<p>1000 runs of target sum deactivation</p>
+            <img src="http://2015.igem.org/wiki/images/e/e4/Waterloo_Situation_2.png" height="50%" width="50%">
+<p>1000 runs of single target deactivation</p>
+        </center>
+<p>Further developments we would like to pursue are adding proximity of targets to their large deletion probabilities and making the model simpler to apply to non-viral genomes.</p>
+    </section>
+
+
+    <section id="references" title="References">
+        <h2>References</h2>
+        <ol id="reflist"></ol>
+    </section>
+</div>
+</html>
+{{Waterloo_Footer}}

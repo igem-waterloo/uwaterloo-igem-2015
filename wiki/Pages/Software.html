@@ -1,33 +1,316 @@
 {{Waterloo}}
 <html>
-<div id ="mainContainer">
-<div id ="contentContainer">
-
+<div class="container main-container">
     <h1>Software</h1>
-    <a href="https://igem-waterloo.github.io/uwaterloo-igem-2015/digest-calculator/"> Digest Calculator</a>
-    <a href="https://igem-waterloo.github.io/uwaterloo-igem-2015/ligation-calculator/"> Ligation Calculator</a>
-    <a href="#">Cas9-PAM Modification Framework</a>
-
-    <div class="prevHighlightBox">
-        <div class="highlightBox">
-            <h4>Note</h4>
-            <p>In order to be considered for the <a href="http://2015.igem.org/Judging/Awards#SpecialPrizes">Best Software Tool award</a>, you must fill out this page.</p>
-        </div>
-
-
-        <p>Regardless of the topic, iGEM projects often create or adapt computational tools to move the project forward. Because they are born out of a direct practical need, these software tools (or new computational methods) can be surprisingly useful for other teams. Without necessarily being big or complex, they can make the crucial difference to a project's success. This award tries to find and honour such "nuggets" of computational work.</p>
-
-        <p>If you are working on software as your main project, please join the software track. If you are creating software as an addition to your main project, please apply for this award.</p>
-
-        <p>Here are a few examples from previous teams:</p>
+    <section id="Modelling" title="GitHub">
+        <p>Software played an important role in CRISPieR project, since mathematical and computational modelling is a major area of interest for Waterloo iGEM. The team maintained <a href="https://github.com/igem-waterloo">a GitHub organization</a> throughout 2015- our nearly 600 commit messages and more than 100 pull requests can be browsed at your convenience.</p>
+        <figure>
+        <img src="/wiki/images/c/ca/Waterloo_github_contributions.png" class="img-responsive" />
+        <figcaption>The mounting graph of contributions in our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015">2015 repository</a>.</figcaption>
+        </figure>
+        <h3>Summary of uwaterloo-igem-2015/models</h3>
         <ul>
-            <li><a href="http://2013.igem.org/Team:TU-Munich/Results/Software">TU Munich 2013</a></li>
-            <li><a href="http://2014.igem.org/Team:Heidelberg/Software">Heidelberg 2014</a></li>
-            <li><a href="http://2014.igem.org/Team:Aachen/Project/Measurement_Device#Software">Aachen 2014</a></li>
+        <li><strong>targeting</strong>: Python code from <a href="http://2015.igem.org/Team:Waterloo/Modeling/Cas9_Dynamics">CRISPR/Cas9 model</a>, run <em>genome_simulation.py</em> to see results for a single genome, <em>genome_multisimulation.py</em> gives averaged results for many simulaitons</li>
+        <li><strong>tridimensional</strong>: various bash and Python/PyRosetta scripts for <a href="http://2015.igem.org/Team:Waterloo/Modeling/PAM_Flexibility">rational design</a> of cas9 mutants with engineered PAM specificity, see notes below</li>
+        <li><strong>viralassembly</strong>: MATLAB code for the <a href="http://2015.igem.org/Team:Waterloo/Modeling/CaMV_Replication">CaMV Replication</a> model, run <em>viralAssemblyTimeSeries.m</em> to see time series plots</li>
+        <li><strong>viralspread</strong>: NetLogo code for the <a href="http://2015.igem.org/Team:Waterloo/Modeling/Intercellular_Spread">viral spread</a> model, run <em>ViralSpreadFullODE.nlogo</em> to see results incorporating Euler's method approximation of viral spread ODE</li>
         </ul>
-    </div>
+    </section>
+    <section id="pyrosetta" title="PyRosetta & PyMOL">
+        <h2>PyRosetta and PyMOL</h2>
+        <p>We used PyRosetta and PyMOL quite extensively when <a href="http://2015.igem.org/Team:Waterloo/Modeling/PAM_Flexibility">modelling engineered PAM specificity</a>. The documentation for PyRosetta is rather sparse and we have often encountered our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/wiki/PyRosetta-Fold-Trees">hastily-written</a> <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/wiki/Building-PyRosetta-from-Source">GitHub</a> <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/wiki/PyMOL-and-PyRosetta-Setup-for-Windows">wiki</a> <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/wiki/PyMOL-and-PyRosetta-Setup-for-Linux">pages</a> on the software rather distressingly near the top of Google results.</p>
+<p>The sections below, in addition to our <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/tree/master/models/tridimensional/docking_validation">scripts</a> and the <a href="http://2015.igem.org/Team:Waterloo/Modeling/PAM_Flexibility">PAM Flexibility page</a>, provide some documentation for other iGEM teams looking to model protein binding with PyRosetta.</p>
 
+        <h3>Setup Instructions</h3>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="windows-install">
+                    <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#windows-collapse" aria-expanded="false" aria-controls="windows-collapse">
+                    Windows Installation
+                    <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                    </a>
+                    </h4>
+                </div>
+                <div id="windows-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="windows-install">
+                    <div class="panel-body">
+
+        <h3>PyRosetta</h3>
+
+        <p>Adapted from <a href="https://drive.google.com/viewerng/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxweXJvc2V0dGF8Z3g6NjA4OWZhYjZlN2YyOWZiNQ">this guide</a>.
+
+        <p>PyRosetta is fairly simple to install on Windows, assuming Python is installed. However, it does take large amounts of RAM (you'll need a computer with >4GB), so you may need to use the Linux version for older computers.</p>
+        <ol>
+            <li><a href="https://www.python.org/downloads/">Download Python 2.7</a>. You MUST use the 64-bit version, and make sure to select the option to add python to your path.</li>
+            <li>Install iPython. Open a command prompt, and type <code>python -m pip install ipython</code>. This should download and install ipython in one step.</li>
+            <li><a href="https://pypi.python.org/pypi/pyreadline/2.0">Get pyreadline</a> (Download the 64-bit version, pyreadline-2.0.win-amd64.exe). Run the exe once download is complete. This provides a bunch of tab-completion and other handy features, it isn't necessary, but is very helpful.</li>
+            <li> <a href="http://c4c.uwc4c.com/express_license_technologies/pyrosetta">Get a PyRosetta license</a>. These are free for academic/non-commercial use.</li>
+            <li>Once your license is processed (which should only take a couple minutes), you'll receive an email with a username and password, and a link to the download.</li>
+            <li>Download the most recent version of the PyRosetta windows. You'll want the .exe for the latest release.</li>
+            <li>When the download completes, run the exe to install PyRosetta.</li>
+            <li>Two shortcuts should appear on the desktop, one for "iPython PyRosetta shell" and on for "PyMOL PyRosetta Link". Delete the second one, as it doesn't work with the version of PyMOL we'll be using.</li>
+            <li>Open the ipython shell using the remaining shortcut. type:
+            <pre><code>from rosetta import *
+            rosetta.init()
+            </code></pre>
+            <li>If you get a message ending with something like the following, you've successfully installed PyRosetta.
+            <pre><code>core.init.random: RandomGenerator:init: Normal mode, seed=-1088387864 RG_type=mt19937</code></pre></li>
+        </ol>
+
+        <h3>PyMOL</h3>
+
+        <p>Adapted from <a href="http://www.pymolwiki.org/index.php/Windows_Install#Pre-compiled_PyMOL">this guide</a></p>
+
+        <ol>
+            <li>Create a folder (e.g. C:\PyMOL_Install) to hold the files>
+            <li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Download</a>:
+                <ul>
+                <li>pymol-1.7.6.0-cp27-none-win_amd64.whl</li>
+                <li>pymol_launcher-1.0-cp27-none-win_amd64.whl</li>
+                <li>numpy-1.9.2+mkl-cp27-none-win_amd64.whl</li>
+                <li>Pmw-2.0.0-py2-none-any.whl</li></li>
+                </ul>
+                <li>Move the files to the folder you created.</li>
+                <li>Start a command prompt, and move to the directory you saved the files in:
+                <pre><code>cd C:\PyMOL_Install</code></pre></li>
+                <li>Assuming you added python to you path earlier, run the command:
+                <pre><code>python -m pip install --no-index --find-link="%CD%" --pre pymol_launcher-1.0-cp27-none-win_amd64.whl</code></pre>
+                <ol>
+                    <li>If there are errors, try installing the .whl files in this order: <em>numpy</em>, <em>Pmw</em>, <em>pymol-1.7.6.0</em>, <em>pymol_launcher</em></li>
+                    <li>If there are no errors, you should be able start PyMOL using C:\Python27\PyMOL.exe</li>
+                </ol>
+                <li>Create a shortcut on your desktop to make starting PyMOL easier.</li>
+        </ol>
+
+        <h3>Linking PyMOL and PyRosetta</h3>
+        <p>Adapted from <a href="http://www.pyrosetta.org/pymol_mover-tutorial">this guide</a>.</p>
+        <ol>
+            <li>Start PyMOL</li>
+            <li>In the command line (upper window), type
+                <pre><code>run C:\Program Files\PyRosetta\PyMOLPyRosettaServer.py</code></pre></li>
+            <li>You should see a message just above saying:
+            <pre><code>
+                PyMOL <---> PyRosetta link started!
+                at 127.0.0.1 port 65000</code></pre>
+            If it doesn't work, check if PyRosetta installed to the above path (which it should have if you followed the instructions on this page). If the path is different, modify the run command to match.</li>
+            <li>Go to the 'File' menu and select 'Edit pymolrc'.</li>
+            <li>Add the same run command to the file, then save it. This will start the PyRosetta link automatically every time you run PyMOL.</li>
+        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="mac-install">
+                    <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#mac-collapse" aria-expanded="false" aria-controls="mac-collapse">
+                    Mac OSX Installation
+                    <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                    </a>
+                    </h4>
+                </div>
+                <div id="mac-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="mac-install">
+                    <div class="panel-body">
+                    <h3>PyRosetta</h3>
+<h4>For Mac OSX (vanilla)</h4>
+<p> Adapted from <a href="http://www.pyrosetta.org/dow">this guide</a> and <a href="http://www.pyrosetta.org/documentation#TOC-Building-PyRosetta-from-source">this guide</a>.</p>
+<ol>
+<li>A license must be obtained prior to installation, to obtain an academic license (it's free by the way) please visit <a href="http://c4c.uwc4c.com/express_license_technologies/pyrosetta">this site</a> to get one.</li>
+<li>After obtaining a license, go back to the <a href="http://www.pyrosetta.org/dow">download page</a> and choose the PyRosetta monolith release for Mac. (<strong>NOTE:</strong> Do not use the download link provided in the license email for Linux and Mac installations! It <strong>does not</strong> include links to the latest version of PyRosetta.</li>
+<li>Create a new directory (new folder) in the space you'd like to install it (I would personally recommend creating a workspace directory and then un-tarring the pyrosetta.tar.bz2 in workspace, so the path to the .tar.bz2 file would be <pre><code>users/'YOURUSERNAME'/workspace/PyRosetta.monolith.mac.release-55.tar.bz2</pre></code></li>
+<li>In the terminal type in <pre><code>tar -vjxf PyRosetta-monolith.mac.release-55.tar.bz2</code></pre> to un-tar the file, or alternatively just click on it to decompress it.</li>
+<li>Since Mac already comes with Python 2.7, python does not have to be installed. Open a terminal window and paste in <pre><code>cd ~/workspace/PyRosetta.monolith.mac.release-55</code></pre> to move to the PyRosetta directory.</li>
+<li>Once you're in the directory, start python by typing <pre><code>python</code></pre> in the terminal, and import the PyRosetta library with the following commands:
+<pre><code>import rosetta
+rosetta.init()
+</code></pre></li>
+<li>If no errors or complaints have been made by your machine, congratulations, you have just installed software that is notoriously difficult to install!</li>
+</ol>
+<h3>PyRosetta for Mac OSX with a Package Manager (e.g. Homebrew)</h3>
+<p>Unfortunately, for Mac users that use either homebrew, fink, or macports, PyRosetta must be built from source, since custom versions of python are used when one of the above are installed. If you don't know what homebrew, fink, or macports is, you probably don't have it installed so use the instructions above.</p>
+<ol>
+<li>Obtain an academic Rosetta License from <a href="https://c4c.uwc4c.com/express_license_technologies/rosetta">here</a>.</li>
+<li>Once you have a license and have been prompted to the download page, download the latest source version of Rosetta. At the moment it is Rosetta 2015.19.</li>
+<li>After downloading the .tgz and un-tarring rosetta into the directory of your choice, go into the directory where rosetta is in and find <pre></code>building.txt</code></pre> located in the following path <pre><code>main/source/src/python/bindings/</code></pre> which contains specific instructions to build and deploy pyrosetta.</li>
+</ol>
+
+<h3>PyMOL</h3>
+                </div>
+            </div>
 </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="mac-install">
+                    <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#linux-collapse" aria-expanded="false" aria-controls="linux-collapse">
+                    Linux Installation
+                    <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                    </a>
+                    </h4>
+                </div>
+                <div id="linux-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="linux-install">
+                    <div class="panel-body">
+                    <h3>PyRosetta</h3>
+<p> Please ensure you're running at 64-bit version of Ubuntu or your preferred Linux flavour, as PyRosetta is available in 64-bit only.</p>
+<ol>
+<li>Installing iPython first is useful, as it allows much easier interaction with PyRosetta: <pre><code>sudo apt-get install ipython</code></pre></li>
+<li><a href="http://www.pyrosetta.org/dow">Download the latest release.namespace build for Ubuntu (you will have to <a href="https://els.comotion.uw.edu/express_license_technologies/pyrosetta">sign up</a> for a free academic license).</li>
+<li>Place the file where you want to use it (Note: Somewhere convenient to access, such as the your home folder, is recommened since you will be running files from this folder each time to use PyRosetta/PyRosetta+PyMOL).</li>
+<li>In terminal, navigate to the folder above, and use <pre><code>tar -vjxf PyRosetta-<version>.tar.bz2</code></pre> to extract the file.</li>
+<li>Run the script which sets up your environment by typing <pre><code>source SetPyRosettaEnvironment.sh</code></pre> while in the PyRosetta folder. This must be done each time you want to use Rosetta.</li>
+<li>Open IPython (ipython) and try running PyRosetta to see that it set up properly: <pre><code>import rosetta
+rosetta.init()</code></pre>.</li>
+</ol>
+
+                    <h3>PyMOL</h3>
+
+<p>Run this command in terminal: <pre><code>sudo apt-get install pymol</code></pre></p>
+
+<p>This will install the version of PyMOL which is hosted on Ubuntu's package directory. This is not the newest version, but it's reasonably up-to-date, and this method has the added bonus of automatically installing all dependencies that are need for PyMOL.</p>
+
+                    <h4></h4>
+                </div>
+            </div>
+</div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="source-install">
+                    <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#source-collapse" aria-expanded="false" aria-controls="source-collapse">
+                    Installation from Source
+                    <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                    </a>
+                    </h4>
+                </div>
+                <div id="source-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="source-install">
+                    <div class="panel-body">
+<p> This guide was developed following instructions from the <a href-"http://www.pyrosetta.org/documentation#TOC-Building-PyRosetta-from-source">PyRosetta online documentation</a>. All installs are local to the user.</p>
+
+<p>It is recommended to use the default binaries provided by PyRosetta. However, the following scenarios are reasons for installing PyRosetta from source:</p>
+<ul>
+<li>You need to have bindings for your own custom C++ code that is not part of Rosetta master branch</li>
+<li>PyRosetta needs to run custom-build Python (for example if you would like to use some Python packages from MacPorts, Fink or Homebrew who deploy its own version of Python)</li>
+<li>You need to use a different version of Python</li>
+<li>You can't install GLIBC required by pre-build binaries</li>
+<li>You are running on a 32Bit system</li>
+</ul>
+
+<h3>Deploying PyRosetta Build Environment</h3>
+<h4>Dependencies</h4>
+<strong>Rosetta Source</strong>
+
+<p>Download the Academic Version of Rosetta software, and extract the archive
+<pre><code>tar xvzf rosetta_bin_linux_####.##.#####_bundle.tgz ~/rosetta_bin_linux</code></pre>
+
+<p>To easily install all of the following dependencies, run the following:</p>
+<pre><code>cd rosetta_bin_linux/
+cd tools/PyRosetta.develop/
+./DeployPyRosetta.py</code></pre>
+
+<p>This should take some time. If at the end everything installs correctly, skip to Building PyRosetta. Otherwise, keep reading the following subsections.</p>
+
+<strong>Python</strong>
+<p>Install Python >= 2.5. Most systems come with this installed, but if not, it's available <a href="https://www.python.org/">here</a></p>
+
+<strong>CMake</strong>
+
+<p>Like Python, most systems have this installed by default. Install <a href="http://www.cmake.org/install/">Cmake</a> from here if not.
+<pre><code>./bootstrap --prefix=~/Applications/
+make
+make install</code></pre>
+
+<strong>GCCXML</strong>
+<pre><code>mkdir gccxml-cvs
+cd gccxml-cvs
+cvs -d :pserver:anoncvs@www.gccxml.org:/cvsroot/GCC_XML co -D 2009-04-15 gccxml
+mkdir gccxml-build
+cd gccxml-build
+cmake ../gccxml -DCMAKE_INSTALL_PREFIX:PATH=~/Applications/
+make && make install</code></pre>
+
+<strong>PyGCCXML and Py++</strong>
+
+<p>Download PyGCCXML and Py++ archives from <a href="https://sourceforge.net/project/showfiles.php?group_id=118209">SourceForge</a>, and extract the zip file.</p>
+<pre><code>unzip pygccxml-1.0.0.zip
+cd pygccxml-1.0.0
+python setup.py install --user
+cd ..
+unzip Py++-1.0.0.zip
+cd Py++-1.0.0
+python setup.py install --user</code></pre>
+
+<p>Check that all of the above are installed correctly</p>
+<pre><code>python
+>>> import pygccxml, pyplusplus
+>>> print pygccxml.__version__, pyplusplus.__version__</code></pre>
+
+<p>If installed correctly, the output is</p>
+<pre><code>1.0.0 1.0.0</code></pre>
+
+<strong>LibBoost</strong>
+
+<p>Install Boost (download from <a href="http://boost.org">here</a> or <a href="http://sourceforge.net/projects/boost/files/boost/">here</a>). Most Linux distributions will come with boost. If so, skip to the next step. If not, run the following commands</p>
+<pre><code>tar xvzf boost_1_58_0.tar.gz
+cd boost_1_58_0/
+./bootstrap.sh --prefix=/home/<username>/Applications/
+./b2 install --prefix=/home/<username>/Applications/</code></pre>
+
+<p>In the bootstrap command, the prefix must be an absolute path.</p>
+<strong>Building Rosetta</strong>
+
+<p>Test the installation by navigating to ~/rosetta_bin_linux/main/source/src/python/bindings/ and running</p>
+
+<pre><code>./BuildBindings.py -I ~/Applications/include -L ~/Applications/lib -L ~/./local/lib</code></pre>
+
+<p>(This takes a very long time, there are lots of files to build)</p>
+<strong>Building PyRosetta</strong>
+<p>After successfully deploying the PyRosetta build environment, copy the generated BuildPyRosetta.sh into the main Rosetta source directory: <pre><code>/rosetta/main/source/BuildPyRosetta.sh</code></pre> and run it within this directory to build PyRosetta.
+
+                </div>
+            </div>
+</div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="waterloo-scripts">
+                    <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#waterloo-collapse" aria-expanded="false" aria-controls="waterloo-collapse">
+                    Using Team Waterloo Scripts
+                    <span class="hidden-xs toggle-arrow pull-right">Panel Toggle</span>
+                    </a>
+                    </h4>
+                </div>
+                <div id="waterloo-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="waterloo-scripts">
+                    <div class="panel-body">
+<h3>Recommended Directory Structure</h3>
+
+<p>The scripts developed by the Waterloo iGEM team were developed using the following directory structure. Setting up a similar structure should allow you to use the same the scripts on different computers, making development significantly easier.</p>
+<ol>
+<li>In the same directory as the PyRosetta folder, create another folder called <em>working</em>.</li>
+<li>Within the working directory create folders <em>pdb/</em>, <em>results/</em>, and <em>scripts/</em></li>
+<li>Create subdirectories <em>results/batch/</em>, and <em>results/batch/log/</em></li>
+<li>Download the files in the <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/tree/master/models/tridimensional/docking_validation">models/tridimensional/docking_validation folder</a> on the Waterloo iGEM 2015 github into the <em>working/scripts</em> directory.</li>
+</ol>
+
+<h3>Getting Started with Cas9-DNA docking</h3>
+<p> The batch_dock.sh script <a href="https://github.com/igem-waterloo/uwaterloo-igem-2015/tree/master/models/tridimensional/docking_validation">found here</a> is designed to perform docking of cas9/dsDNA pdb files with different 3 and 4 nucleotide pams. The script includes basic usage documentation for performing a docking run. If you have any questions regarding scrip usage, please contact the Waterloo iGEM team.</p>
+
+                </div>
+            </div>
+
+
+    </section>
+
+    <section id="lab" title="Lab Software">
+
+        <h2>Restriction Digest Calculator</h2>
+        <div class="row">
+        <div class="col-sm-6">
+        <a href="https://igem-waterloo.github.io/uwaterloo-igem-2015/digest-calculator/"><img src="/wiki/images/1/1b/Waterloo_digest_calculator_screenshot.png" alt="digest calculator screenshot" class="img-responsive" /></a>
+        </div>
+        <div class="col-sm-6">
+        </div>
+<p>The team often makes very repetitive calculations when doing restriction digests. One of the lab team members ended up creating an online spreadsheet to assist with the calculations and the modelling team decided to convert it into an online tool for others to use.
+<p>The <a href="https://igem-waterloo.github.io/uwaterloo-igem-2015/digest-calculator/">Digest Calculator</a> made available on our website allows iGEM teams to easily and automatically find the volumes needed for their restriction digests.</p>
+    </section>
+   </div>
+
 </div>
 </html>
 {{Waterloo_Footer}}

@@ -86,6 +86,28 @@ def init_targets_single_P6(complex_concentration):
              'direction': 1,
              'domain_label': "gene_P6"}]
 
+
+def init_targets_multi_P6(complex_concentration):
+    return [{'label': "target_P6_1",
+             'target_sequence': "gctaacggctcttcgcaaca",
+             'target_start_idx': 5862,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"},
+             {'label': "target_P6_2",
+             'target_sequence': "gttagagaggcttacgcagc",
+             'target_start_idx': 6648,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"},
+             {'label': "target_P6_3",
+             'target_sequence': "tcagaagtactattccagta",
+             'target_start_idx': 6802,
+             'complex_concentration': complex_concentration,
+             'sense': 1,
+             'domain_label': "gene_P6"}]
+
+
 def init_targets_all_domains(complex_concentration):
     return [{'label': "target_P1_1",
              'target_sequence': "cattcacgatgccacaggta",
@@ -110,4 +132,4 @@ def init_targets_all_domains(complex_concentration):
              'target_start_idx': 6201,
              'complex_concentration': complex_concentration,
              'sense': 1,
-             'domain_label': "gene_P6"},]
+             'domain_label': "gene_P6"}]
